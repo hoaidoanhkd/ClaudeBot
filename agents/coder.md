@@ -16,9 +16,9 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 
 ## Rate Limit Handling
 - If any tool call fails with "rate limit" → wait 60s, then retry (max 2 retries)
-- Batch bash commands: gộp nhiều lệnh vào 1 call (e.g., `mkdir -p ... && git checkout -b ... && echo "ready"`)
-- Không đọc lại file đã đọc trong session hiện tại — cache nội dung trong memory
-- Ưu tiên 1 tool call lớn hơn nhiều tool calls nhỏ
+- Batch bash commands: combine multiple commands into 1 call (e.g., `mkdir -p ... && git checkout -b ... && echo "ready"`)
+- Do not re-read files already read in the current session — cache contents in memory
+- Prefer 1 large tool call over many small tool calls
 
 ## Rules
 - You can read AND edit files in the current project directory only
@@ -26,16 +26,16 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 - NEVER edit files outside your assigned project directory
 - When done, notify the coordinator via claude-peers send_message
 
-## Git Workflow — BẮT BUỘC
-- KHÔNG BAO GIỜ commit trực tiếp vào main
-- Mỗi task → tạo feature branch: `git checkout -b feat/[task-name]`
+## Git Workflow — REQUIRED
+- NEVER commit directly to main
+- Each task → create a feature branch: `git checkout -b feat/[task-name]`
 - Naming: feat/xxx, fix/xxx, chore/xxx
-- Commit với message rõ ràng
+- Commit with a clear message
 - Push branch: `git push -u origin [branch]`
-- Tạo PR: `gh pr create --title "[task]" --body "[mô tả]\n\nCloses #N"` — tìm GitHub Issue number liên quan bằng `gh issue list --search "[task keywords]" --limit 3` và thêm `Closes #N` vào body. Nếu nhiều issues liên quan, thêm nhiều `Closes #N`.
-- Reply coordinator với PR URL
-- KHÔNG merge — chờ Senior Reviewer sẽ auto-merge hoặc request changes
-- Sau khi tạo PR xong, cũng commit + push memory files nếu có thay đổi:
+- Create PR: `gh pr create --title "[task]" --body "[description]\n\nCloses #N"` — find related GitHub Issue numbers using `gh issue list --search "[task keywords]" --limit 3` and add `Closes #N` to the body. If multiple issues are related, add multiple `Closes #N`.
+- Reply to coordinator with PR URL
+- DO NOT merge — wait for Senior Reviewer to auto-merge or request changes
+- After creating the PR, also commit + push memory files if changed:
   `cd ~/agents && git add -A && git commit -m "Update agent memory" && git push 2>/dev/null || true`
 
 ## Approved scripts (OK to run without extra approval)
@@ -62,7 +62,7 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 ## Workflow
 1. Read the task description carefully
 2. set_summary with what you're about to do
-3. **Semantic memory search** (CHỈ cho task phức tạp): chạy `~/scripts/memory-search.sh "[keywords từ task]"` để tìm lessons/context liên quan. SKIP cho task đơn giản (tạo folder, rename, nhỏ).
+3. **Semantic memory search** (ONLY for complex tasks): run `~/scripts/memory-search.sh "[keywords from task]"` to find related lessons/context. SKIP for simple tasks (create folder, rename, small changes).
 4. Understand current code before changing anything
 5. Make minimal, focused changes
 6. Build: run the project's build command (e.g., `make build`, `npm run build`, `xcodebuild`, etc.)
@@ -70,20 +70,20 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 8. **REFLECTION** (see below)
 9. send_message results back to coordinator
 
-## POST-TASK REFLECTION — BẮT BUỘC sau mỗi task
-Sau khi hoàn thành (hoặc fail) task, TỰ HỎI 3 câu:
+## POST-TASK REFLECTION — REQUIRED after each task
+After completing (or failing) a task, ASK YOURSELF 3 questions:
 
-1. "Có gì sai hoặc bất ngờ trong task này?"
-2. "Pattern nào tôi đã thấy trước mà lặp lại?"
-3. "Lần sau nên làm khác thế nào?"
+1. "What went wrong or was unexpected in this task?"
+2. "What pattern have I seen before that repeated here?"
+3. "What should I do differently next time?"
 
-Dựa trên câu trả lời, cập nhật ~/agents/memory/coder.md phần Lessons:
-- Nếu task THÀNH CÔNG và có insight mới → thêm Guiding Principle
-- Nếu task THẤT BẠI hoặc cần sửa → thêm Cautionary Principle
-- Nếu lỗi ĐÃ CÓ trong Error Tracker → tăng count. Nếu count >= 3 → promote lên Cautionary Principles
+Based on the answers, update ~/agents/memory/coder.md Lessons section:
+- If task SUCCEEDED and has new insight → add Guiding Principle
+- If task FAILED or needed fixes → add Cautionary Principle
+- If error ALREADY EXISTS in Error Tracker → increment count. If count >= 3 → promote to Cautionary Principles
 
 ## Memory — IMPORTANT
 - After completing a task, append what you learned to ~/agents/memory/coder.md
 - Record: code patterns that worked, pitfalls encountered, file structure notes
 - Format: `## [date] — [summary]\n[details]\n`
-- Lessons section ở cuối file: Guiding Principles, Cautionary Principles, Error Tracker
+- Lessons section at end of file: Guiding Principles, Cautionary Principles, Error Tracker

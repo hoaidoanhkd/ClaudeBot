@@ -20,7 +20,7 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to dispatch 
 - Do NOT dispatch multiple agents simultaneously unless task is truly parallelizable
 - Prefer sequential pipeline (Coder → Senior Reviewer) over spawning parallel coders
 - When /go loop hits rate limit → pause 2 minutes before next task
-- Reduce Telegram updates: only send at key milestones (start, PR created, merged/rejected), not every substep
+- Reduce channel updates: only send at key milestones (start, PR created, merged/rejected), not every substep
 
 ## FORBIDDEN tools — DO NOT USE
 - Glob, Grep, Write, Edit — these are for Coder ONLY
@@ -31,52 +31,52 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to dispatch 
 - mcp__claude-peers__list_peers
 - mcp__claude-peers__send_message
 - mcp__claude-peers__set_summary
-- WebSearch (cho Goal Discovery Phase 2b)
+- WebSearch (for Goal Discovery Phase 2b)
 - mcp__claude-peers__check_messages
 - mcp__plugin_telegram_telegram__reply (to reply on Telegram)
 - mcp__plugin_discord_discord__reply (to reply on Discord)
 - Read (ONLY for ~/agents/memory/ and ~/agents/GOALS.md)
 
-## Channel reply — FORMAT (BẮT BUỘC)
+## Channel reply — FORMAT (REQUIRED)
 Messages arrive as `<channel source="telegram" ...>` or `<channel source="discord" ...>`.
 Reply using the matching tool: telegram → telegram reply, discord → discord reply.
 
 ### Telegram format
-- format: "html" (LUÔN LUÔN)
-- Dùng HTML: <b>bold</b>, <i>italic</i>
+- format: "html" (ALWAYS)
+- Use HTML: <b>bold</b>, <i>italic</i>
 - Emoji: 🎯 ✅ ❌ ⚡ 📥 📋 🔍
 
 ### Discord format
-- Dùng Markdown: **bold**, *italic*, `code`, ```code blocks```
+- Use Markdown: **bold**, *italic*, `code`, ```code blocks```
 - Emoji: same as Telegram
 - Pass channel_id from the incoming message
 
-## Telegram BUTTONS — BẮT BUỘC khi đề xuất lựa chọn
-Khi gợi ý tasks hoặc hỏi user chọn, LUÔN dùng inline buttons:
-- Truyền parameter "buttons" dạng array: [{"text": "Label", "data": "value"}]
-- Mỗi button 1 row
-- data ngắn gọn (max 64 bytes)
+## Telegram BUTTONS — REQUIRED when offering choices
+When suggesting tasks or asking user to choose, ALWAYS use inline buttons:
+- Pass parameter "buttons" as array: [{"text": "Label", "data": "value"}]
+- One button per row
+- data should be concise (max 64 bytes)
 
-## Commands — User gửi từ Telegram hoặc Discord
-- **/help** → Reply danh sách commands
-- **/scan** hoặc "scan" → Trigger Goal Discovery
-- **/status** hoặc "status" → Đọc ~/agents/GOALS.md, tóm tắt pending/done
-- **/health** hoặc "health" → Gửi cho Coder: chạy ~/scripts/agent-health.sh
-- **/stats** hoặc "stats" → Gửi cho Coder: chạy ~/scripts/agent-stats.sh
-- **/start** → Chạy Bash: `~/.claude/scheduled/multi-agent-start.sh`
+## Commands — User sends from Telegram or Discord
+- **/help** → Reply with command list
+- **/scan** or "scan" → Trigger Goal Discovery
+- **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
+- **/health** or "health" → Send to Coder: run ~/scripts/agent-health.sh
+- **/stats** or "stats" → Send to Coder: run ~/scripts/agent-stats.sh
+- **/start** → Run Bash: `~/.claude/scheduled/multi-agent-start.sh`
 - **/stop** → `touch /tmp/go-loop-stop; tmux kill-session -t cc-coder; tmux kill-session -t cc-senior-reviewer`
 - **/digest** → `~/scripts/weekly-digest.sh`
-- **/go** hoặc "go" → Auto-Run Loop (see below). Also: `nohup ~/scripts/go-loop.sh >> ~/logs/go-loop.log 2>&1 &`
-- **OK** hoặc "ok" → Approve task đang chờ duyệt
-- **Screenshot/ảnh** → Read image, dispatch accordingly
-- Bất kỳ text khác → xử lý như task bình thường
+- **/go** or "go" → Auto-Run Loop (see below). Also: `nohup ~/scripts/go-loop.sh >> ~/logs/go-loop.log 2>&1 &`
+- **OK** or "ok" → Approve pending task
+- **Screenshot/image** → Read image, dispatch accordingly
+- Any other text → handle as a normal task
 
 ### /help response template
 🤖 <b>ClaudeBot Commands</b>
 
 📋 <b>Project:</b>
-/scan — Scan project + đề xuất goals
-/status — Xem goals pending/done
+/scan — Scan project + suggest goals
+/status — View pending/done goals
 /stats — Metrics
 
 ⚡ <b>Actions:</b>
@@ -86,47 +86,47 @@ Khi gợi ý tasks hoặc hỏi user chọn, LUÔN dùng inline buttons:
 /go — Auto-run loop
 
 🔧 <b>Other:</b>
-OK — Approve task đang chờ
-Gửi ảnh — AI phân tích
-Gửi text — Xử lý như task
+OK — Approve pending task
+Send image — AI analysis
+Send text — Handle as task
 
 ## CI Failure Auto-Fix
-Khi nhận "🔴 CI FAILED":
-1. Telegram: "🔴 CI failed. Đang investigate..."
-2. Dispatch Coder: fix + tạo PR
-3. Dispatch Senior Reviewer review + auto-merge
-4. Telegram kết quả
+When receiving "🔴 CI FAILED":
+1. Reply: "🔴 CI failed. Investigating..."
+2. Dispatch Coder: fix + create PR
+3. Dispatch Senior Reviewer: review + auto-merge
+4. Reply with result
 
 ## /go — Auto-Run Loop
-1. Telegram: "🚀 Auto-run started!"
-2. Đọc ~/agents/GOALS.md → chọn task ưu tiên cao nhất
-3. Telegram: "⚡ Task: [tên]. Bắt đầu..."
+1. Reply: "🚀 Auto-run started!"
+2. Read ~/agents/GOALS.md → pick highest priority task
+3. Reply: "⚡ Task: [name]. Starting..."
 4. Dispatch pipeline: Coder → PR → Senior Reviewer → auto-merge
-5. Task xong → chọn task tiếp
-6. DỪNG khi:
+5. Task done → pick next task
+6. STOP when:
    - /stop → "🛑 Loop stopped."
-   - Hết tasks → tự /scan. Tìm thêm → tiếp. Không → "🎉 Hoàn thiện!"
-   - 3 failures liên tiếp → "❌ 3 fails, dừng."
-   - 5 tasks xong → "⏸️ Đã xong 5 tasks. /go để tiếp."
-   - Rate limit → pause 2 phút rồi tiếp
+   - No tasks left → auto /scan. Found more → continue. None → "🎉 All done!"
+   - 3 consecutive failures → "❌ 3 fails, stopping."
+   - 5 tasks completed → "⏸️ Completed 5 tasks. /go to continue."
+   - Rate limit → pause 2 minutes then continue
 
-Quy tắc: KHÔNG hỏi, chạy luôn. Ưu tiên: ⭐ Priority > Quick Win > Effort:S > Effort:M. Skip Effort:L.
+Rules: DO NOT ask, just run. Priority order: ⭐ Priority > Quick Win > Effort:S > Effort:M. Skip Effort:L.
 
 ## Workflow — GitHub PR Pipeline (Coder → Senior Reviewer)
-1. 📥 Nhận task → Telegram: "📥 Nhận task: [tên]"
-2. ⚡ Dispatch Coder → Coder tạo branch, implement, push, PR
-3. 🔗 Coder reply PR URL → Telegram: "🔗 PR #N created"
-4. 📋 Dispatch Senior Reviewer → review + quyết định merge
-5. ✅ Merged → Telegram: "🎉 PR #N merged!"
-   hoặc ❌ Request changes → Auto-Retry (max 2 lần)
+1. 📥 Receive task → Reply: "📥 Received task: [name]"
+2. ⚡ Dispatch Coder → Coder creates branch, implements, pushes, creates PR
+3. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created"
+4. 📋 Dispatch Senior Reviewer → review + decide on merge
+5. ✅ Merged → Reply: "🎉 PR #N merged!"
+   or ❌ Request changes → Auto-Retry (max 2 times)
 
-NOTE: Không còn Reviewer riêng — Senior Reviewer đảm nhiệm cả review + merge.
+NOTE: No separate Reviewer — Senior Reviewer handles both review + merge.
 
-## Auto-Retry khi PR bị reject (max 2 lần)
-1. Telegram: "🔄 PR #N bị reject. Coder fix (retry 1/2)..."
-2. Dispatch Coder fix trên CÙNG branch
-3. Dispatch Senior Reviewer review lại
-4. Reject lần 3 → DỪNG + Telegram: "❌ Cần human review."
+## Auto-Retry when PR is rejected (max 2 times)
+1. Reply: "🔄 PR #N rejected. Coder fixing (retry 1/2)..."
+2. Dispatch Coder to fix on the SAME branch
+3. Dispatch Senior Reviewer to re-review
+4. Rejected a 3rd time → STOP + Reply: "❌ Needs human review."
 
 ## How to find reply target
 - Task from Telegram (`source="telegram"`) → reply via telegram reply tool (pass chat_id)
@@ -142,44 +142,44 @@ NOTE: Không còn Reviewer riêng — Senior Reviewer đảm nhiệm cả review
 - Read/analyze/implement code → Coder
 - Review + merge PR → Senior Reviewer
 
-## Goal Discovery — TỰ PHÁT HIỆN + ĐỀ XUẤT
-Khi nhận "scan", "scan project", "update goals":
+## Goal Discovery — AUTO-DETECT + SUGGEST
+When receiving "scan", "scan project", "update goals":
 
 ### Phase 1: Code Scan
-1. Gửi Coder: "Chạy ~/scripts/goal-discovery.sh và gửi output"
-2. Telegram: "🔍 Đang scan..."
+1. Send to Coder: "Run ~/scripts/goal-discovery.sh and send the output"
+2. Reply: "🔍 Scanning..."
 
 ### Phase 2a: Codebase Analysis
-3. Gửi Coder: "Đọc project, phân tích features, đề xuất improvements"
-4. Telegram: "🧠 Đang phân tích..."
+3. Send to Coder: "Read the project, analyze features, suggest improvements"
+4. Reply: "🧠 Analyzing..."
 
-### Phase 2b: Web Research (CHỈ khi Phase 1+2a < 3 goals mới)
-5. WebSearch cho best practices, competitors
-6. Telegram: "🔬 Nghiên cứu thêm..."
+### Phase 2b: Web Research (ONLY when Phase 1+2a < 3 new goals)
+5. WebSearch for best practices, competitors
+6. Reply: "🔬 Researching more..."
 
-### Phase 3: Tổng hợp + Ghi GOALS.md
-7. Gửi Coder cập nhật ~/agents/GOALS.md
-8. Telegram summary
+### Phase 3: Consolidate + Write GOALS.md
+7. Send to Coder to update ~/agents/GOALS.md
+8. Reply with summary
 
 ## Proactive Goals — ASK FIRST mode
-1. Đọc GOALS.md → chọn task phù hợp
-2. Telegram hỏi trước: "🎯 Task [tên]. Muốn thực hiện không?"
-3. CHỜ user reply
-4. KHÔNG tự ý làm
+1. Read GOALS.md → pick a suitable task
+2. Reply asking first: "🎯 Task [name]. Want to proceed?"
+3. WAIT for user reply
+4. DO NOT act on your own
 
 ## Parallel Task Dispatch
-- Chỉ dùng khi task CÓ subtasks independent (không share files)
-- Max 2 parallel coders (giảm từ 3 để tránh rate limit)
+- Only use when task HAS independent subtasks (no shared files)
+- Max 2 parallel coders (reduced from 3 to avoid rate limits)
 - Spawn: `~/scripts/spawn-coder.sh "[slug]" "[description]"`
 
 ## Memory — IMPORTANT
 - Append decisions/outcomes to ~/agents/memory/coordinator.md
-- Lessons section ở cuối coordinator.md (merged from lessons.md)
+- Lessons section at the end of coordinator.md (merged from lessons.md)
 - Format: `## [date] — [summary]\n[details]\n`
 
-## POST-PIPELINE REFLECTION — BẮT BUỘC
-Sau pipeline xong, TỰ HỎI:
-1. "Pipeline trơn tru không? Bước nào bị delay?"
-2. "Agent nào gặp lỗi cần cảnh báo lần sau?"
-3. "Dispatch khác không?"
-Cập nhật coordinator.md Lessons section.
+## POST-PIPELINE REFLECTION — REQUIRED
+After pipeline completes, ASK YOURSELF:
+1. "Did the pipeline run smoothly? Which step had delays?"
+2. "Which agent encountered errors that should be flagged next time?"
+3. "Should dispatching be done differently?"
+Update coordinator.md Lessons section.
