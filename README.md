@@ -16,34 +16,45 @@ Multi-agent system controlled via Telegram and Discord. Three always-on agents (
 ```bash
 git clone https://github.com/hoaidoanhkd/ClaudeBot.git
 cd ClaudeBot
-./install.sh   # Interactive setup — configures project, GitHub repo, agents
-./start.sh
+./install.sh    # Interactive — 6 questions, handles everything
+./start.sh      # Launch all agents in tmux
 ```
+
+`install.sh` walks you through:
+
+1. **Dependency check** — verifies claude, tmux, bun, gh, claude-peers-mcp
+2. **Project config** — name, path, GitHub repo, project type
+3. **Channel choice** — Telegram, Discord, or both
+4. **Bot tokens** — saves directly to `~/.claude/channels/`
+5. **Symlinks + config** — agents, commands, hooks, launchd plist
+
+To uninstall: `./uninstall.sh`
 
 ## Features
 
 - **4 agents**: Coordinator + Coder + Senior Reviewer (always-on) + Researcher (on-demand)
-- **Telegram + Discord**: control agents from either platform
+- **Telegram + Discord**: choose one or both during setup
 - **GitHub PR workflow**: branch, implement, PR, review, auto-merge
 - **Goal Discovery**: scan codebase, generate GOALS.md, sync to GitHub Issues
 - **Self-learning**: post-task reflection, guiding/cautionary principles
 - **Slash commands**: /scan, /digest, /nudge, /stats, /sync-goals, /switch-project
 - **1 config file** (`config.env`) to switch between projects
 
-## Telegram Setup
+## Channel Setup (Telegram / Discord)
 
+`install.sh` handles token setup automatically. If you need to configure manually:
+
+**Telegram:**
 1. Create a bot via [@BotFather](https://t.me/BotFather)
-2. Save your bot token in `~/.claude/channels/telegram/.env`
-3. Pair your chat via the `/telegram:access` skill in Claude Code
+2. `install.sh` saves token to `~/.claude/channels/telegram/.env`, or manually: `/telegram:configure <token>`
+3. Pair: `/telegram:access`
 
-## Discord Setup
-
+**Discord:**
 1. Create a bot at [Discord Developer Portal](https://discord.com/developers/applications)
 2. Enable **Message Content Intent** under Bot > Privileged Gateway Intents
 3. Invite bot to server (OAuth2 > URL Generator > scope `bot` + Send Messages, Read History, Attach Files, Add Reactions)
-4. In Claude Code: `/discord:configure <bot-token>`
-5. DM the bot on Discord, then pair: `/discord:access pair <code>`
-6. Set `DISCORD_ENABLED="true"` in config.env
+4. `install.sh` saves token to `~/.claude/channels/discord/.env`, or manually: `/discord:configure <token>`
+5. DM the bot, then pair: `/discord:access pair <code>`
 
 ## Commands (Telegram / Discord)
 
@@ -96,7 +107,8 @@ ClaudeBot/
 ├── commands/        # Slash command definitions (.md)
 ├── plugins/         # Plugin configs
 ├── scripts/         # Utility scripts
-├── install.sh       # Interactive installer
+├── install.sh       # Interactive installer (deps + config + symlinks)
+├── uninstall.sh     # Clean removal
 ├── start.sh         # Launch all agents in tmux
 ├── config.env       # Template config (installed to ~/agents/)
 └── com.claudebot.agents.plist  # macOS launchd service
