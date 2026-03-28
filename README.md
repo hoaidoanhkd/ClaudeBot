@@ -1,40 +1,51 @@
 # ClaudeBot — Autonomous Multi-Agent System for Claude Code
 
-Hệ thống multi-agent tự chủ điều khiển qua Telegram. Tự scan codebase, đề xuất goals, implement, review, merge PRs — tất cả tự động.
+Multi-agent system controlled via Telegram. Three Claude Code instances (Coordinator, Coder, Senior Reviewer) collaborate through claude-peers to implement features, review code, and manage PRs.
 
 ## Features
-- 3 agents: Coordinator + Coder + Senior Reviewer (Claude Opus)
-- Telegram control: /go /scan /stop /stats /help + inline buttons
-- GitHub PR workflow: branch → implement → PR → auto-merge
-- Self-learning: reflection → guiding/cautionary principles
-- Goal Discovery: scan code + web research → GOALS.md → GitHub Issues
-- Auto-recovery: watchdog, keepalive, crash logging
-- 24/7 proactive: periodic goal check + ask user
-- Dynamic: 1 config file to switch projects
+
+- **3 agents**: Coordinator + Coder + Senior Reviewer (all Claude Opus)
+- **Telegram control**: /go /scan /stop /stats /help + inline buttons
+- **GitHub PR workflow**: branch, implement, PR, auto-merge
+- **Self-learning**: post-task reflection, guiding/cautionary principles
+- **Goal Discovery**: scan codebase, generate GOALS.md, sync to GitHub Issues
+- **Slash commands**: /scan, /digest, /nudge, /stats, /sync-goals, /switch-project, and more
+
+### Not yet included (planned)
+
+The following are referenced in `start.sh` but the scripts are not in this repo yet:
+
+- Watchdog (auto-restart crashed agents)
+- Proactive loop (periodic goal check + nudge)
+- Keepalive (prevent idle timeout)
+- CI monitor (watch GitHub Actions)
+
+## Prerequisites
+
+- **macOS** (uses launchd plist for daemon management)
+- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) + Claude Max subscription
+- [Bun](https://bun.sh) runtime
+- [claude-peers-mcp](https://github.com/anthropics/claude-peers-mcp) (inter-agent communication)
+- tmux
+- gh CLI (GitHub)
 
 ## Quick Start
+
 ```bash
 git clone https://github.com/hoaidoanhkd/ClaudeBot.git
 cd ClaudeBot
-./install.sh
-# Edit config.env with your project path + GitHub repo
+./install.sh   # Interactive — asks for project name, path, GitHub repo, etc.
 ./start.sh
 ```
 
-## Requirements
-- macOS (Apple Silicon)
-- Claude Code CLI + Claude Max subscription
-- Bun runtime
-- tmux
-- gh CLI (GitHub)
-- claude-peers-mcp (separate repo)
-
 ## Telegram Setup
-1. Create bot via @BotFather
-2. Set token in `~/.claude/channels/telegram/.env`
-3. Pair via `/telegram:access`
+
+1. Create a bot via [@BotFather](https://t.me/BotFather)
+2. Save your bot token in `~/.claude/channels/telegram/.env`
+3. Pair via the `/telegram:access` skill in Claude Code
 
 ## Commands (Telegram)
+
 | Command | Action |
 |---------|--------|
 | /go | Auto-run loop — ship tasks continuously |
@@ -46,10 +57,25 @@ cd ClaudeBot
 | /digest | Weekly summary |
 
 ## Architecture
+
 ```
 Telegram → Coordinator → Coder → Senior Reviewer → Auto-merge
-                ↓              ↓              ↓
-           Ask First    Branch+PR     Review+Merge
-                ↓              ↓              ↓
-           Proactive    Self-learning   Build verify
+               ↓              ↓              ↓
+          Ask First    Branch+PR     Review+Merge
+               ↓              ↓              ↓
+          Proactive    Self-learning   Build verify
+```
+
+## Project Structure
+
+```
+ClaudeBot/
+├── agents/          # Agent persona definitions + memory
+├── commands/        # Slash command definitions (.md)
+├── plugins/         # Plugin configs (placeholder)
+├── scripts/         # Utility scripts (placeholder)
+├── install.sh       # Interactive installer
+├── start.sh         # Launch all agents in tmux
+├── config.env       # Template config (installed to ~/agents/)
+└── com.claudebot.agents.plist  # macOS launchd service
 ```
