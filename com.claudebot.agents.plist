@@ -15,7 +15,7 @@
         <string>/bin/bash</string>
         <string>-l</string>
         <!-- Path to start.sh — change /Users/username to your home directory -->
-        <string>/Users/username/agents/start.sh</string>
+        <string>/Users/username/.claude/scheduled/multi-agent-start.sh</string>
     </array>
 
     <key>RunAtLoad</key>

@@ -34,8 +34,12 @@ pkill -f "agent-proactive.sh" 2>/dev/null || true
 pkill -f "agent-keepalive.sh" 2>/dev/null || true
 pkill -f "ci-monitor.sh" 2>/dev/null || true
 
-# Kill old broker
-cd ~/claude-peers-mcp && bun cli.ts kill-broker 2>/dev/null || true
+# Kill old broker (claude-peers-mcp location may vary)
+if [ -d ~/claude-peers-mcp ]; then
+  cd ~/claude-peers-mcp && bun cli.ts kill-broker 2>/dev/null || true
+else
+  echo "Skipping broker kill — ~/claude-peers-mcp not found"
+fi
 sleep 2
 
 echo "📡 Starting Coordinator [model: opus]..."
@@ -73,7 +77,9 @@ echo "✅ Reviewer started"
 # Check all peers
 echo ""
 echo "📊 Checking peers status..."
-cd ~/claude-peers-mcp && bun cli.ts status
+if [ -d ~/claude-peers-mcp ]; then
+  cd ~/claude-peers-mcp && bun cli.ts status
+fi
 
 echo ""
 if [ -f ~/scripts/agent-watchdog.sh ]; then

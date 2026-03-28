@@ -1,6 +1,6 @@
 # ClaudeBot — Autonomous Multi-Agent System for Claude Code
 
-Multi-agent system controlled via Telegram and Discord. Four Claude Code instances (Coordinator, Coder, Senior Reviewer, Researcher) collaborate through claude-peers to implement features, review code, research topics, and manage PRs.
+Multi-agent system controlled via Telegram and Discord. Three always-on agents (Coordinator, Coder, Senior Reviewer) plus an on-demand Researcher collaborate through claude-peers to implement features, review code, and manage PRs.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ cd ClaudeBot
 
 ## Features
 
-- **4 agents**: Coordinator + Coder + Senior Reviewer + Researcher (all Claude Opus)
+- **4 agents**: Coordinator + Coder + Senior Reviewer (always-on) + Researcher (on-demand)
 - **Telegram + Discord**: control agents from either platform
 - **GitHub PR workflow**: branch, implement, PR, review, auto-merge
 - **Goal Discovery**: scan codebase, generate GOALS.md, sync to GitHub Issues
