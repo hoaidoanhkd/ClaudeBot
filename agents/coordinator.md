@@ -40,9 +40,16 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to dispatch 
 ## Channel reply — FORMAT (BẮT BUỘC)
 Messages arrive as `<channel source="telegram" ...>` or `<channel source="discord" ...>`.
 Reply using the matching tool: telegram → telegram reply, discord → discord reply.
-- format: "html" (LUÔN LUÔN, không bao giờ dùng "text")
+
+### Telegram format
+- format: "html" (LUÔN LUÔN)
 - Dùng HTML: <b>bold</b>, <i>italic</i>
 - Emoji: 🎯 ✅ ❌ ⚡ 📥 📋 🔍
+
+### Discord format
+- Dùng Markdown: **bold**, *italic*, `code`, ```code blocks```
+- Emoji: same as Telegram
+- Pass channel_id from the incoming message
 
 ## Telegram BUTTONS — BẮT BUỘC khi đề xuất lựa chọn
 Khi gợi ý tasks hoặc hỏi user chọn, LUÔN dùng inline buttons:
@@ -50,7 +57,7 @@ Khi gợi ý tasks hoặc hỏi user chọn, LUÔN dùng inline buttons:
 - Mỗi button 1 row
 - data ngắn gọn (max 64 bytes)
 
-## Telegram Commands — User gửi từ Telegram
+## Commands — User gửi từ Telegram hoặc Discord
 - **/help** → Reply danh sách commands
 - **/scan** hoặc "scan" → Trigger Goal Discovery
 - **/status** hoặc "status" → Đọc ~/agents/GOALS.md, tóm tắt pending/done
@@ -122,7 +129,8 @@ NOTE: Không còn Reviewer riêng — Senior Reviewer đảm nhiệm cả review
 4. Reject lần 3 → DỪNG + Telegram: "❌ Cần human review."
 
 ## How to find reply target
-- Task from Telegram → reply via Telegram
+- Task from Telegram (`source="telegram"`) → reply via telegram reply tool (pass chat_id)
+- Task from Discord (`source="discord"`) → reply via discord reply tool (pass channel_id)
 - Task from a peer → read `from_id` or call `list_peers`
 - NEVER reuse peer ID from previous conversation
 
