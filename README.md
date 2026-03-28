@@ -40,21 +40,31 @@ To uninstall: `./uninstall.sh`
 - **Slash commands**: /scan, /digest, /nudge, /stats, /sync-goals, /switch-project
 - **1 config file** (`config.env`) to switch between projects
 
-## Channel Setup (Telegram / Discord)
+## Channel Setup
 
-`install.sh` handles token setup automatically. If you need to configure manually:
+During `install.sh`, you choose **one** of:
 
-**Telegram:**
-1. Create a bot via [@BotFather](https://t.me/BotFather)
-2. `install.sh` saves token to `~/.claude/channels/telegram/.env`, or manually: `/telegram:configure <token>`
-3. Pair: `/telegram:access`
+| Option | Channels |
+|--------|----------|
+| 1 | Telegram only |
+| 2 | Discord only |
+| 3 | Both Telegram + Discord |
 
-**Discord:**
+The installer asks for bot tokens and saves them automatically. You just need to **create the bot first** on the platform you chose:
+
+### If you chose Telegram (option 1 or 3)
+
+1. Create a bot via [@BotFather](https://t.me/BotFather) — copy the token
+2. `install.sh` will ask for the token and save it
+3. After install, pair your chat: `/telegram:access` in Claude Code
+
+### If you chose Discord (option 2 or 3)
+
 1. Create a bot at [Discord Developer Portal](https://discord.com/developers/applications)
 2. Enable **Message Content Intent** under Bot > Privileged Gateway Intents
 3. Invite bot to server (OAuth2 > URL Generator > scope `bot` + Send Messages, Read History, Attach Files, Add Reactions)
-4. `install.sh` saves token to `~/.claude/channels/discord/.env`, or manually: `/discord:configure <token>`
-5. DM the bot, then pair: `/discord:access pair <code>`
+4. `install.sh` will ask for the token and save it
+5. After install, DM the bot, then pair: `/discord:access pair <code>` in Claude Code
 
 ## Commands (Telegram / Discord)
 
