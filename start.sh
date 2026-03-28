@@ -8,9 +8,20 @@ set -euo pipefail
 # Load config
 source "$HOME/agents/config.env"
 
+# Build channels list dynamically from config
+CHANNELS=""
+if [ "${TELEGRAM_ENABLED:-false}" = "true" ]; then
+  CHANNELS="$CHANNELS plugin:telegram@claude-plugins-official"
+fi
+if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
+  CHANNELS="$CHANNELS plugin:discord@claude-plugins-official"
+fi
+CHANNELS="${CHANNELS# }"  # trim leading space
+
 echo "🚀 Starting ClaudeBot for $PROJECT_NAME..."
-echo "   Project: $PROJECT_PATH"
-echo "   GitHub:  $GITHUB_REPO"
+echo "   Project:  $PROJECT_PATH"
+echo "   GitHub:   $GITHUB_REPO"
+echo "   Channels: ${CHANNELS:-none}"
 
 # Kill old sessions if exist
 tmux kill-session -t cc-coordinator 2>/dev/null || true
@@ -28,8 +39,12 @@ cd ~/claude-peers-mcp && bun cli.ts kill-broker 2>/dev/null || true
 sleep 2
 
 echo "📡 Starting Coordinator [model: opus]..."
-tmux new-session -d -s cc-coordinator \
-  "cd $PROJECT_PATH && claude --agent coordinator --channels plugin:telegram@claude-plugins-official --dangerously-load-development-channels server:claude-peers"
+if [ -n "$CHANNELS" ]; then
+  COORDINATOR_CMD="cd $PROJECT_PATH && claude --agent coordinator --channels $CHANNELS --dangerously-load-development-channels server:claude-peers"
+else
+  COORDINATOR_CMD="cd $PROJECT_PATH && claude --agent coordinator --dangerously-load-development-channels server:claude-peers"
+fi
+tmux new-session -d -s cc-coordinator "$COORDINATOR_CMD"
 
 sleep 10
 echo "⏳ Confirming channel prompts..."

@@ -1,6 +1,6 @@
 # ClaudeBot — Autonomous Multi-Agent System for Claude Code
 
-Multi-agent system controlled via Telegram. Four Claude Code instances (Coordinator, Coder, Senior Reviewer, Researcher) collaborate through claude-peers to implement features, review code, research topics, and manage PRs.
+Multi-agent system controlled via Telegram and Discord. Four Claude Code instances (Coordinator, Coder, Senior Reviewer, Researcher) collaborate through claude-peers to implement features, review code, research topics, and manage PRs.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ cd ClaudeBot
 ## Features
 
 - **4 agents**: Coordinator + Coder + Senior Reviewer + Researcher (all Claude Opus)
-- **Telegram control**: /go /scan /stop /stats /help + inline buttons
+- **Telegram + Discord**: control agents from either platform
 - **GitHub PR workflow**: branch, implement, PR, review, auto-merge
 - **Goal Discovery**: scan codebase, generate GOALS.md, sync to GitHub Issues
 - **Self-learning**: post-task reflection, guiding/cautionary principles
@@ -36,7 +36,16 @@ cd ClaudeBot
 2. Save your bot token in `~/.claude/channels/telegram/.env`
 3. Pair your chat via the `/telegram:access` skill in Claude Code
 
-## Commands (Telegram)
+## Discord Setup
+
+1. Create a bot at [Discord Developer Portal](https://discord.com/developers/applications)
+2. Enable **Message Content Intent** under Bot > Privileged Gateway Intents
+3. Invite bot to server (OAuth2 > URL Generator > scope `bot` + Send Messages, Read History, Attach Files, Add Reactions)
+4. In Claude Code: `/discord:configure <bot-token>`
+5. DM the bot on Discord, then pair: `/discord:access pair <code>`
+6. Set `DISCORD_ENABLED="true"` in config.env
+
+## Commands (Telegram / Discord)
 
 | Command | Action |
 |---------|--------|
@@ -65,17 +74,18 @@ cd ClaudeBot
 ## Architecture
 
 ```
-Telegram --> Coordinator --> Coder ---------> Senior Reviewer --> Auto-merge
-                 |    \          |                    |
-            Ask First  \    Branch+PR           Review+Merge
-                 |      \        |                    |
-            Goal Scan    \  Self-learning        Build verify
-                          \
-                           --> Researcher
-                                  |
-                              Web search
-                                  |
-                             Deep research
+Telegram ──┐
+            ├──> Coordinator --> Coder ---------> Senior Reviewer --> Auto-merge
+Discord  ──┘         |    \          |                    |
+                Ask First  \    Branch+PR           Review+Merge
+                     |      \        |                    |
+                Goal Scan    \  Self-learning        Build verify
+                              \
+                               --> Researcher
+                                      |
+                                  Web search
+                                      |
+                                 Deep research
 ```
 
 ## Project Structure

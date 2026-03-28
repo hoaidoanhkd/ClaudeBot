@@ -134,6 +134,16 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
     TELEGRAM_CHAT_ID="your-chat-id"
   fi
 
+  # 6. Channel toggles
+  echo ""
+  TELEGRAM_ENABLED="true"
+  DISCORD_ENABLED="false"
+  ask "Enable Discord channel? (y/N): "
+  read -r yn
+  case "$yn" in
+    [yY]|[yY][eE][sS]) DISCORD_ENABLED="true" ;;
+  esac
+
   echo ""
 else
   echo -e "${DIM}Using existing config at ~/agents/config.env${NC}"
@@ -183,6 +193,11 @@ GITHUB_REPO="${GITHUB_REPO}"
 PROJECT_TYPE="${PROJECT_TYPE}"
 AGENTS="coordinator,coder,reviewer"
 LOG_DIR="\$HOME/logs"
+
+# Channels (set to "true" to enable)
+TELEGRAM_ENABLED="${TELEGRAM_ENABLED}"
+DISCORD_ENABLED="${DISCORD_ENABLED}"
+
 TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
 ENVEOF
   ok "Config: ~/agents/config.env"
@@ -258,6 +273,11 @@ if [ -n "${PROJECT_NAME:-}" ]; then
   else
     echo -e "  Telegram:     ${DIM}not configured${NC}"
   fi
+  if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
+    echo -e "  Discord:      ${CYAN}enabled${NC}"
+  else
+    echo -e "  Discord:      ${DIM}disabled${NC}"
+  fi
   echo -e "  Config:       ${DIM}~/agents/config.env${NC}"
   if [ "$PLIST_UPDATED" = true ]; then
     echo -e "  Launchd:      ${DIM}~/Library/LaunchAgents/com.claudebot.agents.plist${NC}"
@@ -269,9 +289,12 @@ fi
 echo -e "${BOLD}Next steps:${NC}"
 if [ "${TELEGRAM_CHAT_ID:-}" = "your-chat-id" ]; then
   echo -e "  1. ${YELLOW}Set up Telegram${NC}: edit ~/agents/config.env (add chat ID)"
-  echo -e "  2. Configure Telegram bot: ~/.claude/channels/telegram/.env"
+  echo -e "  2. Configure Telegram bot: run ${BOLD}/telegram:configure${NC} in Claude Code"
 else
-  echo -e "  1. Configure Telegram bot: ~/.claude/channels/telegram/.env"
+  echo -e "  1. Configure Telegram bot: run ${BOLD}/telegram:configure${NC} in Claude Code"
+fi
+if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
+  echo -e "  ${DIM}*${NC} Configure Discord bot: run ${BOLD}/discord:configure <token>${NC} in Claude Code"
 fi
 echo -e "  ${DIM}*${NC} Start agents:  ~/.claude/scheduled/multi-agent-start.sh"
 if [ "$PLIST_UPDATED" = true ]; then
