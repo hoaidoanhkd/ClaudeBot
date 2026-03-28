@@ -184,39 +184,49 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
     fi
   fi
 
-  # 5. Telegram chat ID (optional)
+  # 5. Communication channels
   echo ""
-  TELEGRAM_CHAT_ID=$(prompt "Telegram chat ID (optional, press Enter to skip)" "")
-  if [ -z "$TELEGRAM_CHAT_ID" ]; then
-    TELEGRAM_CHAT_ID="your-chat-id"
-  fi
-
-  # 5b. Telegram bot token (optional)
-  TELEGRAM_BOT_TOKEN=$(prompt "Telegram bot token (from @BotFather, or Enter to skip)" "")
-  if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
-    mkdir -p ~/.claude/channels/telegram
-    echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" > ~/.claude/channels/telegram/.env
-    ok "Saved Telegram token to ~/.claude/channels/telegram/.env"
-  fi
-
-  # 6. Channel toggles
+  echo -e "  ${DIM}Choose how to control your agents:${NC}"
+  echo -e "    ${BOLD}1${NC}) Telegram only"
+  echo -e "    ${BOLD}2${NC}) Discord only"
+  echo -e "    ${BOLD}3${NC}) Both Telegram + Discord"
   echo ""
-  TELEGRAM_ENABLED="true"
+
+  CHANNEL_CHOICE=$(prompt "Channel setup (1-3)" "1")
+  TELEGRAM_ENABLED="false"
   DISCORD_ENABLED="false"
-  ask "Enable Discord channel? (y/N): "
-  read -r yn
-  case "$yn" in
-    [yY]|[yY][eE][sS]) DISCORD_ENABLED="true" ;;
+  TELEGRAM_CHAT_ID="your-chat-id"
+
+  case "$CHANNEL_CHOICE" in
+    1) TELEGRAM_ENABLED="true" ;;
+    2) DISCORD_ENABLED="true" ;;
+    3) TELEGRAM_ENABLED="true"; DISCORD_ENABLED="true" ;;
+    *) warn "Invalid choice, defaulting to Telegram only"; TELEGRAM_ENABLED="true" ;;
   esac
 
-  # 6b. Discord bot token (if enabled)
-  DISCORD_BOT_TOKEN=""
+  # Telegram setup
+  if [ "$TELEGRAM_ENABLED" = "true" ]; then
+    echo ""
+    TELEGRAM_CHAT_ID=$(prompt "Telegram chat ID (or Enter to skip)" "")
+    if [ -z "$TELEGRAM_CHAT_ID" ]; then
+      TELEGRAM_CHAT_ID="your-chat-id"
+    fi
+    TELEGRAM_BOT_TOKEN=$(prompt "Telegram bot token (from @BotFather, or Enter to skip)" "")
+    if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
+      mkdir -p ~/.claude/channels/telegram
+      echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" > ~/.claude/channels/telegram/.env
+      ok "Saved Telegram token"
+    fi
+  fi
+
+  # Discord setup
   if [ "$DISCORD_ENABLED" = "true" ]; then
+    echo ""
     DISCORD_BOT_TOKEN=$(prompt "Discord bot token (or Enter to skip)" "")
     if [ -n "$DISCORD_BOT_TOKEN" ]; then
       mkdir -p ~/.claude/channels/discord
       echo "DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}" > ~/.claude/channels/discord/.env
-      ok "Saved Discord token to ~/.claude/channels/discord/.env"
+      ok "Saved Discord token"
     fi
   fi
 
