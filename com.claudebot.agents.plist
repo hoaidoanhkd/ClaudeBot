@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  ClaudeBot LaunchAgent — auto-starts agents on login.
+  Customize the 4 paths below to match your setup.
+  Install: cp this file ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist
+-->
 <plist version="1.0">
 <dict>
     <key>Label</key>
     <string>com.claudebot.agents</string>
+
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
         <string>-l</string>
-        <string>/Users/username/agents/start.sh</string> <!-- edit path -->
+        <!-- Path to start.sh — change /Users/username to your home directory -->
+        <string>/Users/username/agents/start.sh</string>
     </array>
+
     <key>RunAtLoad</key>
     <true/>
+
+    <!-- Log files — create the logs directory first: mkdir -p /Users/username/logs -->
     <key>StandardOutPath</key>
-    <string>/Users/username/logs/launchd-agents.log</string> <!-- edit path -->
+    <string>/Users/username/logs/launchd-agents.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/username/logs/launchd-agents-error.log</string> <!-- edit path -->
+    <string>/Users/username/logs/launchd-agents-error.log</string>
+
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <!-- Your home directory — must be absolute path, not $HOME -->
         <key>HOME</key>
-        <string>/Users/username</string> <!-- edit path -->
+        <string>/Users/username</string>
     </dict>
 </dict>
 </plist>

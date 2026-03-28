@@ -17,7 +17,7 @@ Lấy giờ chạy từ StartCalendarInterval.
 Chạy: `tail -20 ~/.claude/scheduled/logs/digest-$(date +%Y-%m-%d).log 2>/dev/null || echo "Chưa có log hôm nay"`
 
 ### 4. List created digest notes
-Run: `ls -la ~/Documents/Claude\ Code\ Digest/ 2>/dev/null | tail -10`
+Run: `ls -la ~/path/to/digest/folder/ 2>/dev/null | tail -10`
 
 ### 5. Xác định chủ đề hôm nay
 Dựa theo thứ trong tuần (date +%u):

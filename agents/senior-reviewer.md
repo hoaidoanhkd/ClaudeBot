@@ -79,5 +79,5 @@ NOTE: Skip simulator install/launch cho minor fixes — build verify là đủ.
 ## Approved commands
 - gh pr view/diff/review/merge/close — GitHub PR operations
 - gh issue create — follow-up issues
-- xcodebuild build/test — verify build
+- Project build/test commands (configured per project)
 - grep, find, cat — read-only

@@ -5,8 +5,8 @@ Chuyển hệ thống multi-agent sang project khác.
 ## Thực hiện:
 
 ### 1. Hỏi user project mới:
-- Project path (ví dụ: ~/Desktop/Projects/JapaneseVoice-SwiftUI)
-- GitHub repo (ví dụ: hoaidoanhkd/JapaneseVoice-SwiftUI)
+- Project path (e.g., ~/Desktop/Projects/MyApp)
+- GitHub repo (e.g., user/MyApp)
 
 ### 2. Cập nhật config
 Sửa ~/agents/config.env:
