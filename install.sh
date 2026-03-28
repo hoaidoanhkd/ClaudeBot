@@ -42,6 +42,63 @@ echo -e "  ${DIM}Autonomous multi-agent system for Claude Code${NC}"
 echo -e "  ${DIM}Source: ${DIR}${NC}"
 echo ""
 
+# ── Dependency Check ─────────────────────────────────────────────────────────
+echo -e "${BOLD}Checking dependencies...${NC}"
+
+MISSING_REQUIRED=0
+
+check_dep() {
+  local name="$1"
+  local cmd="$2"
+  local required="$3"
+  local hint="$4"
+  local version=""
+
+  if command -v "$cmd" &>/dev/null; then
+    case "$cmd" in
+      claude) version=$(claude --version 2>/dev/null | head -1 || echo "installed") ;;
+      tmux)   version=$(tmux -V 2>/dev/null | sed 's/tmux //' || echo "installed") ;;
+      bun)    version=$(bun --version 2>/dev/null || echo "installed") ;;
+      gh)     version=$(gh --version 2>/dev/null | head -1 | sed 's/gh version //' | cut -d' ' -f1 || echo "installed") ;;
+    esac
+    echo -e "  ${GREEN}✓${NC} ${name} ${DIM}(${version})${NC}"
+  else
+    if [ "$required" = "required" ]; then
+      echo -e "  ${RED}✗${NC} ${name} — ${hint}"
+      MISSING_REQUIRED=$((MISSING_REQUIRED + 1))
+    else
+      echo -e "  ${RED}✗${NC} ${name} — ${hint}"
+    fi
+  fi
+}
+
+check_dep "claude"  "claude"  "required" "install from https://docs.anthropic.com/en/docs/claude-code"
+check_dep "tmux"    "tmux"    "required" "brew install tmux"
+check_dep "bun"     "bun"     "required" "curl -fsSL https://bun.sh/install | bash"
+check_dep "gh"      "gh"      "optional" "brew install gh"
+
+# claude-peers-mcp: check directory existence
+if [ -d "$HOME/claude-peers-mcp" ]; then
+  echo -e "  ${GREEN}✓${NC} claude-peers-mcp"
+else
+  echo -e "  ${RED}✗${NC} claude-peers-mcp — install from https://github.com/anthropics/claude-peers-mcp"
+fi
+
+echo ""
+
+if [ "$MISSING_REQUIRED" -gt 0 ]; then
+  warn "${MISSING_REQUIRED} required dependency(ies) missing. You can continue, but agents may not work."
+  ask "Continue anyway? (Y/n): "
+  read -r yn
+  case "$yn" in
+    [nN]|[nN][oO])
+      err "Aborted. Install missing dependencies and re-run."
+      exit 1
+      ;;
+  esac
+  echo ""
+fi
+
 # ── Interactive Configuration ─────────────────────────────────────────────────
 RECONFIGURE=false
 if [ -f ~/agents/config.env ]; then
@@ -134,6 +191,14 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
     TELEGRAM_CHAT_ID="your-chat-id"
   fi
 
+  # 5b. Telegram bot token (optional)
+  TELEGRAM_BOT_TOKEN=$(prompt "Telegram bot token (from @BotFather, or Enter to skip)" "")
+  if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
+    mkdir -p ~/.claude/channels/telegram
+    echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" > ~/.claude/channels/telegram/.env
+    ok "Saved Telegram token to ~/.claude/channels/telegram/.env"
+  fi
+
   # 6. Channel toggles
   echo ""
   TELEGRAM_ENABLED="true"
@@ -143,6 +208,17 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   case "$yn" in
     [yY]|[yY][eE][sS]) DISCORD_ENABLED="true" ;;
   esac
+
+  # 6b. Discord bot token (if enabled)
+  DISCORD_BOT_TOKEN=""
+  if [ "$DISCORD_ENABLED" = "true" ]; then
+    DISCORD_BOT_TOKEN=$(prompt "Discord bot token (or Enter to skip)" "")
+    if [ -n "$DISCORD_BOT_TOKEN" ]; then
+      mkdir -p ~/.claude/channels/discord
+      echo "DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}" > ~/.claude/channels/discord/.env
+      ok "Saved Discord token to ~/.claude/channels/discord/.env"
+    fi
+  fi
 
   echo ""
 else
