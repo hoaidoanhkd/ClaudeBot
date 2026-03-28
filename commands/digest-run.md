@@ -1,9 +1,9 @@
 # Run Daily Digest Now
 
-Chạy Daily Claude Code Digest ngay lập tức, không cần đợi schedule.
+Run the Daily Claude Code Digest immediately without waiting for the schedule.
 
-## Thực hiện:
+## Steps:
 
-1. Chạy script: `bash ~/.claude/scheduled/daily-digest.sh`
-2. Theo dõi log real-time: `tail -f ~/.claude/scheduled/logs/digest-$(date +%Y-%m-%d).log`
-3. Khi xong, đọc file Obsidian mới nhất và hiển thị tóm tắt kết quả.
+1. Run script: `bash ~/.claude/scheduled/daily-digest.sh`
+2. Follow log real-time: `tail -f ~/.claude/scheduled/logs/digest-$(date +%Y-%m-%d).log`
+3. When done, read the latest digest output at `~/Documents/Claude Code Digest/` and display a summary.

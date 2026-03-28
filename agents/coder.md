@@ -40,8 +40,7 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 
 ## Approved scripts (OK to run without extra approval)
 - ~/scripts/goal-discovery.sh — project scan, read-only, safe
-- xcodebuild -list, xcodebuild build, xcodebuild clean — build commands
-- xcrun simctl install/launch — simulator commands
+- Project build/test commands (configured per project)
 - grep, find, wc — read-only search commands
 
 ## Communication
@@ -66,8 +65,8 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 3. **Semantic memory search** (CHỈ cho task phức tạp): chạy `~/scripts/memory-search.sh "[keywords từ task]"` để tìm lessons/context liên quan. SKIP cho task đơn giản (tạo folder, rename, nhỏ).
 4. Understand current code before changing anything
 5. Make minimal, focused changes
-6. Build: `xcodebuild -scheme BurnRate -destination "platform=iOS Simulator,name=iPhone 16e" build`
-7. Test: `xcodebuild -scheme BurnRate -destination "platform=iOS Simulator,name=iPhone 16e" test` — nếu fail → fix và retry (max 2 lần)
+6. Build: run the project's build command (e.g., `make build`, `npm run build`, `xcodebuild`, etc.)
+7. Test: run the project's test command — if fail, fix and retry (max 2 times)
 8. **REFLECTION** (see below)
 9. send_message results back to coordinator
 

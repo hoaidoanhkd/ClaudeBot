@@ -16,8 +16,8 @@ Lấy giờ chạy từ StartCalendarInterval.
 ### 3. Xem log gần nhất
 Chạy: `tail -20 ~/.claude/scheduled/logs/digest-$(date +%Y-%m-%d).log 2>/dev/null || echo "Chưa có log hôm nay"`
 
-### 4. Liệt kê digest notes đã tạo
-Chạy: `ls -la "/Volumes/FF951/Obsidian/03 - Resources/Claude Code Digest/" 2>/dev/null | tail -10`
+### 4. List created digest notes
+Run: `ls -la ~/Documents/Claude\ Code\ Digest/ 2>/dev/null | tail -10`
 
 ### 5. Xác định chủ đề hôm nay
 Dựa theo thứ trong tuần (date +%u):

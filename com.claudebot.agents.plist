@@ -8,20 +8,20 @@
     <array>
         <string>/bin/bash</string>
         <string>-l</string>
-        <string>/Users/apple/.claude/scheduled/multi-agent-start.sh</string>
+        <string>/Users/username/agents/start.sh</string> <!-- edit path -->
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/apple/logs/launchd-agents.log</string>
+    <string>/Users/username/logs/launchd-agents.log</string> <!-- edit path -->
     <key>StandardErrorPath</key>
-    <string>/Users/apple/logs/launchd-agents-error.log</string>
+    <string>/Users/username/logs/launchd-agents-error.log</string> <!-- edit path -->
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
         <key>HOME</key>
-        <string>/Users/apple</string>
+        <string>/Users/username</string> <!-- edit path -->
     </dict>
 </dict>
 </plist>
