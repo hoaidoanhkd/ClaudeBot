@@ -1,82 +1,272 @@
 #!/bin/bash
-# ClaudeBot Install — symlink files to correct locations
+# ClaudeBot Install — interactive setup + symlink files to correct locations
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-echo "🚀 Installing ClaudeBot from $DIR"
 
-# Agent definitions → ~/.claude/agents/
+# ── Colors ────────────────────────────────────────────────────────────────────
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+DIM='\033[2m'
+NC='\033[0m' # No Color
+
+ok()   { echo -e "  ${GREEN}+${NC} $1"; }
+skip() { echo -e "  ${DIM}~${NC} $1 ${DIM}(skipped)${NC}"; }
+warn() { echo -e "  ${YELLOW}!${NC} $1"; }
+err()  { echo -e "  ${RED}x${NC} $1"; }
+ask()  { echo -en "${YELLOW}?${NC} $1"; }
+
+# ── Helper: prompt with default ───────────────────────────────────────────────
+# Usage: result=$(prompt "Label" "default_value")
+prompt() {
+  local label="$1"
+  local default="$2"
+  local input
+  if [ -n "$default" ]; then
+    ask "${label} ${DIM}[${default}]${NC}: "
+  else
+    ask "${label}: "
+  fi
+  read -r input
+  echo "${input:-$default}"
+}
+
+# ── Banner ────────────────────────────────────────────────────────────────────
+echo ""
+echo -e "${BOLD}${CYAN}  ClaudeBot Installer${NC}"
+echo -e "  ${DIM}Autonomous multi-agent system for Claude Code${NC}"
+echo -e "  ${DIM}Source: ${DIR}${NC}"
+echo ""
+
+# ── Interactive Configuration ─────────────────────────────────────────────────
+RECONFIGURE=false
+if [ -f ~/agents/config.env ]; then
+  echo -e "${YELLOW}!${NC} Existing config found at ~/agents/config.env"
+  ask "Reconfigure? (y/N): "
+  read -r yn
+  case "$yn" in
+    [yY]|[yY][eE][sS]) RECONFIGURE=true ;;
+  esac
+  echo ""
+fi
+
+if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
+  echo -e "${BOLD}Step 1/5: Project Configuration${NC}"
+  echo ""
+
+  # 1. Project name
+  PROJECT_NAME=$(prompt "Project name (e.g. BurnRate, MyApp)" "")
+  if [ -z "$PROJECT_NAME" ]; then
+    err "Project name is required."
+    exit 1
+  fi
+
+  # 2. Project path (smart default based on name)
+  DEFAULT_PATH="$HOME/Desktop/Projects/${PROJECT_NAME}"
+  PROJECT_PATH=$(prompt "Project path" "$DEFAULT_PATH")
+  # Expand ~ to $HOME if user typed it
+  PROJECT_PATH="${PROJECT_PATH/#\~/$HOME}"
+
+  if [ ! -d "$PROJECT_PATH" ]; then
+    warn "Directory does not exist: ${PROJECT_PATH}"
+    ask "Continue anyway? (Y/n): "
+    read -r yn
+    case "$yn" in
+      [nN]|[nN][oO])
+        err "Aborted. Create the directory first and re-run."
+        exit 1
+        ;;
+    esac
+  fi
+
+  # 3. GitHub repo (smart default from git remote or project name)
+  DEFAULT_REPO=""
+  if [ -d "$PROJECT_PATH/.git" ]; then
+    DEFAULT_REPO=$(git -C "$PROJECT_PATH" remote get-url origin 2>/dev/null | sed -E 's|.*github\.com[:/]||;s|\.git$||' || true)
+  fi
+  if [ -z "$DEFAULT_REPO" ]; then
+    GIT_USER=$(git config --global user.name 2>/dev/null || echo "user")
+    DEFAULT_REPO="${GIT_USER}/${PROJECT_NAME}"
+  fi
+  GITHUB_REPO=$(prompt "GitHub repo (user/repo)" "$DEFAULT_REPO")
+
+  # 4. Project type
+  echo ""
+  echo -e "  ${DIM}Project types:${NC}"
+  echo -e "    ${BOLD}1${NC}) ios-swiftui    ${DIM}— SwiftUI + Swift, Xcode project${NC}"
+  echo -e "    ${BOLD}2${NC}) ios-uikit      ${DIM}— UIKit + Swift, Xcode project${NC}"
+  echo -e "    ${BOLD}3${NC}) web            ${DIM}— HTML/CSS/JS, Node.js, React, etc.${NC}"
+  echo -e "    ${BOLD}4${NC}) python         ${DIM}— Python scripts, Django, Flask, etc.${NC}"
+  echo -e "    ${BOLD}5${NC}) rust           ${DIM}— Rust + Cargo${NC}"
+  echo -e "    ${BOLD}6${NC}) go             ${DIM}— Go modules${NC}"
+  echo -e "    ${BOLD}7${NC}) generic        ${DIM}— Other / mixed${NC}"
+  echo ""
+
+  PROJECT_TYPES=("ios-swiftui" "ios-uikit" "web" "python" "rust" "go" "generic")
+  TYPE_CHOICE=$(prompt "Choose project type (1-7)" "7")
+
+  # Validate: accept number 1-7 or a raw type name
+  if [[ "$TYPE_CHOICE" =~ ^[1-7]$ ]]; then
+    PROJECT_TYPE="${PROJECT_TYPES[$((TYPE_CHOICE - 1))]}"
+  elif printf '%s\n' "${PROJECT_TYPES[@]}" | grep -qx "$TYPE_CHOICE"; then
+    PROJECT_TYPE="$TYPE_CHOICE"
+  else
+    warn "Invalid choice '${TYPE_CHOICE}', defaulting to 'generic'"
+    PROJECT_TYPE="generic"
+  fi
+
+  # 5. Telegram chat ID (optional)
+  echo ""
+  TELEGRAM_CHAT_ID=$(prompt "Telegram chat ID (optional, press Enter to skip)" "")
+  if [ -z "$TELEGRAM_CHAT_ID" ]; then
+    TELEGRAM_CHAT_ID="your-chat-id"
+  fi
+
+  echo ""
+else
+  echo -e "${DIM}Using existing config at ~/agents/config.env${NC}"
+  echo ""
+fi
+
+# ── Symlinks ──────────────────────────────────────────────────────────────────
+echo -e "${BOLD}Installing files...${NC}"
+echo ""
+
+# Agent definitions -> ~/.claude/agents/
 mkdir -p ~/.claude/agents
 for f in "$DIR"/agents/*.md; do
-  ln -sf "$f" ~/.claude/agents/"$(basename $f)"
-  echo "  ✅ Agent: $(basename $f)"
+  [ -f "$f" ] || continue
+  ln -sf "$f" ~/.claude/agents/"$(basename "$f")"
+  ok "Agent: $(basename "$f")"
 done
 
-# Scripts → ~/scripts/
+# Scripts -> ~/scripts/
 mkdir -p ~/scripts
 for f in "$DIR"/scripts/*.sh; do
-  ln -sf "$f" ~/scripts/"$(basename $f)"
+  [ -f "$f" ] || continue
+  ln -sf "$f" ~/scripts/"$(basename "$f")"
   chmod +x "$f"
-  echo "  ✅ Script: $(basename $f)"
+  ok "Script: $(basename "$f")"
 done
 
-# Commands → ~/.claude/commands/
+# Commands -> ~/.claude/commands/
 mkdir -p ~/.claude/commands
 for f in "$DIR"/commands/*.md; do
-  ln -sf "$f" ~/.claude/commands/"$(basename $f)"
-  echo "  ✅ Command: $(basename $f)"
+  [ -f "$f" ] || continue
+  ln -sf "$f" ~/.claude/commands/"$(basename "$f")"
+  ok "Command: $(basename "$f")"
 done
 
-# Config
+# ── Write config.env ──────────────────────────────────────────────────────────
 mkdir -p ~/agents/memory ~/agents/hooks ~/logs
-if [ ! -f ~/agents/config.env ]; then
-  cp "$DIR/config.env" ~/agents/config.env
-  echo "  ✅ Config: ~/agents/config.env (EDIT THIS)"
+
+if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
+  cat > ~/agents/config.env << ENVEOF
+# ClaudeBot Agent Config
+# Generated by install.sh on $(date '+%Y-%m-%d %H:%M:%S')
+
+PROJECT_NAME="${PROJECT_NAME}"
+PROJECT_PATH="${PROJECT_PATH}"
+GITHUB_REPO="${GITHUB_REPO}"
+PROJECT_TYPE="${PROJECT_TYPE}"
+AGENTS="coordinator,coder,reviewer"
+LOG_DIR="\$HOME/logs"
+TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
+ENVEOF
+  ok "Config: ~/agents/config.env"
 else
-  echo "  ⏭️ Config exists, skipping"
+  skip "Config exists, not overwriting"
 fi
 
-# Hooks
-ln -sf "$DIR/agents/hooks/post_failure.sh" ~/agents/hooks/
-chmod +x "$DIR/agents/hooks/post_failure.sh"
+# ── Hooks ─────────────────────────────────────────────────────────────────────
+if [ -f "$DIR/agents/hooks/post_failure.sh" ]; then
+  ln -sf "$DIR/agents/hooks/post_failure.sh" ~/agents/hooks/
+  chmod +x "$DIR/agents/hooks/post_failure.sh"
+  ok "Hook: post_failure.sh"
+fi
 
-# Startup script
+# ── Startup script ────────────────────────────────────────────────────────────
+mkdir -p ~/.claude/scheduled
 ln -sf "$DIR/start.sh" ~/.claude/scheduled/multi-agent-start.sh
 chmod +x "$DIR/start.sh"
+ok "Startup: ~/.claude/scheduled/multi-agent-start.sh"
 
-# Launchd (optional)
-if [ ! -f ~/Library/LaunchAgents/com.claudebot.agents.plist ]; then
-  cp "$DIR/com.claudebot.agents.plist" ~/Library/LaunchAgents/
-  echo "  ✅ Launchd: auto-start on boot"
-  echo "     Run: launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist"
+# ── Launchd plist ─────────────────────────────────────────────────────────────
+mkdir -p ~/Library/LaunchAgents
+PLIST_PATH=~/Library/LaunchAgents/com.claudebot.agents.plist
+PLIST_UPDATED=false
+
+if [ ! -f "$PLIST_PATH" ] || [ "$RECONFIGURE" = true ]; then
+  # Copy template and replace /Users/username with actual $HOME
+  sed "s|/Users/username|${HOME}|g" "$DIR/com.claudebot.agents.plist" > "$PLIST_PATH"
+  ok "Launchd: com.claudebot.agents.plist (paths set to ${HOME})"
+  PLIST_UPDATED=true
 else
-  echo "  ⏭️ Launchd exists, skipping"
+  skip "Launchd plist exists"
 fi
 
-# Memory templates
+# ── Memory templates ──────────────────────────────────────────────────────────
 if [ ! -f ~/agents/memory/lessons.md ]; then
   cat > ~/agents/memory/lessons.md << 'EOF'
 # Lessons Learned
 
-## Guiding Principles (từ success)
+## Guiding Principles
 
-## Cautionary Principles (từ failure)
+## Cautionary Principles
 
-## Error Tracker (count → promote khi >= 3)
+## Error Tracker (count -> promote when >= 3)
 EOF
-  echo "  ✅ Memory templates created"
+  ok "Memory: lessons.md template"
+else
+  skip "lessons.md exists"
 fi
 
 if [ ! -f ~/agents/GOALS.md ]; then
-  echo "# Project Goals\n\nChạy /scan để phát hiện goals." > ~/agents/GOALS.md
-  echo "  ✅ GOALS.md created"
+  printf '# Project Goals\n\nRun /scan to discover goals.\n' > ~/agents/GOALS.md
+  ok "Memory: GOALS.md"
+else
+  skip "GOALS.md exists"
 fi
 
+# ── Summary ───────────────────────────────────────────────────────────────────
 echo ""
-echo "🎉 ClaudeBot installed!"
+echo -e "${GREEN}${BOLD}ClaudeBot installed successfully!${NC}"
 echo ""
-echo "Next steps:"
-echo "  1. Edit ~/agents/config.env (project path + GitHub repo)"
-echo "  2. Setup Telegram: ~/.claude/channels/telegram/.env"
-echo "  3. Run: ~/.claude/scheduled/multi-agent-start.sh"
-echo "  4. Send /go on Telegram"
+
+# Show config summary if we just configured
+if [ -n "${PROJECT_NAME:-}" ]; then
+  echo -e "${BOLD}Configuration Summary${NC}"
+  echo -e "  ${DIM}--------------------------------------${NC}"
+  echo -e "  Project:      ${CYAN}${PROJECT_NAME}${NC}"
+  echo -e "  Path:         ${CYAN}${PROJECT_PATH}${NC}"
+  echo -e "  GitHub:       ${CYAN}${GITHUB_REPO}${NC}"
+  echo -e "  Type:         ${CYAN}${PROJECT_TYPE}${NC}"
+  if [ "$TELEGRAM_CHAT_ID" != "your-chat-id" ]; then
+    echo -e "  Telegram:     ${CYAN}${TELEGRAM_CHAT_ID}${NC}"
+  else
+    echo -e "  Telegram:     ${DIM}not configured${NC}"
+  fi
+  echo -e "  Config:       ${DIM}~/agents/config.env${NC}"
+  if [ "$PLIST_UPDATED" = true ]; then
+    echo -e "  Launchd:      ${DIM}~/Library/LaunchAgents/com.claudebot.agents.plist${NC}"
+  fi
+  echo -e "  ${DIM}--------------------------------------${NC}"
+  echo ""
+fi
+
+echo -e "${BOLD}Next steps:${NC}"
+if [ "${TELEGRAM_CHAT_ID:-}" = "your-chat-id" ]; then
+  echo -e "  1. ${YELLOW}Set up Telegram${NC}: edit ~/agents/config.env (add chat ID)"
+  echo -e "  2. Configure Telegram bot: ~/.claude/channels/telegram/.env"
+else
+  echo -e "  1. Configure Telegram bot: ~/.claude/channels/telegram/.env"
+fi
+echo -e "  ${DIM}*${NC} Start agents:  ~/.claude/scheduled/multi-agent-start.sh"
+if [ "$PLIST_UPDATED" = true ]; then
+  echo -e "  ${DIM}*${NC} Auto-start:    launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist"
+fi
+echo -e "  ${DIM}*${NC} Send ${BOLD}/go${NC} on Telegram to begin"
+echo ""
