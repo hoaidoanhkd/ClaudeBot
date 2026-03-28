@@ -21,14 +21,15 @@ ask()  { echo -en "${YELLOW}?${NC} $1"; }
 
 # ── Helper: prompt with default ───────────────────────────────────────────────
 # Usage: result=$(prompt "Label" "default_value")
+# Note: prompt text goes to stderr so $(prompt ...) only captures the answer
 prompt() {
   local label="$1"
   local default="$2"
   local input
   if [ -n "$default" ]; then
-    ask "${label} ${DIM}[${default}]${NC}: "
+    echo -en "${YELLOW}?${NC} ${label} ${DIM}[${default}]${NC}: " >&2
   else
-    ask "${label}: "
+    echo -en "${YELLOW}?${NC} ${label}: " >&2
   fi
   read -r input
   echo "${input:-$default}"
@@ -111,11 +112,19 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   # Validate: accept number 1-7 or a raw type name
   if [[ "$TYPE_CHOICE" =~ ^[1-7]$ ]]; then
     PROJECT_TYPE="${PROJECT_TYPES[$((TYPE_CHOICE - 1))]}"
-  elif printf '%s\n' "${PROJECT_TYPES[@]}" | grep -qx "$TYPE_CHOICE"; then
-    PROJECT_TYPE="$TYPE_CHOICE"
   else
-    warn "Invalid choice '${TYPE_CHOICE}', defaulting to 'generic'"
-    PROJECT_TYPE="generic"
+    VALID_TYPE=false
+    for t in "${PROJECT_TYPES[@]}"; do
+      if [ "$TYPE_CHOICE" = "$t" ]; then
+        PROJECT_TYPE="$TYPE_CHOICE"
+        VALID_TYPE=true
+        break
+      fi
+    done
+    if [ "$VALID_TYPE" = false ]; then
+      warn "Invalid choice '${TYPE_CHOICE}', defaulting to 'generic'"
+      PROJECT_TYPE="generic"
+    fi
   fi
 
   # 5. Telegram chat ID (optional)

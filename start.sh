@@ -61,24 +61,37 @@ echo "📊 Checking peers status..."
 cd ~/claude-peers-mcp && bun cli.ts status
 
 echo ""
-echo "🛡️ Starting Watchdog (${WATCHDOG_INTERVAL}s)..."
-nohup ~/scripts/agent-watchdog.sh >> ~/logs/agent-watchdog.log 2>&1 &
-echo "✅ Watchdog PID: $!"
+if [ -f ~/scripts/agent-watchdog.sh ]; then
+  echo "Starting Watchdog (${WATCHDOG_INTERVAL}s)..."
+  nohup ~/scripts/agent-watchdog.sh >> ~/logs/agent-watchdog.log 2>&1 &
+  echo "Watchdog PID: $!"
+else
+  echo "Skipping watchdog — ~/scripts/agent-watchdog.sh not found"
+fi
 
-echo ""
-echo "🎯 Starting Proactive Loop (${PROACTIVE_INTERVAL}m)..."
-nohup ~/scripts/agent-proactive.sh --interval "$PROACTIVE_INTERVAL" >> ~/logs/agent-proactive.log 2>&1 &
-echo "✅ Proactive PID: $!"
+if [ -f ~/scripts/agent-proactive.sh ]; then
+  echo "Starting Proactive Loop (${PROACTIVE_INTERVAL}m)..."
+  nohup ~/scripts/agent-proactive.sh --interval "$PROACTIVE_INTERVAL" >> ~/logs/agent-proactive.log 2>&1 &
+  echo "Proactive PID: $!"
+else
+  echo "Skipping proactive — ~/scripts/agent-proactive.sh not found"
+fi
 
-echo ""
-echo "💓 Starting Keepalive (${KEEPALIVE_INTERVAL}s)..."
-nohup ~/scripts/agent-keepalive.sh >> ~/logs/agent-keepalive.log 2>&1 &
-echo "✅ Keepalive PID: $!"
+if [ -f ~/scripts/agent-keepalive.sh ]; then
+  echo "Starting Keepalive (${KEEPALIVE_INTERVAL}s)..."
+  nohup ~/scripts/agent-keepalive.sh >> ~/logs/agent-keepalive.log 2>&1 &
+  echo "Keepalive PID: $!"
+else
+  echo "Skipping keepalive — ~/scripts/agent-keepalive.sh not found"
+fi
 
-echo ""
-echo "🔄 Starting CI Monitor (${CI_MONITOR_INTERVAL}s)..."
-nohup ~/scripts/ci-monitor.sh >> ~/logs/ci-monitor.log 2>&1 &
-echo "✅ CI Monitor PID: $!"
+if [ -f ~/scripts/ci-monitor.sh ]; then
+  echo "Starting CI Monitor (${CI_MONITOR_INTERVAL}s)..."
+  nohup ~/scripts/ci-monitor.sh >> ~/logs/ci-monitor.log 2>&1 &
+  echo "CI Monitor PID: $!"
+else
+  echo "Skipping CI monitor — ~/scripts/ci-monitor.sh not found"
+fi
 
 echo ""
 echo "⏳ Auto-bootstrap via tmux input..."
@@ -94,7 +107,11 @@ sleep 30
 
 echo ""
 echo "📋 Syncing Goals → GitHub Issues..."
-~/scripts/goals-sync.sh --push 2>&1 | tail -3
+if [ -f ~/scripts/goals-sync.sh ]; then
+  ~/scripts/goals-sync.sh --push 2>&1 | tail -3
+else
+  echo "Skipping goals sync — ~/scripts/goals-sync.sh not found"
+fi
 
 echo ""
 echo "🎉 Multi-Agent System Ready! [$PROJECT_NAME]"

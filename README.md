@@ -1,48 +1,40 @@
 # ClaudeBot — Autonomous Multi-Agent System for Claude Code
 
-Multi-agent system controlled via Telegram. Three Claude Code instances (Coordinator, Coder, Senior Reviewer) collaborate through claude-peers to implement features, review code, and manage PRs.
-
-## Features
-
-- **3 agents**: Coordinator + Coder + Senior Reviewer (all Claude Opus)
-- **Telegram control**: /go /scan /stop /stats /help + inline buttons
-- **GitHub PR workflow**: branch, implement, PR, auto-merge
-- **Self-learning**: post-task reflection, guiding/cautionary principles
-- **Goal Discovery**: scan codebase, generate GOALS.md, sync to GitHub Issues
-- **Slash commands**: /scan, /digest, /nudge, /stats, /sync-goals, /switch-project, and more
-
-### Not yet included (planned)
-
-The following are referenced in `start.sh` but the scripts are not in this repo yet:
-
-- Watchdog (auto-restart crashed agents)
-- Proactive loop (periodic goal check + nudge)
-- Keepalive (prevent idle timeout)
-- CI monitor (watch GitHub Actions)
+Multi-agent system controlled via Telegram. Four Claude Code instances (Coordinator, Coder, Senior Reviewer, Researcher) collaborate through claude-peers to implement features, review code, research topics, and manage PRs.
 
 ## Prerequisites
 
-- **macOS** (uses launchd plist for daemon management)
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) + Claude Max subscription
-- [Bun](https://bun.sh) runtime
-- [claude-peers-mcp](https://github.com/anthropics/claude-peers-mcp) (inter-agent communication)
-- tmux
-- gh CLI (GitHub)
+- **macOS** (Apple Silicon, uses launchd for daemon management)
+- **Bun** runtime
+- **Claude Code CLI** + Claude Max subscription
+- **claude-peers-mcp** (inter-agent communication)
+- **tmux**
+- **gh** CLI (GitHub)
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/hoaidoanhkd/ClaudeBot.git
 cd ClaudeBot
-./install.sh   # Interactive — asks for project name, path, GitHub repo, etc.
+./install.sh   # Interactive setup — configures project, GitHub repo, agents
 ./start.sh
 ```
+
+## Features
+
+- **4 agents**: Coordinator + Coder + Senior Reviewer + Researcher (all Claude Opus)
+- **Telegram control**: /go /scan /stop /stats /help + inline buttons
+- **GitHub PR workflow**: branch, implement, PR, review, auto-merge
+- **Goal Discovery**: scan codebase, generate GOALS.md, sync to GitHub Issues
+- **Self-learning**: post-task reflection, guiding/cautionary principles
+- **Slash commands**: /scan, /digest, /nudge, /stats, /sync-goals, /switch-project
+- **1 config file** (`config.env`) to switch between projects
 
 ## Telegram Setup
 
 1. Create a bot via [@BotFather](https://t.me/BotFather)
 2. Save your bot token in `~/.claude/channels/telegram/.env`
-3. Pair via the `/telegram:access` skill in Claude Code
+3. Pair your chat via the `/telegram:access` skill in Claude Code
 
 ## Commands (Telegram)
 
@@ -56,14 +48,34 @@ cd ClaudeBot
 | /help | List all commands |
 | /digest | Weekly summary |
 
+## Slash Commands (Claude Code)
+
+| Command | Description |
+|---------|-------------|
+| /scan | Goal Discovery — scan project, detect issues, generate GOALS.md |
+| /stats | Show agent metrics and performance (goals, PRs, uptime, CI) |
+| /agents | Manage multi-agent system (check peers, tmux sessions, start/stop) |
+| /nudge | Trigger a proactive nudge — Coordinator checks goals and suggests tasks |
+| /parallel | Guide for spawning parallel Coder agents for independent subtasks |
+| /sync-goals | Sync GOALS.md with GitHub Issues (push/pull/both) |
+| /switch-project | Switch the multi-agent system to a different project |
+| /digest-run | Run the Daily Digest immediately |
+| /digest-status | Check Daily Digest status, schedule, logs, and topic rotation |
+
 ## Architecture
 
 ```
-Telegram → Coordinator → Coder → Senior Reviewer → Auto-merge
-               ↓              ↓              ↓
-          Ask First    Branch+PR     Review+Merge
-               ↓              ↓              ↓
-          Proactive    Self-learning   Build verify
+Telegram --> Coordinator --> Coder ---------> Senior Reviewer --> Auto-merge
+                 |    \          |                    |
+            Ask First  \    Branch+PR           Review+Merge
+                 |      \        |                    |
+            Goal Scan    \  Self-learning        Build verify
+                          \
+                           --> Researcher
+                                  |
+                              Web search
+                                  |
+                             Deep research
 ```
 
 ## Project Structure
@@ -72,8 +84,8 @@ Telegram → Coordinator → Coder → Senior Reviewer → Auto-merge
 ClaudeBot/
 ├── agents/          # Agent persona definitions + memory
 ├── commands/        # Slash command definitions (.md)
-├── plugins/         # Plugin configs (placeholder)
-├── scripts/         # Utility scripts (placeholder)
+├── plugins/         # Plugin configs
+├── scripts/         # Utility scripts
 ├── install.sh       # Interactive installer
 ├── start.sh         # Launch all agents in tmux
 ├── config.env       # Template config (installed to ~/agents/)
