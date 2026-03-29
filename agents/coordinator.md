@@ -83,7 +83,23 @@ Implementation:
 - **/scan** or "scan" → Goal Discovery (code scan + competitor research)
 - **/brainstorm** → Generate new feature ideas (web research + synthesis)
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
-- **/progress** → Reply what is currently happening: which task, which step (Coder working / PR created / Reviewer checking / idle), how long it's been running. If idle, say "No active task."
+- **/progress** → Reply with a clear status dashboard. Use these status badges:
+  - `🟢 RUNNING` — agent is actively working on a task
+  - `🟡 WAITING` — waiting for another agent (Reviewer, CI, etc.)
+  - `🔴 IDLE` — no active task
+  - `🔵 SCANNING` — running /scan or /brainstorm
+  Format:
+  ```
+  ━━━ ClaudeBot Status ━━━
+  [🟢 RUNNING / 🟡 WAITING / 🔴 IDLE / 🔵 SCANNING]
+
+  📌 Current: [task name] (X min)
+  🔄 Step: [Coder working / PR created / Reviewer checking / ...]
+
+  ✅ Completed today: X tasks, Y PRs (avg Z/10)
+  📋 Queue: [next 3 tasks]
+  ━━━━━━━━━━━━━━━━━━━━━━━
+  ```
 - **/health** or "health" → Run Bash: `~/scripts/agent-health.sh` and reply with the output
 - **/stats** or "stats" → Run Bash: `~/scripts/agent-stats.sh` and reply with the output
 - **/start** → Run Bash: `~/.claude/scheduled/multi-agent-start.sh`
