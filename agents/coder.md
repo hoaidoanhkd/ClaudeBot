@@ -70,6 +70,30 @@ fetch from: startOfMonth(-N) to: startOfCurrentMonth  (NOT to: Date())
 REASON: Using `Date()` as upper bound includes partial current month, inflating averages
 and potentially overflowing bucket indices.
 
+## Simulator Query — REQUIRED before build/test
+Always query available simulators before any xcodebuild or xcrun simctl command:
+```bash
+xcrun simctl list devices available | grep -i iphone
+```
+Use the first booted device, or boot one: `xcrun simctl boot "iPhone 17 Pro"`
+NEVER hardcode "iPhone 16" — it doesn't exist on Xcode 26.3.
+Default simulator: iPhone 17 Pro (Xcode 26.3 / iOS 26.2).
+
+## No git reset --hard in agents repo — CRITICAL
+NEVER run `git reset --hard` or `git clean` in `~/agents/` or the ClaudeBot repo.
+These commands wipe untracked local memory files (lessons.md, anti_patterns.md, etc.).
+For targeted resets: use `git checkout -- <specific-file>` only.
+For stashing: use `git stash` (then `git stash pop` after).
+Memory files are untracked by design — they are local-only and irreplaceable.
+
+## NSDecimalNumber.intValue — FORBIDDEN
+Never use `NSDecimalNumber(...).intValue` — it returns 0 for repeating decimals
+(e.g. 1000/3 = 333.333… → `intValue` = 0).
+Fix: use `.doubleValue` then `Int()` truncation:
+```swift
+Int(NSDecimalNumber(decimal: result).doubleValue)
+```
+
 ## FORBIDDEN — Cost & Security
 - NEVER add features that call external paid APIs (OpenAI, Google Cloud, AWS, etc.)
 - NEVER add API keys, tokens, or secrets into source code
