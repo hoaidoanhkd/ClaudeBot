@@ -53,17 +53,17 @@ else
 fi
 tmux new-session -d -s cc-coordinator "$COORDINATOR_CMD"
 
-sleep 10
+sleep 5
 echo "⏳ Confirming channel prompts..."
 tmux send-keys -t cc-coordinator Enter
-sleep 2
+sleep 1
 echo "✅ Coordinator started"
 
 echo "💻 Starting Coder Agent [model: opus]..."
 tmux new-session -d -s cc-coder \
   "cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
 
-sleep 8
+sleep 5
 tmux send-keys -t cc-coder Enter
 sleep 2
 echo "✅ Coder started"
@@ -72,9 +72,9 @@ echo "🔍 Starting Senior Reviewer [model: opus]..."
 tmux new-session -d -s cc-reviewer \
   "cd $PROJECT_PATH && claude --enable-auto-mode --agent senior-reviewer --dangerously-load-development-channels server:claude-peers"
 
-sleep 8
+sleep 5
 tmux send-keys -t cc-reviewer Enter
-sleep 2
+sleep 1
 echo "✅ Reviewer started"
 
 # Check all peers
@@ -127,8 +127,8 @@ for s in cc-coordinator cc-coder cc-reviewer; do
 done
 echo "✅ Bootstrap triggered"
 
-echo "⏳ Waiting for bootstrap completion (30s)..."
-sleep 30
+echo "⏳ Waiting for bootstrap completion (15s)..."
+sleep 15
 
 echo ""
 echo "📋 Syncing Goals → GitHub Issues..."
