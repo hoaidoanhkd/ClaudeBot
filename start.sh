@@ -61,7 +61,7 @@ echo "✅ Coordinator started"
 
 echo "💻 Starting Coder Agent [model: opus]..."
 tmux new-session -d -s cc-coder \
-  "cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
+  "cd $PROJECT_PATH && claude --dangerously-skip-permissions --agent coder --dangerously-load-development-channels server:claude-peers"
 
 sleep 5
 tmux send-keys -t cc-coder Enter

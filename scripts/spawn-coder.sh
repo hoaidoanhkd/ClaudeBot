@@ -35,7 +35,7 @@ echo "Spawning parallel coder: $SESSION (task: $TASK_NAME)"
 
 # Create tmux session with coder agent
 tmux new-session -d -s "$SESSION" \
-  "cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
+  "cd $PROJECT_PATH && claude --dangerously-skip-permissions --agent coder --dangerously-load-development-channels server:claude-peers"
 
 # Wait for agent to initialize
 sleep 8
