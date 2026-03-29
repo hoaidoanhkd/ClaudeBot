@@ -37,6 +37,39 @@ Any task involving SwiftData entity deletion MUST include:
 (c) Define reassign or graceful fallback strategy
 Never silently delete entities that may be referenced by other models.
 
+## SwiftData Delete+Dismiss — REQUIRED (Task pattern)
+When deleting a SwiftData model from a detail view, ALWAYS use dismiss-first pattern:
+1. Call `dismiss()` first
+2. Capture `modelContext` + object reference as local constants BEFORE dismiss
+3. Delete via `Task { @MainActor in context.delete(captured) }`
+NEVER: delete then dismiss — the view renders a tombstoned @Bindable model during
+the dismiss animation, causing a crash.
+
+## Decimal(string:) Locale — REQUIRED
+ALL `Decimal(string:)` calls on user input MUST specify locale:
+```swift
+Decimal(string: text, locale: Locale(identifier: "en_US_POSIX"))
+```
+NEVER: bare `Decimal(string: text)` — returns nil on non-US locales (comma separator).
+Cache as: `static let posixLocale = Locale(identifier: "en_US_POSIX")`
+
+## SwiftData #Predicate Enum Restriction — REQUIRED
+Inside `#Predicate<SwiftData>`, ONLY use:
+- Date comparisons
+- Decimal/Double/Int comparisons
+- String equality on stored String properties
+NEVER: enum `.rawValue`, enum cases, or nested enum properties inside #Predicate.
+These compile but crash at runtime (SQLite cannot translate).
+PATTERN: Filter by date/amount at DB level, filter enum type in-memory with `.filter{}`
+
+## N-Month Historical Analysis — Upper Bound Rule
+When bucketing expenses into N complete monthly slots:
+```
+fetch from: startOfMonth(-N) to: startOfCurrentMonth  (NOT to: Date())
+```
+REASON: Using `Date()` as upper bound includes partial current month, inflating averages
+and potentially overflowing bucket indices.
+
 ## FORBIDDEN — Cost & Security
 - NEVER add features that call external paid APIs (OpenAI, Google Cloud, AWS, etc.)
 - NEVER add API keys, tokens, or secrets into source code
@@ -121,6 +154,10 @@ If a tool call is blocked or requires approval:
     - [ ] No force unwraps (`!`) on optional values
     - [ ] No `.rounded()` missing on percentage/ratio calculations
     - [ ] No dismiss/delete ordering issues (dismiss sheet BEFORE deleting data)
+    - [ ] No `onChange(of: array.count)` used to detect SwiftData property changes
+          → `.count` only catches insert/delete, NOT property mutations
+          → Use compound key: `onChange(of: items.map { "\($0.id)\($0.someProperty)" })`
+          → OR trigger refresh via `.onDismiss` of edit sheets
     - [ ] No debug prints or temporary code left
     - [ ] Error handling for all user inputs (empty, nil, overflow)
     - [ ] Accessibility labels on new UI elements
