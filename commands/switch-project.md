@@ -1,26 +1,26 @@
 # Switch Project
 
-Chuyển hệ thống multi-agent sang project khác.
+Switch the multi-agent system to a different project.
 
-## Thực hiện:
+## Steps:
 
-### 1. Hỏi user project mới:
+### 1. Ask user for new project:
 - Project path (e.g., ~/Desktop/Projects/MyApp)
 - GitHub repo (e.g., user/MyApp)
 
-### 2. Cập nhật config
-Sửa ~/agents/config.env:
+### 2. Update config
+Edit ~/agents/config.env:
 - PROJECT_NAME
 - PROJECT_PATH
 - GITHUB_REPO
 
-### 3. Reset memory cho project mới
+### 3. Reset memory for new project
 ```bash
-# Backup memory cũ
+# Backup old memory
 cp -r ~/agents/memory ~/agents/memory-backup-$(date +%Y%m%d)
 
-# Reset GOALS.md (sẽ được scan lại)
-echo "# Project Goals — [NEW_PROJECT]\n\n## Chưa scan\nChạy /scan để phát hiện goals." > ~/agents/GOALS.md
+# Reset GOALS.md (will be scanned again)
+printf '# Project Goals\n\nRun /scan to discover goals.\n' > ~/agents/GOALS.md
 ```
 
 ### 4. Restart agents
@@ -28,5 +28,5 @@ echo "# Project Goals — [NEW_PROJECT]\n\n## Chưa scan\nChạy /scan để ph�
 ~/.claude/scheduled/multi-agent-start.sh
 ```
 
-### 5. Scan project mới
-Tự động chạy /scan sau khi restart.
+### 5. Scan new project
+Automatically run /scan after restart.

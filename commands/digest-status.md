@@ -1,43 +1,39 @@
-# Daily Digest Status
+# Digest Status
 
-Kiểm tra trạng thái Daily Claude Code Digest và hiển thị thông tin quản lý.
+Check the status of the weekly digest system.
 
-## Thực hiện tuần tự:
+## Steps:
 
-### 1. Kiểm tra launchd
-Chạy: `launchctl list | grep claude.daily`
-- Nếu có kết quả → đang active
-- Nếu không → đã tắt
+### 1. Check if digest script exists
+```bash
+ls -la ~/scripts/weekly-digest.sh
+```
 
-### 2. Xem config schedule
-Chạy: `plutil -p ~/Library/LaunchAgents/com.claude.daily-digest.plist`
-Lấy giờ chạy từ StartCalendarInterval.
+### 2. Check launchd agent status
+```bash
+launchctl list | grep claudebot
+```
 
-### 3. Xem log gần nhất
-Chạy: `tail -20 ~/.claude/scheduled/logs/digest-$(date +%Y-%m-%d).log 2>/dev/null || echo "Chưa có log hôm nay"`
+### 3. View schedule config
+```bash
+plutil -p ~/Library/LaunchAgents/com.claudebot.agents.plist
+```
+Get the run time from StartCalendarInterval.
 
-### 4. List created digest notes
-Run: `ls -la ~/path/to/digest/folder/ 2>/dev/null | tail -10`
+### 4. View latest log
+```bash
+tail -20 ~/logs/weekly-digest-$(date +%Y-%m-%d).log 2>/dev/null || echo "No log for today yet"
+```
 
-### 5. Xác định chủ đề hôm nay
-Dựa theo thứ trong tuần (date +%u):
-- 1=Thứ 2: CLAUDE.md
-- 2=Thứ 3: Hooks & Automation
-- 3=Thứ 4: Agents & Skills
-- 4=Thứ 5: MCP & Plugins
-- 5=Thứ 6: Workflow & Productivity
-- 6=Thứ 7: Channels & Remote
-- 7=Chủ nhật: Tổng hợp tuần
+### 5. Display summary
+Format clearly with:
+- Status: Active/Inactive
+- Run time: HH:MM
+- Last log (summary)
 
-### 6. Hiển thị tổng kết
-Format rõ ràng với:
-- Trạng thái: Active/Inactive
-- Giờ chạy: HH:MM
-- Chủ đề hôm nay + ngày mai
-- Log cuối cùng (tóm tắt)
-- Số digest notes đã tạo
-- Lệnh quản lý nhanh:
-  - Tắt: `launchctl unload ~/Library/LaunchAgents/com.claude.daily-digest.plist`
-  - Bật: `launchctl load ~/Library/LaunchAgents/com.claude.daily-digest.plist`
-  - Chạy thủ công: `~/.claude/scheduled/daily-digest.sh`
-  - Xem log: `cat ~/.claude/scheduled/logs/digest-$(date +%Y-%m-%d).log`
+### 6. Show management commands
+- Run now: `bash ~/scripts/weekly-digest.sh`
+- Save to file: `bash ~/scripts/weekly-digest.sh --output ~/Desktop/digest-$(date +%Y-%m-%d).md`
+- Enable: `launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist`
+- Disable: `launchctl unload ~/Library/LaunchAgents/com.claudebot.agents.plist`
+- View log: `tail -50 ~/logs/weekly-digest-$(date +%Y-%m-%d).log`

@@ -1,13 +1,13 @@
 # Agent Stats
 
-Hiển thị metrics và performance của hệ thống multi-agent.
+Show metrics and performance of the multi-agent system.
 
-## Thực hiện:
+## Steps:
 ```bash
 ~/scripts/agent-stats.sh
 ```
 
-Metrics bao gồm:
+Metrics include:
 - Goals progress (done/total)
 - GitHub Issues (open/closed)
 - PRs (open/merged)

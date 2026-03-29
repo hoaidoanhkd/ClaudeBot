@@ -36,7 +36,13 @@ force_unwrap_count=0
 while IFS= read -r match; do
   echo "  $match"
   force_unwrap_count=$((force_unwrap_count + 1))
-done < <(grep -rn '![^=]' "$PROJECT_DIR" --include='*.swift' 2>/dev/null \
+done < <(grep -rn -E '\w+!\.' "$PROJECT_DIR" --include='*.swift' 2>/dev/null \
+  | grep -v '// ' | grep -v 'IBOutlet' | grep -v 'IBAction' | head -30 || true)
+# Also check force unwrap with subscript access (e.g., array![0])
+while IFS= read -r match; do
+  echo "  $match"
+  force_unwrap_count=$((force_unwrap_count + 1))
+done < <(grep -rn -E '\w+!\[' "$PROJECT_DIR" --include='*.swift' 2>/dev/null \
   | grep -v '// ' | grep -v 'IBOutlet' | grep -v 'IBAction' | head -30 || true)
 echo "  Count: $force_unwrap_count"
 echo ""

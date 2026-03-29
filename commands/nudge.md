@@ -1,10 +1,12 @@
-# Proactive Nudge — Trigger ngay
+# Proactive Nudge — Trigger Now
 
-Gửi proactive nudge cho Coordinator để check goals và đề xuất task.
+Send a proactive nudge to the Coordinator to check goals and suggest a task.
 
-## Thực hiện:
+## Steps:
+
 ```bash
-~/scripts/agent-proactive.sh --once
+~/scripts/go-loop.sh
 ```
 
-Sau đó check Telegram — Coordinator sẽ gửi đề xuất task.
+This picks the next uncompleted goal from GOALS.md and dispatches it to the Coordinator via tmux.
+After that, check Telegram — the Coordinator will send a task suggestion for approval.
