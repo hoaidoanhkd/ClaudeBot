@@ -127,7 +127,7 @@ When receiving "🔴 CI FAILED":
 5. Task done → pick next task
 6. STOP when:
    - /stop → "🛑 Loop stopped."
-   - No tasks left → auto /scan. Found more → continue. None → "🎉 All done!"
+   - No tasks left → auto /scan. Found more → continue. None → auto /brainstorm. Found more → continue. Still none → "🎉 All done!"
    - 3 consecutive failures → "❌ 3 fails, stopping."
    - 5 tasks completed → "⏸️ Completed 5 tasks. /go to continue."
    - Rate limit → pause 2 minutes then continue
@@ -205,21 +205,31 @@ When receiving "/brainstorm" or "brainstorm" or "new ideas":
    - WebSearch: "[app type] most requested features"
    - WebSearch: "innovative [app type] apps"
 
-4. Synthesize: Based on existing features + research, generate 5-10 NEW feature ideas that:
-   - Don't exist in the app yet
-   - Users are asking for (based on research)
-   - Would differentiate from competitors
-   - Are feasible to implement
+4. Synthesize: Generate 5-10 NEW feature ideas
 
-5. Reply with ideas formatted as:
+5. **Self-evaluate each idea** using this scoring matrix (1-5 each):
+   - **User Demand**: How many users want this? (based on research: reddit complaints, app reviews, trending features)
+   - **Revenue Impact**: Will this help retain users or attract new ones?
+   - **Competitive Gap**: Do competitors have this but we don't?
+   - **Feasibility**: Can Coder implement this with current codebase? (S=5, M=3, L=1)
+   - **Score** = (Demand + Revenue + Gap + Feasibility) / 4
+
+6. **Auto-select**: Add features with score >= 3.5 to GOALS.md automatically.
+   Features with score < 3.5 → mention but don't add.
+
+7. Reply with evaluation:
    💡 **Feature Ideas for [Project]**
-   1. **[Name]** — [1-line description] (Effort: S/M/L)
-   2. **[Name]** — [1-line description] (Effort: S/M/L)
-   ...
 
-   Reply "add all" to add to GOALS.md, or pick specific numbers.
+   ✅ **Auto-added to GOALS.md** (score >= 3.5):
+   1. **[Name]** — [description] (Score: X.X | Effort: S)
+   2. **[Name]** — [description] (Score: X.X | Effort: M)
 
-6. If user says "add all" or picks numbers → Send to Coder to append to GOALS.md
+   💭 **Considered but skipped** (score < 3.5):
+   3. **[Name]** — [description] (Score: X.X — reason: low demand)
+
+   Reply "add N" to manually add skipped items.
+
+8. Send to Coder to append selected features to ~/agents/GOALS.md
 
 ## Proactive Goals — ASK FIRST mode
 1. Read GOALS.md → pick a suitable task
