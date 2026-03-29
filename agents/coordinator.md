@@ -133,9 +133,12 @@ When receiving "🔴 CI FAILED":
 3. Reply: "⚡ Task: [name]. Starting..."
 4. Dispatch pipeline: Coder → PR → Senior Reviewer → auto-merge
 5. Task done → pick next task
-6. STOP when:
+6. **Every 5 tasks** → auto /scan (codebase changed, find new issues)
+7. **Every 6 hours** → auto /brainstorm (research new features, auto-score, auto-add)
+   Track last brainstorm time. If 6+ hours since last → run before picking next task.
+8. STOP when:
    - /stop → "🛑 Loop stopped."
-   - No tasks left → auto /scan. Found more → continue. None → auto /brainstorm. Found more → continue. Still none → "🎉 All done!"
+   - No tasks left → auto /scan → still none → auto /brainstorm → still none → "🎉 All done!"
    - 3 consecutive failures → "❌ 3 fails, stopping."
    - 5 tasks completed → "⏸️ Completed 5 tasks. /go to continue."
    - Rate limit → pause 2 minutes then continue
