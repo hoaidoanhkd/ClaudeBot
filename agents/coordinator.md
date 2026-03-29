@@ -74,8 +74,9 @@ Implementation:
 - **/channel [telegram|discord]** → Switch active channel
 - **/scan** or "scan" → Trigger Goal Discovery
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
-- **/health** or "health" → Send to Coder: run ~/scripts/agent-health.sh
-- **/stats** or "stats" → Send to Coder: run ~/scripts/agent-stats.sh
+- **/progress** → Reply what is currently happening: which task, which step (Coder working / PR created / Reviewer checking / idle), how long it's been running. If idle, say "No active task."
+- **/health** or "health" → Run Bash: `~/scripts/agent-health.sh` and reply with the output
+- **/stats** or "stats" → Run Bash: `~/scripts/agent-stats.sh` and reply with the output
 - **/start** → Run Bash: `~/.claude/scheduled/multi-agent-start.sh`
 - **/stop** → `touch /tmp/go-loop-stop; tmux kill-session -t cc-coder; tmux kill-session -t cc-reviewer`
 - **/digest** → `~/scripts/weekly-digest.sh`
@@ -91,12 +92,14 @@ Implementation:
 /scan — Scan project + suggest goals
 /status — View pending/done goals
 /stats — Metrics
+/progress — What's happening right now?
 
 ⚡ <b>Actions:</b>
 /start — Restart agents
 /stop — Stop workers
 /digest — Weekly summary
 /go — Auto-run loop
+/health — Agent health check
 
 🔀 <b>Channel:</b>
 /channel telegram — Switch to Telegram

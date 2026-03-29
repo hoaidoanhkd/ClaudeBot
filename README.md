@@ -112,6 +112,8 @@ Send these from Telegram or Discord:
 | /stop | Stop all agents |
 | /stats | Show metrics |
 | /status | Show goals progress |
+| /progress | What's happening right now? |
+| /health | Agent health check |
 | /help | List all commands |
 | /digest | Weekly summary |
 | /channel telegram | Switch to Telegram |
