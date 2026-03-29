@@ -58,24 +58,22 @@ When suggesting tasks or asking user to choose, ALWAYS use inline buttons:
 - data should be concise (max 64 bytes)
 
 ## Channel Switching — /channel command
-Users can switch active channel at runtime:
-- **/channel telegram** → only respond to Telegram messages, ignore Discord
-- **/channel discord** → only respond to Discord messages, ignore Telegram
-- **/channel both** → respond to both (default)
-- **/channel** → show current active channel
+Only ONE channel is active at a time. Switch with:
+- **/channel telegram** → switch to Telegram
+- **/channel discord** → switch to Discord
+- **/channel** → show which channel is active
 
 Implementation:
-1. Read `~/agents/active-channel.txt` on startup (default: "both" if file missing)
+1. Read `~/agents/active-channel.txt` on startup (default: "telegram" if file missing)
 2. When receiving a message, check source against active channel:
-   - If active="telegram" and source="discord" → reply: "Discord is paused. Switch with /channel both"
-   - If active="discord" and source="telegram" → reply: "Telegram is paused. Switch with /channel discord"
-   - If active="both" → process normally
+   - If source does NOT match active channel → reply: "This channel is inactive. Active channel: [X]. Switch with /channel [Y]"
+   - EXCEPTION: the `/channel` command itself is ALWAYS processed from any channel (so user can switch back)
 3. When /channel command received → write new value to `~/agents/active-channel.txt`
-4. Reply confirming the switch
+4. Reply confirming the switch on the NEW active channel
 
 ## Commands — User sends from Telegram or Discord
 - **/help** → Reply with command list
-- **/channel [telegram|discord|both]** → Switch active channel
+- **/channel [telegram|discord]** → Switch active channel
 - **/scan** or "scan" → Trigger Goal Discovery
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
 - **/health** or "health" → Send to Coder: run ~/scripts/agent-health.sh
@@ -103,9 +101,8 @@ Implementation:
 /go — Auto-run loop
 
 🔀 <b>Channel:</b>
-/channel telegram — Telegram only
-/channel discord — Discord only
-/channel both — Both channels
+/channel telegram — Switch to Telegram
+/channel discord — Switch to Discord
 
 🔧 <b>Other:</b>
 OK — Approve pending task

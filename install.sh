@@ -197,12 +197,16 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   DISCORD_ENABLED="false"
   TELEGRAM_CHAT_ID="your-chat-id"
 
+  ACTIVE_CHANNEL="telegram"
   case "$CHANNEL_CHOICE" in
-    1) TELEGRAM_ENABLED="true" ;;
-    2) DISCORD_ENABLED="true" ;;
-    3) TELEGRAM_ENABLED="true"; DISCORD_ENABLED="true" ;;
+    1) TELEGRAM_ENABLED="true"; ACTIVE_CHANNEL="telegram" ;;
+    2) DISCORD_ENABLED="true"; ACTIVE_CHANNEL="discord" ;;
+    3) TELEGRAM_ENABLED="true"; DISCORD_ENABLED="true"; ACTIVE_CHANNEL="telegram" ;;
     *) warn "Invalid choice, defaulting to Telegram only"; TELEGRAM_ENABLED="true" ;;
   esac
+  mkdir -p ~/agents
+  echo "$ACTIVE_CHANNEL" > ~/agents/active-channel.txt
+  ok "Active channel: $ACTIVE_CHANNEL"
 
   # Telegram setup
   NEED_TELEGRAM_PLUGIN=false

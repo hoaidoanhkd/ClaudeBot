@@ -114,9 +114,8 @@ Send these from Telegram or Discord:
 | /status | Show goals progress |
 | /help | List all commands |
 | /digest | Weekly summary |
-| /channel telegram | Switch to Telegram only |
-| /channel discord | Switch to Discord only |
-| /channel both | Use both channels |
+| /channel telegram | Switch to Telegram |
+| /channel discord | Switch to Discord |
 
 Slash commands in Claude Code:
 
