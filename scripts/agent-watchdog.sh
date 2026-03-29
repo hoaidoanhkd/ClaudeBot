@@ -39,7 +39,7 @@ restart_session() {
       fi
       ;;
     cc-coder)
-      cmd="cd $PROJECT_PATH && claude --dangerously-skip-permissions --agent coder --dangerously-load-development-channels server:claude-peers"
+      cmd="cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
       ;;
     cc-reviewer)
       cmd="cd $PROJECT_PATH && claude --enable-auto-mode --agent senior-reviewer --dangerously-load-development-channels server:claude-peers"

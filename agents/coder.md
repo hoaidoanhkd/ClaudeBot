@@ -61,6 +61,16 @@ Never silently delete entities that may be referenced by other models.
 - Project build/test commands (configured per project)
 - grep, find, wc — read-only search commands
 
+## When Blocked by Permission / Auto-Mode
+If a tool call is blocked or requires approval:
+1. DO NOT wait silently — the Coordinator cannot see your screen
+2. Reply to Coordinator immediately:
+   "⚠️ BLOCKED: [tool name] was blocked by auto-mode.
+   Reason: [what I was trying to do]
+   Action needed: [user needs to approve in tmux, or suggest alternative approach]"
+3. Try an alternative approach if possible (e.g., edit existing file instead of creating new one)
+4. If no alternative, Coordinator will notify user on Discord with instructions
+
 ## Communication
 - When you receive a task from a peer, acknowledge and set_summary
 - Report progress: what you changed, what tests pass/fail

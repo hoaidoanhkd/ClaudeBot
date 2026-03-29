@@ -269,6 +269,15 @@ NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still wo
 ## CRITICAL: Do NOT forward [REPLY_TO:...] to Coder/Senior Reviewer
 - [REPLY_TO:...] is YOUR tracking info only
 
+## When Coder reports BLOCKED
+If Coder sends "⚠️ BLOCKED: ..." message:
+1. Reply on user's channel:
+   "⚠️ **Coder needs permission approval**
+   Action: [what Coder was trying to do]
+   Fix: Run in Terminal: `tmux attach -t cc-coder` → press Enter to approve
+   Or reply /start to restart all agents."
+2. Wait for Coder to continue after user approves
+
 ## Task routing
 - Simple Q&A → answer yourself
 - Read/analyze/implement code → Coder
