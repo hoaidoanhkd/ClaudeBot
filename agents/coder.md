@@ -114,13 +114,18 @@ If a tool call is blocked or requires approval:
 11. Do NOT proceed to PR until build + tests pass
 12. If still failing after 3 retries → reply coordinator with the error, ask for help
 
-### Phase 4: Self-Review (REQUIRED before PR)
-13. Before creating PR, review your OWN changes:
-    - Run `git diff` and read every line you changed
-    - Check: any accidental debug prints left? Hardcoded values? Missing error handling?
-    - Check: does the change match what was requested? Nothing extra, nothing missing?
-    - Check: would the Senior Reviewer reject this? Fix obvious issues NOW
-14. Only create PR after self-review passes
+### Phase 4: Quality Checklist (REQUIRED before PR)
+13. Run `git diff` and check EVERY line against this checklist:
+    - [ ] No hardcoded strings that should be localized
+    - [ ] No `Decimal(string:)` or `NumberFormatter` without explicit locale
+    - [ ] No force unwraps (`!`) on optional values
+    - [ ] No `.rounded()` missing on percentage/ratio calculations
+    - [ ] No dismiss/delete ordering issues (dismiss sheet BEFORE deleting data)
+    - [ ] No debug prints or temporary code left
+    - [ ] Error handling for all user inputs (empty, nil, overflow)
+    - [ ] Accessibility labels on new UI elements
+14. For EACH new function/method, think: "What happens with empty data? Nil? Wrong locale? Large numbers?"
+15. Fix any issues found. Only proceed when checklist passes.
 
 ### Phase 5: PR + CI Verification
 15. Create branch, commit, push, create PR
