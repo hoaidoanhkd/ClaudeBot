@@ -72,7 +72,8 @@ Implementation:
 ## Commands — User sends from Telegram or Discord
 - **/help** → Reply with command list
 - **/channel [telegram|discord]** → Switch active channel
-- **/scan** or "scan" → Trigger Goal Discovery
+- **/scan** or "scan" → Goal Discovery (code scan + competitor research)
+- **/brainstorm** → Generate new feature ideas (web research + synthesis)
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
 - **/progress** → Reply what is currently happening: which task, which step (Coder working / PR created / Reviewer checking / idle), how long it's been running. If idle, say "No active task."
 - **/health** or "health" → Run Bash: `~/scripts/agent-health.sh` and reply with the output
@@ -89,7 +90,8 @@ Implementation:
 🤖 <b>ClaudeBot Commands</b>
 
 📋 <b>Project:</b>
-/scan — Scan project + suggest goals
+/scan — Scan code + research competitors
+/brainstorm — Generate new feature ideas
 /status — View pending/done goals
 /stats — Metrics
 /progress — What's happening right now?
@@ -167,24 +169,57 @@ NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still wo
 - Read/analyze/implement code → Coder
 - Review + merge PR → Senior Reviewer
 
-## Goal Discovery — AUTO-DETECT + SUGGEST
+## Goal Discovery — /scan
 When receiving "scan", "scan project", "update goals":
 
 ### Phase 1: Code Scan
 1. Send to Coder: "Run ~/scripts/goal-discovery.sh and send the output"
-2. Reply: "🔍 Scanning..."
+2. Reply: "🔍 Phase 1: Scanning codebase..."
 
-### Phase 2a: Codebase Analysis
-3. Send to Coder: "Read the project, analyze features, suggest improvements"
-4. Reply: "🧠 Analyzing..."
+### Phase 2: Codebase Analysis
+3. Send to Coder: "Read the project structure, list all features, identify gaps and improvements"
+4. Reply: "🧠 Phase 2: Analyzing features..."
 
-### Phase 2b: Web Research (ONLY when Phase 1+2a < 3 new goals)
-5. WebSearch for best practices, competitors
-6. Reply: "🔬 Researching more..."
+### Phase 3: Competitive Research
+5. WebSearch: "[project type] app best features 2026" (e.g., "budget tracker app best features 2026")
+6. WebSearch: "top [project type] apps comparison features"
+7. Compare what competitors have vs what this project has → identify missing features
+8. Reply: "🔬 Phase 3: Researching competitors..."
 
-### Phase 3: Consolidate + Write GOALS.md
-7. Send to Coder to update ~/agents/GOALS.md
-8. Reply with summary
+### Phase 4: Consolidate + Write GOALS.md
+9. Combine findings from all phases
+10. Prioritize: quick wins first, high-impact features next
+11. Send to Coder to update ~/agents/GOALS.md
+12. Reply with summary of new goals found
+
+## Feature Discovery — /brainstorm
+When receiving "/brainstorm" or "brainstorm" or "new ideas":
+
+1. Reply: "🧠 Brainstorming new ideas..."
+
+2. Ask Coder: "Read the entire project. List ALL features that exist. Describe the app's purpose and target users."
+
+3. Research (run ALL searches in parallel):
+   - WebSearch: "[app type] trending features 2026"
+   - WebSearch: "[app type] user complaints reddit"
+   - WebSearch: "[app type] most requested features"
+   - WebSearch: "innovative [app type] apps"
+
+4. Synthesize: Based on existing features + research, generate 5-10 NEW feature ideas that:
+   - Don't exist in the app yet
+   - Users are asking for (based on research)
+   - Would differentiate from competitors
+   - Are feasible to implement
+
+5. Reply with ideas formatted as:
+   💡 **Feature Ideas for [Project]**
+   1. **[Name]** — [1-line description] (Effort: S/M/L)
+   2. **[Name]** — [1-line description] (Effort: S/M/L)
+   ...
+
+   Reply "add all" to add to GOALS.md, or pick specific numbers.
+
+6. If user says "add all" or picks numbers → Send to Coder to append to GOALS.md
 
 ## Proactive Goals — ASK FIRST mode
 1. Read GOALS.md → pick a suitable task

@@ -108,7 +108,8 @@ Send these from Telegram or Discord:
 | Command | Action |
 |---------|--------|
 | /go | Auto-run — ship tasks continuously |
-| /scan | Scan project, suggest goals |
+| /scan | Scan code + research competitors |
+| /brainstorm | Generate new feature ideas |
 | /stop | Stop all agents |
 | /stats | Show metrics |
 | /status | Show goals progress |
