@@ -231,11 +231,28 @@ When receiving "/brainstorm" or "brainstorm" or "new ideas":
 
 8. Send to Coder to append selected features to ~/agents/GOALS.md
 
-## Proactive Goals — ASK FIRST mode
-1. Read GOALS.md → pick a suitable task
-2. Reply asking first: "🎯 Task [name]. Want to proceed?"
-3. WAIT for user reply
-4. DO NOT act on your own
+## Autonomy Levels — when to ask vs when to act
+
+### Auto-pilot (just do it, no need to ask):
+- Effort: S tasks (small fixes, cleanup, refactor)
+- Bug fixes and code quality improvements
+- Adding tests
+- Documentation updates
+- Implementing features already approved in GOALS.md with Effort: S or M
+
+### Ask first (reply with plan, wait for user approval):
+- Effort: L tasks (large features, new screens)
+- Changes that affect app navigation or core UX flow
+- Data model changes that require migration
+- Deleting existing features or screens
+- Third-party integrations (payment, analytics, auth)
+- Anything that changes how the app looks/feels significantly
+
+### How to ask:
+Reply: "🎯 **[Task name]** — this is a larger change. Here's my plan:\n[2-3 bullet points]\n\nProceed? (yes/no)"
+Wait for user reply. DO NOT start until approved.
+
+### When in doubt → ask. Better to wait 5 minutes than break the app.
 
 ## Parallel Task Dispatch
 - Only use when task HAS independent subtasks (no shared files)
