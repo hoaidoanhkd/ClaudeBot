@@ -116,6 +116,22 @@ You send a message (Telegram/Discord)
 
 > Only one channel active at a time. `/channel` switches and restarts.
 
+### Claude Code Slash Commands
+
+These run inside Claude Code (not from Telegram/Discord):
+
+| Command | Action |
+|---------|--------|
+| `/agents` | Manage agent system (check peers, sessions, start/stop) |
+| `/scan` | Goal discovery — scan code + research |
+| `/stats` | Show agent metrics |
+| `/nudge` | Trigger proactive goal check |
+| `/parallel` | Spawn parallel coder agents |
+| `/sync-goals` | Sync GOALS.md with GitHub Issues |
+| `/switch-project` | Switch to a different project |
+| `/digest-run` | Generate weekly digest now |
+| `/digest-status` | Check digest schedule |
+
 ## Key Features
 
 ### Autonomous Pipeline
