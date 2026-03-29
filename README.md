@@ -7,11 +7,12 @@ Autonomous multi-agent system for Claude Code. Control your agents via Telegram 
 ```bash
 git clone https://github.com/hoaidoanhkd/ClaudeBot.git
 cd ClaudeBot
-./install.sh    # Interactive setup — handles everything
-./start.sh      # Launch agents
+./install.sh
 ```
 
-The installer checks dependencies, configures your project, sets up channels, and symlinks everything into place. To remove: `./uninstall.sh`
+That's it for installation. But there are a few more steps to get everything running — see the full setup guide below.
+
+To remove: `./uninstall.sh`
 
 ## Prerequisites
 
@@ -22,7 +23,7 @@ The installer checks dependencies, configures your project, sets up channels, an
 - **gh** CLI (GitHub)
 - **claude-peers-mcp** (inter-agent communication)
 
-> `install.sh` verifies all of these, tells you what's missing, and auto-installs Telegram/Discord plugins.
+> `install.sh` verifies all of these and tells you what's missing.
 
 ## Agents
 
@@ -33,24 +34,65 @@ The installer checks dependencies, configures your project, sets up channels, an
 | Senior Reviewer | Reviews code, approves + merges PRs | Always-on |
 | Researcher | Web search, deep research | On-demand |
 
-## Channel Setup
+## Full Setup Guide
 
-During setup, you choose your communication channel:
+### Step 1 — Create your bot (before running install.sh)
 
-| Option | What you get |
-|--------|-------------|
-| 1 | Telegram only |
-| 2 | Discord only |
-| 3 | Both |
+**If using Telegram:**
+1. Message [@BotFather](https://t.me/BotFather) on Telegram → `/newbot` → copy the token
 
-**Before running `install.sh`**, create your bot:
+**If using Discord:**
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications) → New Application
+2. Tab **Bot** → enable **Message Content Intent**
+3. Tab **OAuth2 → URL Generator** → scope `bot` → permissions: View Channels, Send Messages, Read Message History, Add Reactions, Attach Files
+4. Open the generated URL → select your server → Authorize
+5. Tab **Bot** → **Reset Token** → copy the token
 
-- **Telegram** — Create via [@BotFather](https://t.me/BotFather), copy the token
-- **Discord** — Create at [Developer Portal](https://discord.com/developers/applications), enable **Message Content Intent**, invite to server with bot permissions
+### Step 2 — Run install.sh
 
-The installer will ask for the token and save it. After install, pair your account:
-- Telegram: `/telegram:access` in Claude Code
-- Discord: DM the bot, then `/discord:access pair <code>` in Claude Code
+```bash
+./install.sh
+```
+
+The installer asks for: project name, path, GitHub repo, channel choice (Telegram/Discord/both), and bot tokens. Discord tokens are entered securely (hidden input).
+
+### Step 3 — Install channel plugins
+
+Plugins **must** be installed from inside Claude Code (not from bash). Open Claude Code and run:
+
+```
+/plugin install telegram@claude-plugins-official    # if using Telegram
+/plugin install discord@claude-plugins-official      # if using Discord
+```
+
+You only need to do this once.
+
+### Step 4 — Start agents
+
+```bash
+./start.sh
+# or: ~/.claude/scheduled/multi-agent-start.sh
+```
+
+### Step 5 — Pair your account
+
+**Telegram:** Run `/telegram:access` inside the coordinator session:
+```bash
+tmux attach -t cc-coordinator
+# then type: /telegram:access
+```
+
+**Discord:**
+1. DM your bot on Discord → bot replies with a **pairing code**
+2. In the coordinator session, run: `/discord:access pair <code>`
+```bash
+tmux attach -t cc-coordinator
+# then type: /discord:access pair <the-code>
+```
+
+### Step 6 — Test!
+
+Send a message to your bot. It should reply. Try `/status` or `/help`.
 
 ## Commands
 

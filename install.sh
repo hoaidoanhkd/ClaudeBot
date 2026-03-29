@@ -205,16 +205,14 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   esac
 
   # Telegram setup
+  NEED_TELEGRAM_PLUGIN=false
   if [ "$TELEGRAM_ENABLED" = "true" ]; then
     echo ""
-    # Install plugin if not installed
-    if ! grep -q '"telegram@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
-      echo -e "  ${DIM}Installing Telegram plugin...${NC}"
-      claude -p "/plugin marketplace add anthropics/claude-plugins-official" &>/dev/null || true
-      claude -p "/plugin install telegram@claude-plugins-official" &>/dev/null && \
-        ok "Telegram plugin installed" || warn "Could not install plugin — install manually: /plugin install telegram@claude-plugins-official"
-    else
+    if grep -q '"telegram@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
       ok "Telegram plugin already installed"
+    else
+      NEED_TELEGRAM_PLUGIN=true
+      warn "Telegram plugin not installed (will install in next steps)"
     fi
 
     TELEGRAM_CHAT_ID=$(prompt "Telegram chat ID (or Enter to skip)" "")
@@ -230,30 +228,24 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   fi
 
   # Discord setup
+  NEED_DISCORD_PLUGIN=false
   if [ "$DISCORD_ENABLED" = "true" ]; then
     echo ""
-    # Install plugin if not installed
-    if ! grep -q '"discord@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
-      echo -e "  ${DIM}Installing Discord plugin...${NC}"
-      claude -p "/plugin marketplace add anthropics/claude-plugins-official" &>/dev/null || true
-      claude -p "/plugin install discord@claude-plugins-official" &>/dev/null && \
-        ok "Discord plugin installed" || warn "Could not install plugin — install manually: /plugin install discord@claude-plugins-official"
-    else
+    if grep -q '"discord@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
       ok "Discord plugin already installed"
+    else
+      NEED_DISCORD_PLUGIN=true
+      warn "Discord plugin not installed (will install in next steps)"
     fi
 
-    DISCORD_BOT_TOKEN=$(prompt "Discord bot token (or Enter to skip)" "")
+    echo -e "  ${DIM}Discord bot token is hidden when you type (secure).${NC}"
+    echo -en "${YELLOW}?${NC} Discord bot token (or Enter to skip): "
+    read -rs DISCORD_BOT_TOKEN
+    echo ""
     if [ -n "$DISCORD_BOT_TOKEN" ]; then
       mkdir -p ~/.claude/channels/discord
       echo "DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}" > ~/.claude/channels/discord/.env
-      ok "Saved Discord token"
-    fi
-
-    # Set open access policy for Discord
-    mkdir -p ~/.claude/channels/discord
-    if [ ! -f ~/.claude/channels/discord/access.json ]; then
-      echo '{"policy":"open"}' > ~/.claude/channels/discord/access.json
-      ok "Discord access policy set to open"
+      ok "Saved Discord token (hidden)"
     fi
   fi
 
@@ -406,16 +398,38 @@ if [ -n "${PROJECT_NAME:-}" ]; then
 fi
 
 echo -e "${BOLD}Next steps:${NC}"
-if [ "${TELEGRAM_CHAT_ID:-}" = "your-chat-id" ]; then
-  echo -e "  1. ${YELLOW}Set up Telegram${NC}: edit ~/agents/config.env (add chat ID)"
-  echo -e "  2. Configure Telegram bot: run ${BOLD}/telegram:configure${NC} in Claude Code"
-else
-  echo -e "  1. Configure Telegram bot: run ${BOLD}/telegram:configure${NC} in Claude Code"
+STEP=1
+
+# Plugin installation (must be done inside Claude Code)
+if [ "${NEED_TELEGRAM_PLUGIN:-false}" = true ] || [ "${NEED_DISCORD_PLUGIN:-false}" = true ]; then
+  echo -e "  ${STEP}. ${YELLOW}Install channel plugins${NC} — open Claude Code and run:"
+  if [ "${NEED_TELEGRAM_PLUGIN:-false}" = true ]; then
+    echo -e "     ${BOLD}/plugin install telegram@claude-plugins-official${NC}"
+  fi
+  if [ "${NEED_DISCORD_PLUGIN:-false}" = true ]; then
+    echo -e "     ${BOLD}/plugin install discord@claude-plugins-official${NC}"
+  fi
+  STEP=$((STEP + 1))
 fi
+
+echo -e "  ${STEP}. Start agents:  ${BOLD}~/.claude/scheduled/multi-agent-start.sh${NC}"
+STEP=$((STEP + 1))
+
+# Pairing instructions
 if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
-  echo -e "  ${DIM}*${NC} Configure Discord bot: run ${BOLD}/discord:configure <token>${NC} in Claude Code"
+  echo -e "  ${STEP}. ${YELLOW}Pair Discord${NC}:"
+  echo -e "     a. DM your bot on Discord → bot replies with pairing code"
+  echo -e "     b. In coordinator tmux: ${BOLD}/discord:access pair <code>${NC}"
+  echo -e "     Attach to coordinator: ${DIM}tmux attach -t cc-coordinator${NC}"
+  STEP=$((STEP + 1))
 fi
-echo -e "  ${DIM}*${NC} Start agents:  ~/.claude/scheduled/multi-agent-start.sh"
+
+if [ "${TELEGRAM_ENABLED:-false}" = "true" ] && [ "${TELEGRAM_CHAT_ID:-}" = "your-chat-id" ]; then
+  echo -e "  ${STEP}. ${YELLOW}Pair Telegram${NC}: run ${BOLD}/telegram:access${NC} in coordinator"
+  STEP=$((STEP + 1))
+fi
+
+echo -e "  ${STEP}. Send a message to your bot — it should reply!"
 if [ "$PLIST_UPDATED" = true ]; then
   echo -e "  ${DIM}*${NC} Auto-start:    launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist"
 fi
