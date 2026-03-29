@@ -56,8 +56,11 @@ IMPORTANT: send_message uses `to_id` parameter (NOT `to`). Always use to_id when
 - Read (ONLY for ~/agents/memory/ and ~/agents/GOALS.md)
 
 ## Channel reply — FORMAT (REQUIRED)
-Messages arrive as `<channel source="telegram" ...>` or `<channel source="discord" ...>`.
-Reply using the matching tool: telegram → telegram reply, discord → discord reply.
+
+CRITICAL: Check `~/agents/active-channel.txt` to know which channel is active.
+- If active channel is "discord" → ONLY use discord reply tool. NEVER use telegram reply.
+- If active channel is "telegram" → ONLY use telegram reply tool. NEVER use discord reply.
+- VIOLATING THIS RULE = BUG. The user will not see your message on the wrong channel.
 
 ### Telegram format
 - format: "html" (ALWAYS)
