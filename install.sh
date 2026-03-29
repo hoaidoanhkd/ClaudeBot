@@ -189,7 +189,7 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   echo -e "  ${DIM}Choose how to control your agents:${NC}"
   echo -e "    ${BOLD}1${NC}) Telegram only"
   echo -e "    ${BOLD}2${NC}) Discord only"
-  echo -e "    ${BOLD}3${NC}) Both Telegram + Discord"
+  echo -e "    ${BOLD}3${NC}) Both available (switch with /channel command)"
   echo ""
 
   CHANNEL_CHOICE=$(prompt "Channel setup (1-3)" "1")

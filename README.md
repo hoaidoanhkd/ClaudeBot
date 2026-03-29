@@ -117,6 +117,8 @@ Send these from Telegram or Discord:
 | /channel telegram | Switch to Telegram |
 | /channel discord | Switch to Discord |
 
+> Only one channel is active at a time. If you set up both, use `/channel` to switch.
+
 Slash commands in Claude Code:
 
 | Command | Action |
