@@ -43,9 +43,9 @@ sleep 2
 
 echo "📡 Starting Coordinator [model: opus]..."
 if [ -n "$CHANNELS" ]; then
-  COORDINATOR_CMD="cd $PROJECT_PATH && claude --agent coordinator --channels $CHANNELS --dangerously-load-development-channels server:claude-peers"
+  COORDINATOR_CMD="cd $PROJECT_PATH && claude --enable-auto-mode --agent coordinator --channels $CHANNELS --dangerously-load-development-channels server:claude-peers"
 else
-  COORDINATOR_CMD="cd $PROJECT_PATH && claude --agent coordinator --dangerously-load-development-channels server:claude-peers"
+  COORDINATOR_CMD="cd $PROJECT_PATH && claude --enable-auto-mode --agent coordinator --dangerously-load-development-channels server:claude-peers"
 fi
 tmux new-session -d -s cc-coordinator "$COORDINATOR_CMD"
 
@@ -57,7 +57,7 @@ echo "✅ Coordinator started"
 
 echo "💻 Starting Coder Agent [model: opus]..."
 tmux new-session -d -s cc-coder \
-  "cd $PROJECT_PATH && claude --agent coder --dangerously-load-development-channels server:claude-peers"
+  "cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
 
 sleep 8
 tmux send-keys -t cc-coder Enter
@@ -66,7 +66,7 @@ echo "✅ Coder started"
 
 echo "🔍 Starting Senior Reviewer [model: opus]..."
 tmux new-session -d -s cc-reviewer \
-  "cd $PROJECT_PATH && claude --agent senior-reviewer --dangerously-load-development-channels server:claude-peers"
+  "cd $PROJECT_PATH && claude --enable-auto-mode --agent senior-reviewer --dangerously-load-development-channels server:claude-peers"
 
 sleep 8
 tmux send-keys -t cc-reviewer Enter

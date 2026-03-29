@@ -33,16 +33,16 @@ restart_session() {
       local channels
       channels="$(build_channels)"
       if [ -n "$channels" ]; then
-        cmd="cd $PROJECT_PATH && claude --agent coordinator --channels $channels --dangerously-load-development-channels server:claude-peers"
+        cmd="cd $PROJECT_PATH && claude --enable-auto-mode --agent coordinator --channels $channels --dangerously-load-development-channels server:claude-peers"
       else
-        cmd="cd $PROJECT_PATH && claude --agent coordinator --dangerously-load-development-channels server:claude-peers"
+        cmd="cd $PROJECT_PATH && claude --enable-auto-mode --agent coordinator --dangerously-load-development-channels server:claude-peers"
       fi
       ;;
     cc-coder)
-      cmd="cd $PROJECT_PATH && claude --agent coder --dangerously-load-development-channels server:claude-peers"
+      cmd="cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
       ;;
     cc-reviewer)
-      cmd="cd $PROJECT_PATH && claude --agent senior-reviewer --dangerously-load-development-channels server:claude-peers"
+      cmd="cd $PROJECT_PATH && claude --enable-auto-mode --agent senior-reviewer --dangerously-load-development-channels server:claude-peers"
       ;;
     *)
       log "ERROR: Unknown session $session"
