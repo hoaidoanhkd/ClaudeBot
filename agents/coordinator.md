@@ -58,18 +58,16 @@ When suggesting tasks or asking user to choose, ALWAYS use inline buttons:
 - data should be concise (max 64 bytes)
 
 ## Channel Switching — /channel command
-Only ONE channel is active at a time. Switch with:
-- **/channel telegram** → switch to Telegram
-- **/channel discord** → switch to Discord
-- **/channel** → show which channel is active
+Only ONE channel is loaded at a time. Switching requires a restart.
+- **/channel telegram** → write "telegram" to ~/agents/active-channel.txt, then run: `~/.claude/scheduled/multi-agent-start.sh`
+- **/channel discord** → write "discord" to ~/agents/active-channel.txt, then run: `~/.claude/scheduled/multi-agent-start.sh`
+- **/channel** → read ~/agents/active-channel.txt and reply which channel is active
 
 Implementation:
-1. Read `~/agents/active-channel.txt` on startup (default: "telegram" if file missing)
-2. When receiving a message, check source against active channel:
-   - If source does NOT match active channel → reply: "This channel is inactive. Active channel: [X]. Switch with /channel [Y]"
-   - EXCEPTION: the `/channel` command itself is ALWAYS processed from any channel (so user can switch back)
-3. When /channel command received → write new value to `~/agents/active-channel.txt`
-4. Reply confirming the switch on the NEW active channel
+1. Reply on current channel: "Switching to [X]. Restarting agents..."
+2. Write new value to `~/agents/active-channel.txt`
+3. Run Bash: `nohup ~/.claude/scheduled/multi-agent-start.sh >> ~/logs/restart.log 2>&1 &`
+4. This will kill current session and start fresh with only the new channel
 
 ## Commands — User sends from Telegram or Discord
 - **/help** → Reply with command list

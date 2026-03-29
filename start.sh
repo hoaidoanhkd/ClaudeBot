@@ -8,15 +8,14 @@ set -euo pipefail
 # Load config
 source "$HOME/agents/config.env"
 
-# Build channels list dynamically from config
+# Load active channel (only 1 channel at a time)
+ACTIVE_CHANNEL=$(cat ~/agents/active-channel.txt 2>/dev/null || echo "telegram")
 CHANNELS=""
-if [ "${TELEGRAM_ENABLED:-false}" = "true" ]; then
-  CHANNELS="$CHANNELS plugin:telegram@claude-plugins-official"
-fi
-if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
-  CHANNELS="$CHANNELS plugin:discord@claude-plugins-official"
-fi
-CHANNELS="${CHANNELS# }"  # trim leading space
+case "$ACTIVE_CHANNEL" in
+  telegram) CHANNELS="plugin:telegram@claude-plugins-official" ;;
+  discord)  CHANNELS="plugin:discord@claude-plugins-official" ;;
+  *)        CHANNELS="plugin:telegram@claude-plugins-official" ;;
+esac
 
 echo "🚀 Starting ClaudeBot for $PROJECT_NAME..."
 echo "   Project:  $PROJECT_PATH"
