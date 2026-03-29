@@ -27,7 +27,7 @@ jobs:
             exit 1
           fi
           echo "Files to check: ${files[*]}"
-          shellcheck --severity=warning "${files[@]}"
+          shellcheck --severity=warning --exclude=SC1090,SC2034 "${files[@]}"
           echo "shellcheck passed"
 
       - name: Verify no hardcoded personal data

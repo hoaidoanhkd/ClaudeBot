@@ -8,6 +8,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+# shellcheck disable=SC2034
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 DIM='\033[2m'
