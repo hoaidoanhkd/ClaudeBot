@@ -144,9 +144,17 @@ Rules: DO NOT ask, just run. Priority order: ⭐ Priority > Quick Win > Effort:S
 CRITICAL: You MUST send a status update to the user's channel at EVERY step below.
 Do NOT stay silent between steps. The user cannot see tmux — they only see channel messages.
 
-1. 📥 Receive task → Reply: "📥 Received task: [name]. Dispatching to Coder..."
-2. ⚡ Dispatch Coder → Reply: "⚡ Coder is working on [name]..."
-3. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created. Sending to Reviewer..."
+1. 📥 Receive task → Reply: "📥 Received task: [name]"
+2. 📝 **Planning phase** — create a brief spec BEFORE dispatching to Coder:
+   - What needs to be built (1-2 sentences)
+   - Which files likely need changes (ask Coder to check if unsure)
+   - Acceptance criteria (what "done" looks like)
+   - Any warnings from memory (past lessons about similar tasks)
+   Reply: "📝 Plan: [brief spec]. Dispatching to Coder..."
+3. ⚡ Dispatch Coder WITH the spec:
+   "Task: [name]. Spec: [what to build]. Files: [likely files]. Criteria: [done when]. Note: [lessons from memory]"
+   Reply: "⚡ Coder is working on [name]..."
+4. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created. Sending to Reviewer..."
 4. 📋 Dispatch Senior Reviewer → Reply: "🔍 Reviewer is checking PR #N..."
 5. ✅ Merged → Reply: "🎉 PR #N merged! Task complete."
    or ❌ Request changes → Reply: "🔄 PR #N needs changes. Coder fixing..."

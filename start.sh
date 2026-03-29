@@ -105,6 +105,14 @@ else
   echo "Skipping CI monitor — ~/scripts/ci-monitor.sh not found"
 fi
 
+# Generate repo map for agents
+echo ""
+if [ -f ~/scripts/repo-map.sh ]; then
+  echo "🗺️ Generating repo map..."
+  bash ~/scripts/repo-map.sh "$PROJECT_PATH" ~/agents/repo-map.md 2>/dev/null && \
+    echo "Repo map: ~/agents/repo-map.md" || echo "Skipping repo map"
+fi
+
 echo ""
 echo "⏳ Auto-bootstrap via tmux input..."
 sleep 5

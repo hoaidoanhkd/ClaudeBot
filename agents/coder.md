@@ -67,10 +67,13 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 ## Workflow
 
 ### Phase 1: Prepare
-1. Read the task description carefully
+1. Read the task description + coordinator's spec carefully
 2. set_summary with what you're about to do
-3. **Memory search** (complex tasks only): `~/scripts/memory-search.sh "[keywords]"` for related lessons
-4. **Docs lookup**: If task uses a framework/library/API, search docs FIRST:
+3. **Repo map**: If first task in session, generate project overview:
+   `~/scripts/repo-map.sh $PROJECT_PATH` — scan file tree, key files, definitions
+   This helps you understand the codebase without reading every file.
+4. **Memory search** (complex tasks only): `~/scripts/memory-search.sh "[keywords]"` for related lessons
+5. **Docs lookup**: If task uses a framework/library/API, search docs FIRST:
    - Use context7 MCP tool: `resolve-library-id` → `query-docs` for the specific API
    - Or WebSearch for "[framework] [feature] documentation 2026"
    - Read the docs BEFORE writing any code
