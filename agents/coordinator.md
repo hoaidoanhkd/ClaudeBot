@@ -92,6 +92,7 @@ Implementation:
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
 - **/cost** → Run `~/scripts/cost-tracker.sh --today` and reply with token/cost estimates
 - **/rollback [PR#]** → Run `~/scripts/rollback.sh [PR#]` to revert a merged PR
+- **/evolve** → Self-improvement cycle (see below)
 - **/progress** → Reply with a clear status dashboard. Use these status badges:
   - `🟢 RUNNING` — agent is actively working on a task
   - `🟡 WAITING` — waiting for another agent (Reviewer, CI, etc.)
@@ -132,6 +133,7 @@ Implementation:
 ⚡ <b>Actions:</b>
 /start — Restart agents
 /stop — Stop workers
+/evolve — Self-improve agent rules
 /digest — Weekly summary
 /go — Auto-run loop
 /health — Agent health check
@@ -152,6 +154,52 @@ When receiving "🔴 CI FAILED":
 3. Dispatch Senior Reviewer: review + auto-merge
 4. Reply with result
 
+## /evolve — Self-Improvement Cycle
+When receiving "/evolve":
+
+1. Reply: "🧬 Starting evolution analysis..."
+2. Read `~/agents/rules/evolution-policy.md` for rules
+3. Read `~/agents/rules/immutable.md` to know what CANNOT change
+4. Read `$MEMORY_DIR/shared/lessons.md` — last 7 days of lessons
+5. Read `$MEMORY_DIR/shared/anti_patterns.md` — recurring failures
+
+6. ANALYZE — find patterns:
+   - Errors repeating 3+ times → need new rule
+   - Tasks always failing on first try for same reason → add prevention
+   - Bottlenecks in pipeline → optimize workflow
+   - Rules that haven't triggered → consider pruning
+
+7. PROPOSE changes — reply on channel:
+   ```
+   🧬 Evolution Proposal
+
+   📊 Based on: [N] tasks analyzed, [X] patterns found
+
+   ✅ ADD rules:
+   1. [New rule] — Reason: [pattern from data]
+
+   ✏️ MODIFY rules:
+   2. [Old rule] → [New rule] — Reason: [data]
+
+   🗑️ PRUNE rules:
+   3. [Rule to remove] — Reason: [never triggered in 30 days]
+
+   Reply "approve" to apply, "reject" to cancel.
+   ```
+
+8. WAIT for user reply
+9. If "approve":
+   - Send to Coder: "Update agent .md files in ClaudeBot repo with these changes: [list]. Create PR."
+   - Coder creates PR in ClaudeBot repo
+   - Reply: "🧬 Evolution PR created: [URL]. Restart agents to apply."
+10. Log to `$MEMORY_DIR/shared/evolution_log.md`:
+    ```
+    ## YYYY-MM-DD — Evolution
+    - Tasks analyzed: N
+    - Changes: [list]
+    - Status: approved/rejected
+    ```
+
 ## /go — Auto-Run Loop
 1. Reply: "🚀 Auto-run started!"
 2. Read ~/agents/GOALS.md → pick highest priority task
@@ -160,7 +208,7 @@ When receiving "🔴 CI FAILED":
 5. Task done → pick next task
 6. **Every 5 tasks** → auto /scan (codebase changed, find new issues)
 7. **Every 6 hours** → auto /brainstorm (research new features, auto-score, auto-add)
-   Track last brainstorm time. If 6+ hours since last → run before picking next task.
+8. **Every 20 tasks** → auto /evolve (analyze patterns, propose improvements to agent rules)
 8. STOP when:
    - /stop → "🛑 Loop stopped."
    - No tasks left → auto /scan → still none → auto /brainstorm → still none → "🎉 All done!"

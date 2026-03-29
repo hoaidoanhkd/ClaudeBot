@@ -108,8 +108,11 @@ You send a message (Telegram/Discord)
 | `/health` | Agent health check |
 | `/scan` | Scan code + research competitors → add goals |
 | `/brainstorm` | Research new features, auto-score, auto-add best ones |
+| `/cost` | Token usage + cost estimates |
 | `/stats` | Performance metrics |
 | `/digest` | Weekly summary |
+| `/evolve` | Self-improve agent rules (analyze patterns → propose changes → user approves) |
+| `/rollback PR#N` | Revert a merged PR |
 | `/channel telegram` | Switch to Telegram |
 | `/channel discord` | Switch to Discord |
 | `/help` | All commands |
