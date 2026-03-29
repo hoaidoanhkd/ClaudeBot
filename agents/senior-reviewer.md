@@ -59,8 +59,10 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply.
 | 1+ | any | ❌ Request changes, DO NOT merge |
 
 ## Auto-Merge Process
-1. `gh pr review [N] --approve --body "[summary]"`
-2. `gh pr merge [N] --squash --delete-branch`
+1. **Secret scan** BEFORE merge: `~/scripts/secret-scan.sh [PR_NUMBER]`
+   - If secrets found → ❌ Request changes, DO NOT merge
+2. `gh pr review [N] --approve --body "[summary]"`
+3. `gh pr merge [N] --squash --delete-branch`
 3. Post-merge: `git checkout main && git pull` then run the project's build command to verify
 4. If build fails → Reply Coordinator: "❌ POST-MERGE BUILD FAILED"
 5. Reply Coordinator: "✅ PR #N merged + build verified"

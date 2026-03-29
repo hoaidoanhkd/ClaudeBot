@@ -22,6 +22,11 @@ echo "   Project:  $PROJECT_PATH"
 echo "   GitHub:   $GITHUB_REPO"
 echo "   Channels: ${CHANNELS:-none}"
 
+# Save session state before killing
+if [ -f ~/scripts/session-save.sh ]; then
+  bash ~/scripts/session-save.sh 2>/dev/null || true
+fi
+
 # Kill old sessions if exist
 tmux kill-session -t cc-coordinator 2>/dev/null || true
 tmux kill-session -t cc-coder 2>/dev/null || true

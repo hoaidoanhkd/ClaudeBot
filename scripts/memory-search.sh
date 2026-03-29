@@ -45,6 +45,21 @@ if [ -f "$GOALS_FILE" ]; then
   fi
 fi
 
+# Also search global cross-project memory
+GLOBAL_DIR="$HOME/agents/memory/global"
+if [ -d "$GLOBAL_DIR" ]; then
+  for f in "$GLOBAL_DIR"/*.md; do
+    if [ ! -f "$f" ]; then continue; fi
+    results=$(grep -in -C 2 "$QUERY" "$f" 2>/dev/null) || true
+    if [ -n "$results" ]; then
+      echo "--- [GLOBAL] $(basename "$f") ---"
+      echo "$results"
+      echo ""
+      found=$((found + 1))
+    fi
+  done
+fi
+
 if [ "$found" -eq 0 ]; then
   echo "(no results found)"
 fi

@@ -355,6 +355,13 @@ else
   skip "lessons.md exists"
 fi
 
+# Global cross-project memory
+mkdir -p ~/agents/memory/global
+if [ ! -f ~/agents/memory/global/patterns.md ]; then
+  printf '# Global Patterns\n\nCross-project patterns shared across all projects.\n' > ~/agents/memory/global/patterns.md
+  ok "Memory: global/patterns.md"
+fi
+
 # Project-specific memory (each project gets its own memory)
 PROJ_MEMORY_DIR=~/agents/memory/${PROJECT_NAME:-YourProject}
 mkdir -p "$PROJ_MEMORY_DIR/shared" "$PROJ_MEMORY_DIR/daily"

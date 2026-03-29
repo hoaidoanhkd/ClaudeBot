@@ -90,6 +90,8 @@ Implementation:
 - **/scan** or "scan" → Goal Discovery (code scan + competitor research)
 - **/brainstorm** → Generate new feature ideas (web research + synthesis)
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
+- **/cost** → Run `~/scripts/cost-tracker.sh --today` and reply with token/cost estimates
+- **/rollback [PR#]** → Run `~/scripts/rollback.sh [PR#]` to revert a merged PR
 - **/progress** → Reply with a clear status dashboard. Use these status badges:
   - `🟢 RUNNING` — agent is actively working on a task
   - `🟡 WAITING` — waiting for another agent (Reviewer, CI, etc.)
