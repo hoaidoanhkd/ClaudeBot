@@ -95,6 +95,7 @@ You send a message (Telegram/Discord)
 | **Coordinator** | Plans tasks, delegates, reports progress, runs heartbeat | Always-on |
 | **Coder** | Docs lookup → implement → test-fix loop → self-review → PR | Always-on |
 | **Senior Reviewer** | Reviews code, verifies build, auto-merges | Always-on |
+| **QA Tester** | Verifies features work correctly after merge | On-demand |
 | **Researcher** | Web search, competitor analysis | On-demand |
 
 ## Commands

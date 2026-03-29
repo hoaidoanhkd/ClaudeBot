@@ -237,11 +237,18 @@ Do NOT stay silent between steps. The user cannot see tmux — they only see cha
    "Task: [name]. Spec: [what to build]. Files: [likely files]. Criteria: [done when]. Note: [lessons from memory]"
    Reply: "⚡ Coder is working on [name]..."
 4. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created. Sending to Reviewer..."
-4. 📋 Dispatch Senior Reviewer → Reply: "🔍 Reviewer is checking PR #N..."
-5. ✅ Merged → Reply: "🎉 PR #N merged! Task complete."
+5. 📋 Dispatch Senior Reviewer → Reply: "🔍 Reviewer is checking PR #N..."
+6. ✅ Merged → Reply: "🎉 PR #N merged!"
    or ❌ Request changes → Reply: "🔄 PR #N needs changes. Coder fixing..."
+7. 🧪 **QA Testing** (for Effort:M and Effort:L tasks only, skip for Effort:S):
+   - Spawn QA Tester agent: `claude --enable-auto-mode --agent qa-tester --dangerously-load-development-channels server:claude-peers`
+   - Send: "Test PR #N: [feature name]. Verify: [acceptance criteria from spec]"
+   - Reply: "🧪 QA Tester verifying feature..."
+   - QA replies with report → Reply: "✅ QA passed! Task complete." or "❌ QA found issues: [list]. Dispatching fix..."
+   - If QA fails → dispatch Coder to fix → new PR → Reviewer → QA again (max 1 retry)
 
-NOTE: No separate Reviewer — Senior Reviewer handles both review + merge.
+NOTE: Senior Reviewer handles review + merge. QA Tester verifies post-merge.
+NOTE: Skip QA for Effort:S tasks (quick wins) to save tokens.
 NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still working..." message.
 
 ## Auto-Retry when PR is rejected (max 2 times)
