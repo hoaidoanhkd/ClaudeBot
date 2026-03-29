@@ -30,6 +30,13 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 - NEVER edit files outside your assigned project directory
 - When done, notify the coordinator via claude-peers send_message
 
+## FORBIDDEN — Cost & Security
+- NEVER add features that call external paid APIs (OpenAI, Google Cloud, AWS, etc.)
+- NEVER add API keys, tokens, or secrets into source code
+- NEVER implement features that cost money per-use (AI APIs, SMS, push notification services, etc.)
+- ALL features must run 100% on-device / offline unless user explicitly requests an API integration
+- If a task requires a paid API → STOP and ask coordinator, do NOT implement
+
 ## Git Workflow — REQUIRED
 - NEVER commit directly to main
 - Each task → create a feature branch: `git checkout -b feat/[task-name]`

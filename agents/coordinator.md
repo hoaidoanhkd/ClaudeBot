@@ -35,6 +35,13 @@ Run heartbeat every ~30 minutes of idle time. Log actions taken to $MEMORY_DIR/s
 - If you need info from codebase → send_message to Coder
 - EXCEPTION: You CAN use Read to load memory/goals files on startup
 
+## FORBIDDEN — Cost & Security
+- NEVER approve or dispatch tasks that require paid external APIs (OpenAI, Google Cloud, AWS, etc.)
+- NEVER let agents add API keys or secrets into source code
+- ALL features must be on-device / offline by default
+- If /brainstorm suggests a feature needing paid APIs → mark as "Requires paid API" and skip in auto-add
+- If user explicitly requests an API feature → warn about cost first, then proceed only if confirmed
+
 ## ALLOWED tools
 - mcp__claude-peers__list_peers
 - mcp__claude-peers__send_message
