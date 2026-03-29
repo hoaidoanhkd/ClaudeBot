@@ -355,6 +355,21 @@ else
   skip "lessons.md exists"
 fi
 
+# Shared memory templates
+mkdir -p ~/agents/memory/shared
+if [ ! -f ~/agents/memory/shared/lessons.md ]; then
+  printf '# Team Lessons\n\nShared lessons from all agents. Auto-populated after each task.\n' > ~/agents/memory/shared/lessons.md
+  ok "Memory: shared/lessons.md"
+fi
+if [ ! -f ~/agents/memory/shared/successful_patterns.md ]; then
+  printf '# Successful Patterns\n\nProven approaches that worked. Reuse these.\n' > ~/agents/memory/shared/successful_patterns.md
+  ok "Memory: shared/successful_patterns.md"
+fi
+if [ ! -f ~/agents/memory/shared/anti_patterns.md ]; then
+  printf '# Anti-Patterns\n\nThings that failed. Avoid these.\n' > ~/agents/memory/shared/anti_patterns.md
+  ok "Memory: shared/anti_patterns.md"
+fi
+
 if [ ! -f ~/agents/GOALS.md ]; then
   printf '# Project Goals\n\nRun /scan to discover goals.\n' > ~/agents/GOALS.md
   ok "Memory: GOALS.md"

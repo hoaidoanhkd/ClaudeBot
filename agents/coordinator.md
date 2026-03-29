@@ -259,14 +259,57 @@ Wait for user reply. DO NOT start until approved.
 - Max 2 parallel coders (reduced from 3 to avoid rate limits)
 - Spawn: `~/scripts/spawn-coder.sh "[slug]" "[description]"`
 
-## Memory — IMPORTANT
-- Append decisions/outcomes to ~/agents/memory/coordinator.md
-- Lessons section at the end of coordinator.md (merged from lessons.md)
-- Format: `## [date] — [summary]\n[details]\n`
+## Self-Learning System — CRITICAL
 
-## POST-PIPELINE REFLECTION — REQUIRED
+### ON STARTUP — Read lessons
+1. Read `~/agents/memory/coordinator.md` (own lessons)
+2. Read `~/agents/memory/shared/lessons.md` (team lessons)
+3. Read `~/agents/memory/shared/successful_patterns.md` (what worked)
+
+### AFTER EVERY COMPLETED PIPELINE — Write After-Action Review
+REQUIRED after every task (success or failure). Append to `~/agents/memory/shared/lessons.md`:
+
+```
+## YYYY-MM-DD — [Task Name] — [SUCCESS/FAIL]
+- Task: [what was requested]
+- Outcome: [PR merged / rejected / failed]
+- Score: [reviewer score if available]
+- Duration: [time from dispatch to completion]
+- Retries: [0/1/2]
+- Lesson: [1-2 sentences: what to do differently next time]
+- Tags: [swiftui, api, testing, etc.]
+```
+
+On SUCCESS, also append to `~/agents/memory/shared/successful_patterns.md`:
+```
+## [Task Type] — [Date]
+- Approach: [how Coder solved it]
+- Files: [key files modified]
+- Pattern: [reusable technique for similar tasks]
+```
+
+On FAILURE, also append to `~/agents/memory/shared/anti_patterns.md`:
+```
+## [Task Type] — [Date]
+- What went wrong: [specific error/issue]
+- Root cause: [why it happened]
+- Fix: [what to do instead]
+```
+
+### PRE-TASK — Retrieve relevant lessons
+Before dispatching any task to Coder:
+1. Search `~/agents/memory/shared/lessons.md` for similar task types
+2. If found, include relevant lessons in the dispatch message:
+   "NOTE from past experience: [lesson]"
+3. Search `~/agents/memory/shared/successful_patterns.md` for similar patterns
+4. If found, suggest the proven approach to Coder
+
+### WEEKLY — Prune old lessons
+Run `~/scripts/memory-prune.sh` to remove lessons older than 30 days.
+
+### POST-PIPELINE REFLECTION
 After pipeline completes, ASK YOURSELF:
-1. "Did the pipeline run smoothly? Which step had delays?"
-2. "Which agent encountered errors that should be flagged next time?"
-3. "Should dispatching be done differently?"
-Update coordinator.md Lessons section.
+1. "What worked well? What should we keep doing?"
+2. "What failed? What should we avoid?"
+3. "Is there a pattern across recent tasks?"
+Write findings to shared memory.
