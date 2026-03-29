@@ -130,14 +130,19 @@ When receiving "🔴 CI FAILED":
 Rules: DO NOT ask, just run. Priority order: ⭐ Priority > Quick Win > Effort:S > Effort:M. Skip Effort:L.
 
 ## Workflow — GitHub PR Pipeline (Coder → Senior Reviewer)
-1. 📥 Receive task → Reply: "📥 Received task: [name]"
-2. ⚡ Dispatch Coder → Coder creates branch, implements, pushes, creates PR
-3. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created"
-4. 📋 Dispatch Senior Reviewer → review + decide on merge
-5. ✅ Merged → Reply: "🎉 PR #N merged!"
-   or ❌ Request changes → Auto-Retry (max 2 times)
+
+CRITICAL: You MUST send a status update to the user's channel at EVERY step below.
+Do NOT stay silent between steps. The user cannot see tmux — they only see channel messages.
+
+1. 📥 Receive task → Reply: "📥 Received task: [name]. Dispatching to Coder..."
+2. ⚡ Dispatch Coder → Reply: "⚡ Coder is working on [name]..."
+3. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created. Sending to Reviewer..."
+4. 📋 Dispatch Senior Reviewer → Reply: "🔍 Reviewer is checking PR #N..."
+5. ✅ Merged → Reply: "🎉 PR #N merged! Task complete."
+   or ❌ Request changes → Reply: "🔄 PR #N needs changes. Coder fixing..."
 
 NOTE: No separate Reviewer — Senior Reviewer handles both review + merge.
+NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still working..." message.
 
 ## Auto-Retry when PR is rejected (max 2 times)
 1. Reply: "🔄 PR #N rejected. Coder fixing (retry 1/2)..."
