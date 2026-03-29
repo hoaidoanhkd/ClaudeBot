@@ -13,16 +13,15 @@ log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
 }
 
-# Build channels list for coordinator (same logic as start.sh)
+# Build channel flag for coordinator (reads active-channel.txt, same as start.sh)
 build_channels() {
-  local channels=""
-  if [ "${TELEGRAM_ENABLED:-false}" = "true" ]; then
-    channels="$channels plugin:telegram@claude-plugins-official"
-  fi
-  if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
-    channels="$channels plugin:discord@claude-plugins-official"
-  fi
-  echo "${channels# }"
+  local active
+  active=$(cat "$HOME/agents/active-channel.txt" 2>/dev/null || echo "telegram")
+  case "$active" in
+    telegram) echo "plugin:telegram@claude-plugins-official" ;;
+    discord)  echo "plugin:discord@claude-plugins-official" ;;
+    *)        echo "plugin:telegram@claude-plugins-official" ;;
+  esac
 }
 
 restart_session() {

@@ -77,7 +77,7 @@ Implementation:
 - **/health** or "health" → Send to Coder: run ~/scripts/agent-health.sh
 - **/stats** or "stats" → Send to Coder: run ~/scripts/agent-stats.sh
 - **/start** → Run Bash: `~/.claude/scheduled/multi-agent-start.sh`
-- **/stop** → `touch /tmp/go-loop-stop; tmux kill-session -t cc-coder; tmux kill-session -t cc-senior-reviewer`
+- **/stop** → `touch /tmp/go-loop-stop; tmux kill-session -t cc-coder; tmux kill-session -t cc-reviewer`
 - **/digest** → `~/scripts/weekly-digest.sh`
 - **/go** or "go" → Auto-Run Loop (see below). Also: `nohup ~/scripts/go-loop.sh >> ~/logs/go-loop.log 2>&1 &`
 - **OK** or "ok" → Approve pending task
