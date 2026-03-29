@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Shell linting with shellcheck
+        run: |
+          echo "Running shellcheck on all .sh files..."
+          shopt -s globstar nullglob
+          files=(install.sh uninstall.sh start.sh scripts/*.sh agents/hooks/*.sh)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No .sh files found"
+            exit 1
+          fi
+          echo "Files to check: ${files[*]}"
+          shellcheck --severity=warning "${files[@]}"
+          echo "shellcheck passed"
+
+      - name: Verify no hardcoded personal data
+        run: |
+          echo "Checking for hardcoded personal data..."
+          found=0
+
+          # Check for hardcoded /Users/apple/ paths
+          echo "--- Checking for hardcoded /Users/apple/ paths ---"
+          if grep -rn '/Users/apple/' --include='*.sh' --include='*.yml' --include='*.yaml' --include='*.md' --include='*.env' --include='*.json' \
+            --exclude-dir=.git --exclude-dir=.github . ; then
+            echo "FAIL: Found hardcoded /Users/apple/ paths"
+            found=1
+          fi
+
+          # Check for Telegram chat IDs (numeric strings > 8 digits) in config files
+          echo "--- Checking for hardcoded Telegram chat IDs ---"
+          if grep -rPn '\b[0-9]{9,}\b' --include='*.env' --include='*.json' --include='*.yml' --include='*.yaml' \
+            --exclude-dir=.git --exclude-dir=.github . ; then
+            echo "FAIL: Found potential hardcoded chat IDs (numeric strings > 8 digits in config files)"
+            found=1
+          fi
+
+          # Check for bot tokens (pattern: bot followed by digits and colon)
+          echo "--- Checking for hardcoded bot tokens ---"
+          if grep -rPni 'bot[0-9]+:[A-Za-z0-9_-]+' --include='*.sh' --include='*.env' --include='*.json' --include='*.yml' --include='*.yaml' --include='*.md' \
+            --exclude-dir=.git --exclude-dir=.github . ; then
+            echo "FAIL: Found potential hardcoded bot tokens"
+            found=1
+          fi
+
+          if [ "$found" -ne 0 ]; then
+            echo "Personal data check FAILED"
+            exit 1
+          fi
+          echo "No hardcoded personal data found"
+
+      - name: Bash syntax check
+        run: |
+          echo "Running bash -n on all .sh files..."
+          shopt -s globstar nullglob
+          files=(install.sh uninstall.sh start.sh scripts/*.sh agents/hooks/*.sh)
+          status=0
+          for f in "${files[@]}"; do
+            if bash -n "$f"; then
+              echo "OK: $f"
+            else
+              echo "FAIL: $f"
+              status=1
+            fi
+          done
+          exit $status
+
+      - name: Verify required files exist
+        run: |
+          echo "Checking that all expected files are present..."
+          missing=0
+
+          required_files=(
+            # Core scripts
+            "install.sh"
+            "uninstall.sh"
+            "start.sh"
+            "config.env"
+            "README.md"
+            # Agent definitions
+            "agents/coordinator.md"
+            "agents/coder.md"
+            "agents/senior-reviewer.md"
+            "agents/researcher.md"
+            # Agent hooks
+            "agents/hooks/post_failure.sh"
+            # Commands
+            "commands/agents.md"
+            "commands/scan.md"
+            "commands/stats.md"
+            "commands/nudge.md"
+            "commands/parallel.md"
+            "commands/digest-run.md"
+            "commands/digest-status.md"
+            "commands/switch-project.md"
+            "commands/sync-goals.md"
+          )
+
+          for f in "${required_files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "OK: $f"
+            else
+              echo "MISSING: $f"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -ne 0 ]; then
+            echo "Required files check FAILED"
+            exit 1
+          fi
+          echo "All required files present"
