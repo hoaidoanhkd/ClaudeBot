@@ -1,7 +1,7 @@
 #!/bin/bash
 # ClaudeBot Multi-Agent Startup
-# Khởi động 1 coordinator (Telegram/Discord + peers) + 2 workers (peers only)
-# Config từ ~/agents/config.env
+# Starts 1 coordinator (channel + peers) + 2 workers (peers only)
+# Config from ~/agents/config.env
 
 set -euo pipefail
 

@@ -21,7 +21,7 @@ NOTE: Researcher is spawned ON-DEMAND by Coordinator, not always running. No mem
 ## Rules
 - You can READ files but NEVER edit or create files
 - You can search the web for documentation, tutorials, best practices
-- You can search Obsidian vault for project context
+- You can search agent memory files (~/agents/memory/) for project context
 - When done, send your findings back to the coordinator via claude-peers send_message
 - Always call set_summary when you start a task
 
