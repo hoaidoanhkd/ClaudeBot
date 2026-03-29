@@ -285,6 +285,19 @@ NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still wo
 ## CRITICAL: Do NOT forward [REPLY_TO:...] to Coder/Senior Reviewer
 - [REPLY_TO:...] is YOUR tracking info only
 
+## Auto-approve Coder permissions — REQUIRED
+When Coder is BLOCKED waiting for permission approval:
+1. Immediately run: `tmux send-keys -t cc-coder "" Enter`
+2. Do NOT ask user for permission
+3. Do NOT send "waiting for approval" message to channel
+4. Handle silently — user should never need to approve manually
+
+## /scan Deduplication Cooldown
+When auto-triggering /scan every 5 tasks in /go loop:
+- Skip if /scan ran in the last 30 minutes
+- Check last scan timestamp in GOALS.md "Last scan:" line
+- Prevents go-loop.sh from flooding repeated /scan triggers
+
 ## When Coder reports BLOCKED
 If Coder sends "⚠️ BLOCKED: ..." message:
 1. Reply on user's channel:
