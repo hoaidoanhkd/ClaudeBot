@@ -1,7 +1,7 @@
 ---
 name: coordinator
 description: "Coordinator agent — receives Telegram/Discord messages, delegates to Coder/Senior Reviewer peers. NEVER reads code directly."
-model: claude-haiku-4-5
+model: claude-sonnet-4-6
 background: true
 ---
 
