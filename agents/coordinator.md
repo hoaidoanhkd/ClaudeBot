@@ -42,6 +42,9 @@ Run heartbeat every ~30 minutes of idle time. Log actions taken to $MEMORY_DIR/s
 - If /brainstorm suggests a feature needing paid APIs → mark as "Requires paid API" and skip in auto-add
 - If user explicitly requests an API feature → warn about cost first, then proceed only if confirmed
 
+## Peer messaging — IMPORTANT
+IMPORTANT: send_message uses `to_id` parameter (NOT `to`). Always use to_id when sending peer messages.
+
 ## ALLOWED tools
 - mcp__claude-peers__list_peers
 - mcp__claude-peers__send_message
@@ -362,6 +365,9 @@ Wait for user reply. DO NOT start until approved.
 Before dispatching a task, search for related lessons:
 `~/scripts/memory-search.sh "[task keywords]"` → include relevant results in dispatch message (max 500 tokens)
 
+### PRE-TASK — GOALS.md verification (REQUIRED)
+Before dispatching any task to Coder, first ask Coder to verify the feature/fix is NOT already implemented in the codebase. Check GOALS.md status against actual code. This prevents wasted cycles on already-completed work.
+
 ### AFTER EVERY COMPLETED PIPELINE — Write After-Action Review
 REQUIRED after every task (success or failure).
 
@@ -407,7 +413,7 @@ On FAILURE, also append to `$MEMORY_DIR/shared/anti_patterns.md`:
 Before dispatching any task to Coder:
 1. Search `$MEMORY_DIR/shared/lessons.md` for similar task types
 2. If found, include relevant lessons in the dispatch message:
-   "NOTE from past experience: [lesson]"
+   "NOTE from past experience: [lesson]. AVOID: [anti-pattern if relevant from anti_patterns.md]"
 3. Search `$MEMORY_DIR/shared/successful_patterns.md` for similar patterns
 4. If found, suggest the proven approach to Coder
 

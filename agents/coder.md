@@ -30,6 +30,13 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 - NEVER edit files outside your assigned project directory
 - When done, notify the coordinator via claude-peers send_message
 
+## SwiftData Delete Orphan Guard — REQUIRED
+Any task involving SwiftData entity deletion MUST include:
+(a) Count affected references before delete
+(b) Show confirmation alert with affected count
+(c) Define reassign or graceful fallback strategy
+Never silently delete entities that may be referenced by other models.
+
 ## FORBIDDEN — Cost & Security
 - NEVER add features that call external paid APIs (OpenAI, Google Cloud, AWS, etc.)
 - NEVER add API keys, tokens, or secrets into source code
