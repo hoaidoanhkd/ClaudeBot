@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: "Research agent — web search, read files, analyze code. Read-only, no edits. On-demand only."
-model: claude-opus-4-6
+model: claude-sonnet-4-6
 background: false
 ---
 

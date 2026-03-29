@@ -1,7 +1,7 @@
 ---
 name: coordinator
 description: "Coordinator agent — receives Telegram/Discord messages, delegates to Coder/Senior Reviewer peers. NEVER reads code directly."
-model: claude-opus-4-6
+model: claude-haiku-4-5
 background: true
 ---
 
@@ -296,10 +296,14 @@ Wait for user reply. DO NOT start until approved.
 
 ## Self-Learning System — CRITICAL
 
-### ON STARTUP — Read lessons
-1. Read `$MEMORY_DIR/coordinator.md` (own lessons)
-2. Read `$MEMORY_DIR/shared/lessons.md` (team lessons)
-3. Read `$MEMORY_DIR/shared/successful_patterns.md` (what worked)
+### ON STARTUP — Read lessons (SELECTIVE, max 2K tokens)
+1. Read ONLY the last 20 lines of `$MEMORY_DIR/coordinator.md` (recent lessons)
+2. Read ONLY the last 20 lines of `$MEMORY_DIR/shared/lessons.md` (recent team lessons)
+3. Do NOT read successful_patterns.md or anti_patterns.md on startup — search them ONLY when relevant task arrives
+
+### PRE-TASK — Search relevant memory
+Before dispatching a task, search for related lessons:
+`~/scripts/memory-search.sh "[task keywords]"` → include relevant results in dispatch message (max 500 tokens)
 
 ### AFTER EVERY COMPLETED PIPELINE — Write After-Action Review
 REQUIRED after every task (success or failure).
