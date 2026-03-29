@@ -1,7 +1,7 @@
 #!/bin/bash
 # cost-tracker.sh — Estimate token cost per agent from session data
 # Usage: cost-tracker.sh [--today | --week | --all]
-set -euo pipefail
+set -uo pipefail
 source "$HOME/agents/config.env"
 
 PERIOD="${1:---today}"
