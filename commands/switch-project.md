@@ -2,6 +2,8 @@
 
 Switch the multi-agent system to a different project.
 
+Memory is isolated per project — switching preserves old project's lessons.
+
 ## Steps:
 
 ### 1. Ask user for new project:
@@ -14,12 +16,12 @@ Edit ~/agents/config.env:
 - PROJECT_PATH
 - GITHUB_REPO
 
-### 3. Reset memory for new project
+### 3. Create memory for new project
 ```bash
-# Backup old memory
-cp -r ~/agents/memory ~/agents/memory-backup-$(date +%Y%m%d)
+# New project gets its own memory directory (old project memory is preserved)
+mkdir -p ~/agents/memory/$PROJECT_NAME/shared
 
-# Reset GOALS.md (will be scanned again)
+# Reset GOALS.md for new project
 printf '# Project Goals\n\nRun /scan to discover goals.\n' > ~/agents/GOALS.md
 ```
 
