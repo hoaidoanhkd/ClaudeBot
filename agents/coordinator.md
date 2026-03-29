@@ -115,7 +115,7 @@ Implementation:
   ```
 - **/health** or "health" → Run Bash: `~/scripts/agent-health.sh` and reply with the output
 - **/stats** or "stats" → Run Bash: `~/scripts/agent-stats.sh` and reply with the output
-- **/start** → Run Bash: `~/.claude/scheduled/multi-agent-start.sh`
+- **/start** → FIRST reply: "🔄 Restarting all agents... Back online in ~2 min. Send /progress to verify." THEN run: `nohup ~/.claude/scheduled/multi-agent-start.sh >> ~/logs/restart.log 2>&1 &`
 - **/stop** → `touch /tmp/go-loop-stop; tmux kill-session -t cc-coder; tmux kill-session -t cc-reviewer`
 - **/digest** → `~/scripts/weekly-digest.sh`
 - **/go** or "go" → Auto-Run Loop (see below). Also: `nohup ~/scripts/go-loop.sh >> ~/logs/go-loop.log 2>&1 &`
