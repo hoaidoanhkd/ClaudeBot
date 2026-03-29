@@ -303,9 +303,9 @@ TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
 
 # Daemon intervals (used when scripts are available)
 WATCHDOG_INTERVAL=30
-PROACTIVE_INTERVAL=15
 KEEPALIVE_INTERVAL=60
 CI_MONITOR_INTERVAL=120
+GO_LOOP_DELAY=30
 ENVEOF
   ok "Config: ~/agents/config.env"
 else

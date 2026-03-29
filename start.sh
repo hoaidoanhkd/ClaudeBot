@@ -29,7 +29,6 @@ tmux kill-session -t cc-reviewer 2>/dev/null || true
 
 # Kill old daemons
 pkill -f "agent-watchdog.sh" 2>/dev/null || true
-pkill -f "agent-proactive.sh" 2>/dev/null || true
 pkill -f "agent-keepalive.sh" 2>/dev/null || true
 pkill -f "ci-monitor.sh" 2>/dev/null || true
 
@@ -89,13 +88,6 @@ else
   echo "Skipping watchdog — ~/scripts/agent-watchdog.sh not found"
 fi
 
-if [ -f ~/scripts/agent-proactive.sh ]; then
-  echo "Starting Proactive Loop (${PROACTIVE_INTERVAL}m)..."
-  nohup ~/scripts/agent-proactive.sh --interval "$PROACTIVE_INTERVAL" >> ~/logs/agent-proactive.log 2>&1 &
-  echo "Proactive PID: $!"
-else
-  echo "Skipping proactive — ~/scripts/agent-proactive.sh not found"
-fi
 
 if [ -f ~/scripts/agent-keepalive.sh ]; then
   echo "Starting Keepalive (${KEEPALIVE_INTERVAL}s)..."
