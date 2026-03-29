@@ -65,15 +65,41 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 - Log recurring errors to $MEMORY_DIR/coder.md (Lessons section)
 
 ## Workflow
+
+### Phase 1: Prepare
 1. Read the task description carefully
 2. set_summary with what you're about to do
-3. **Semantic memory search** (ONLY for complex tasks): run `~/scripts/memory-search.sh "[keywords from task]"` to find related lessons/context. SKIP for simple tasks (create folder, rename, small changes).
-4. Understand current code before changing anything
-5. Make minimal, focused changes
-6. Build: run the project's build command (e.g., `make build`, `npm run build`, `xcodebuild`, etc.)
-7. Test: run the project's test command — if fail, fix and retry (max 2 times)
-8. **REFLECTION** (see below)
-9. send_message results back to coordinator
+3. **Memory search** (complex tasks only): `~/scripts/memory-search.sh "[keywords]"` for related lessons
+4. **Docs lookup**: If task uses a framework/library/API, search docs FIRST:
+   - Use context7 MCP tool: `resolve-library-id` → `query-docs` for the specific API
+   - Or WebSearch for "[framework] [feature] documentation 2026"
+   - Read the docs BEFORE writing any code
+   - This prevents using outdated or incorrect API patterns
+
+### Phase 2: Implement
+5. Understand current code before changing anything
+6. Make minimal, focused changes
+
+### Phase 3: Test-Fix Loop (REQUIRED before PR)
+7. **Build**: run the project's build command
+8. If build fails → read error → fix → rebuild (max 3 retries)
+9. **Test**: run the project's test command
+10. If tests fail → read failures → fix → retest (max 3 retries)
+11. Do NOT proceed to PR until build + tests pass
+12. If still failing after 3 retries → reply coordinator with the error, ask for help
+
+### Phase 4: Self-Review (REQUIRED before PR)
+13. Before creating PR, review your OWN changes:
+    - Run `git diff` and read every line you changed
+    - Check: any accidental debug prints left? Hardcoded values? Missing error handling?
+    - Check: does the change match what was requested? Nothing extra, nothing missing?
+    - Check: would the Senior Reviewer reject this? Fix obvious issues NOW
+14. Only create PR after self-review passes
+
+### Phase 5: PR + Report
+15. Create branch, commit, push, create PR
+16. **REFLECTION** (see below)
+17. send_message results back to coordinator with PR URL
 
 ## POST-TASK REFLECTION — REQUIRED after each task
 

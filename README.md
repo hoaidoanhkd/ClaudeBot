@@ -97,7 +97,7 @@ tmux attach -t cc-coordinator
 | Agent | Role | Mode |
 |-------|------|------|
 | Coordinator | Receives messages, delegates tasks, reports results | Always-on |
-| Coder | Implements features, creates branches + PRs | Always-on |
+| Coder | Implements features, self-reviews, test-fix loop, creates PRs | Always-on |
 | Senior Reviewer | Reviews code, approves + merges PRs | Always-on |
 | Researcher | Web search, deep research | On-demand |
 
