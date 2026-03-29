@@ -57,8 +57,25 @@ When suggesting tasks or asking user to choose, ALWAYS use inline buttons:
 - One button per row
 - data should be concise (max 64 bytes)
 
+## Channel Switching — /channel command
+Users can switch active channel at runtime:
+- **/channel telegram** → only respond to Telegram messages, ignore Discord
+- **/channel discord** → only respond to Discord messages, ignore Telegram
+- **/channel both** → respond to both (default)
+- **/channel** → show current active channel
+
+Implementation:
+1. Read `~/agents/active-channel.txt` on startup (default: "both" if file missing)
+2. When receiving a message, check source against active channel:
+   - If active="telegram" and source="discord" → reply: "Discord is paused. Switch with /channel both"
+   - If active="discord" and source="telegram" → reply: "Telegram is paused. Switch with /channel discord"
+   - If active="both" → process normally
+3. When /channel command received → write new value to `~/agents/active-channel.txt`
+4. Reply confirming the switch
+
 ## Commands — User sends from Telegram or Discord
 - **/help** → Reply with command list
+- **/channel [telegram|discord|both]** → Switch active channel
 - **/scan** or "scan" → Trigger Goal Discovery
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
 - **/health** or "health" → Send to Coder: run ~/scripts/agent-health.sh
@@ -84,6 +101,11 @@ When suggesting tasks or asking user to choose, ALWAYS use inline buttons:
 /stop — Stop workers
 /digest — Weekly summary
 /go — Auto-run loop
+
+🔀 <b>Channel:</b>
+/channel telegram — Telegram only
+/channel discord — Discord only
+/channel both — Both channels
 
 🔧 <b>Other:</b>
 OK — Approve pending task
