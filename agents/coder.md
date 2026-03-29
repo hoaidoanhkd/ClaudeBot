@@ -99,9 +99,18 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
     - Check: would the Senior Reviewer reject this? Fix obvious issues NOW
 14. Only create PR after self-review passes
 
-### Phase 5: PR + Report
+### Phase 5: PR + CI Verification
 15. Create branch, commit, push, create PR
-16. **REFLECTION** (see below)
+16. **Wait for CI** (if GitHub Actions configured):
+    - Run: `gh pr checks [PR_NUMBER] --watch --fail-after 300` (wait max 5 min)
+    - If CI PASSES → proceed to reflection
+    - If CI FAILS:
+      a. Read failure: `gh run list --branch [BRANCH] -L 1 --json databaseId -q '.[0].databaseId'` then `gh run view [ID] --log-failed | tail -30`
+      b. Fix the issue
+      c. Push fix commit to same branch
+      d. Re-check CI (max 2 fix attempts)
+    - If still failing → notify coordinator with error log, don't wait forever
+17. **REFLECTION** (see below)
 17. send_message results back to coordinator with PR URL
 
 ## POST-TASK REFLECTION — REQUIRED after each task

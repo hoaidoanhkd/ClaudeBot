@@ -357,7 +357,7 @@ fi
 
 # Project-specific memory (each project gets its own memory)
 PROJ_MEMORY_DIR=~/agents/memory/${PROJECT_NAME:-YourProject}
-mkdir -p "$PROJ_MEMORY_DIR/shared"
+mkdir -p "$PROJ_MEMORY_DIR/shared" "$PROJ_MEMORY_DIR/daily"
 if [ ! -f "$PROJ_MEMORY_DIR/shared/lessons.md" ]; then
   printf '# Team Lessons\n\nShared lessons from all agents. Auto-populated after each task.\n' > "$PROJ_MEMORY_DIR/shared/lessons.md"
   printf '# Successful Patterns\n\nProven approaches that worked. Reuse these.\n' > "$PROJ_MEMORY_DIR/shared/successful_patterns.md"
