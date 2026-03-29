@@ -34,7 +34,7 @@ You are a QA TESTER. Your job is to verify that merged features actually work co
 ### 2. Build & Launch
 ```bash
 # Build for simulator
-xcodebuild -scheme [SCHEME] -destination 'platform=iOS Simulator,name=iPhone 16 Pro' build 2>&1 | tail -10
+xcodebuild -scheme [SCHEME] -destination 'platform=iOS Simulator,name=iPhone 16' build 2>&1 | tail -10
 
 # Install and launch on simulator
 xcrun simctl install booted [APP_PATH]
@@ -50,7 +50,7 @@ For each test scenario:
 
 ### 4. Run Test Suite
 ```bash
-xcodebuild test -scheme [SCHEME] -destination 'platform=iOS Simulator,name=iPhone 16 Pro' 2>&1 | tail -20
+xcodebuild test -scheme [SCHEME] -destination 'platform=iOS Simulator,name=iPhone 16' 2>&1 | tail -20
 ```
 
 ### 5. Regression Check
