@@ -95,6 +95,7 @@ Implementation:
 - **/channel [telegram|discord]** → Switch active channel
 - **/scan** or "scan" → Goal Discovery (code scan + competitor research)
 - **/brainstorm** → Generate new feature ideas (web research + synthesis)
+- **/qa** → Batch QA test (see below)
 - **/status** or "status" → Read ~/agents/GOALS.md, summarize pending/done
 - **/cost** → Run `~/scripts/cost-tracker.sh --today` and reply with token/cost estimates
 - **/rollback [PR#]** → Run `~/scripts/rollback.sh [PR#]` to revert a merged PR
@@ -139,6 +140,7 @@ Implementation:
 ⚡ <b>Actions:</b>
 /start — Restart agents
 /stop — Stop workers
+/qa — Batch QA test recent PRs
 /evolve — Self-improve agent rules
 /digest — Weekly summary
 /go — Auto-run loop
@@ -159,6 +161,27 @@ When receiving "🔴 CI FAILED":
 2. Dispatch Coder: fix + create PR
 3. Dispatch Senior Reviewer: review + auto-merge
 4. Reply with result
+
+## /qa — Batch QA Test
+When receiving "/qa" or auto-triggered every 5 tasks in /go loop:
+
+1. Reply: "🧪 Starting batch QA test..."
+2. Get recent PRs: `gh pr list --state merged --limit 5 --json number,title`
+3. Spawn QA Tester:
+   Run Bash: `tmux new-session -d -s cc-qa "cd $PROJECT_PATH && claude --enable-auto-mode --agent qa-tester --dangerously-load-development-channels server:claude-peers"`
+   Wait 10s, then send-keys Enter, wait 3s
+4. Send task to QA via tmux:
+   `tmux send-keys -t cc-qa "Batch QA: Test these recent PRs: [list PR titles]. Build the project, run all tests, check for crashes, locale issues, edge cases. Report all bugs found." Enter`
+5. Reply: "🧪 QA Tester checking [N] recent PRs..."
+6. Wait for QA to finish (check tmux output periodically)
+7. Read QA results from tmux: `tmux capture-pane -t cc-qa -p`
+8. Kill QA session: `tmux kill-session -t cc-qa`
+9. If bugs found:
+   - Reply: "❌ QA found [N] bugs: [list]. Dispatching Coder to fix..."
+   - Dispatch Coder to fix all bugs in one PR
+10. If no bugs:
+    - Reply: "✅ QA passed! All recent PRs verified."
+11. Log results to $MEMORY_DIR/shared/lessons.md
 
 ## /evolve — Self-Improvement Cycle
 When receiving "/evolve":
@@ -213,9 +236,10 @@ When receiving "/evolve":
 4. Dispatch pipeline: Coder → PR → Senior Reviewer → auto-merge
 5. Task done → pick next task
 6. **Every 5 tasks** → auto /scan (codebase changed, find new issues)
-7. **Every 6 hours** → auto /brainstorm (research new features, auto-score, auto-add)
-8. **Every 20 tasks** → auto /evolve (analyze patterns, propose improvements to agent rules)
-8. STOP when:
+7. **Every 5 tasks** → auto /qa (batch QA test, see below)
+8. **Every 6 hours** → auto /brainstorm (research new features, auto-score, auto-add)
+9. **Every 20 tasks** → auto /evolve (analyze patterns, propose improvements to agent rules)
+10. STOP when:
    - /stop → "🛑 Loop stopped."
    - No tasks left → auto /scan → still none → auto /brainstorm → still none → "🎉 All done!"
    - 3 consecutive failures → "❌ 3 fails, stopping."
@@ -241,17 +265,9 @@ Do NOT stay silent between steps. The user cannot see tmux — they only see cha
    Reply: "⚡ Coder is working on [name]..."
 4. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created. Sending to Reviewer..."
 5. 📋 Dispatch Senior Reviewer → Reply: "🔍 Reviewer is checking PR #N..."
-6. ✅ Merged → Reply: "🎉 PR #N merged!"
+6. ✅ Merged → Reply: "🎉 PR #N merged! Task complete."
    or ❌ Request changes → Reply: "🔄 PR #N needs changes. Coder fixing..."
-7. 🧪 **QA Testing** (for Effort:M and Effort:L tasks only, skip for Effort:S):
-   - Spawn QA Tester agent: `claude --enable-auto-mode --agent qa-tester --dangerously-load-development-channels server:claude-peers`
-   - Send: "Test PR #N: [feature name]. Verify: [acceptance criteria from spec]"
-   - Reply: "🧪 QA Tester verifying feature..."
-   - QA replies with report → Reply: "✅ QA passed! Task complete." or "❌ QA found issues: [list]. Dispatching fix..."
-   - If QA fails → dispatch Coder to fix → new PR → Reviewer → QA again (max 1 retry)
 
-NOTE: Senior Reviewer handles review + merge. QA Tester verifies post-merge.
-NOTE: Skip QA for Effort:S tasks (quick wins) to save tokens.
 NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still working..." message.
 
 ## Auto-Retry when PR is rejected (max 2 times)

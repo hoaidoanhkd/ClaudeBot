@@ -106,6 +106,7 @@ You send a message (Telegram/Discord)
 | `/stop` | Stop the loop |
 | `/progress` | Status dashboard (🟢 RUNNING / 🟡 WAITING / 🔴 IDLE / 🔵 SCANNING) |
 | `/status` | Show goals progress |
+| `/qa` | Batch QA test recent PRs for bugs |
 | `/health` | Agent health check |
 | `/scan` | Scan code + research competitors → add goals |
 | `/brainstorm` | Research new features, auto-score, auto-add best ones |
