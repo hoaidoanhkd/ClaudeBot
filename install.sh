@@ -184,33 +184,29 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
     fi
   fi
 
-  # 5. Communication channels
+  # 5. Communication channel (only 1 active at a time)
   echo ""
-  echo -e "  ${DIM}Choose how to control your agents:${NC}"
-  echo -e "    ${BOLD}1${NC}) Telegram only"
-  echo -e "    ${BOLD}2${NC}) Discord only"
-  echo -e "    ${BOLD}3${NC}) Both available (switch with /channel command)"
+  echo -e "  ${DIM}Choose your channel (only 1 active at a time):${NC}"
+  echo -e "    ${BOLD}1${NC}) Telegram ${DIM}(recommended — easiest setup)${NC}"
+  echo -e "    ${BOLD}2${NC}) Discord"
   echo ""
 
-  CHANNEL_CHOICE=$(prompt "Channel setup (1-3)" "1")
-  TELEGRAM_ENABLED="false"
-  DISCORD_ENABLED="false"
+  CHANNEL_CHOICE=$(prompt "Channel (1-2)" "1")
   TELEGRAM_CHAT_ID="your-chat-id"
+  NEED_TELEGRAM_PLUGIN=false
+  NEED_DISCORD_PLUGIN=false
 
-  ACTIVE_CHANNEL="telegram"
   case "$CHANNEL_CHOICE" in
-    1) TELEGRAM_ENABLED="true"; ACTIVE_CHANNEL="telegram" ;;
-    2) DISCORD_ENABLED="true"; ACTIVE_CHANNEL="discord" ;;
-    3) TELEGRAM_ENABLED="true"; DISCORD_ENABLED="true"; ACTIVE_CHANNEL="telegram" ;;
-    *) warn "Invalid choice, defaulting to Telegram only"; TELEGRAM_ENABLED="true" ;;
+    1) ACTIVE_CHANNEL="telegram" ;;
+    2) ACTIVE_CHANNEL="discord" ;;
+    *) warn "Invalid choice, defaulting to Telegram"; ACTIVE_CHANNEL="telegram" ;;
   esac
   mkdir -p ~/agents
   echo "$ACTIVE_CHANNEL" > ~/agents/active-channel.txt
   ok "Active channel: $ACTIVE_CHANNEL"
 
   # Telegram setup
-  NEED_TELEGRAM_PLUGIN=false
-  if [ "$TELEGRAM_ENABLED" = "true" ]; then
+  if [ "$ACTIVE_CHANNEL" = "telegram" ]; then
     echo ""
     if grep -q '"telegram@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
       ok "Telegram plugin already installed"
@@ -232,8 +228,7 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   fi
 
   # Discord setup
-  NEED_DISCORD_PLUGIN=false
-  if [ "$DISCORD_ENABLED" = "true" ]; then
+  if [ "$ACTIVE_CHANNEL" = "discord" ]; then
     echo ""
     if grep -q '"discord@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
       ok "Discord plugin already installed"
@@ -303,10 +298,7 @@ PROJECT_TYPE="${PROJECT_TYPE}"
 AGENTS="coordinator,coder,reviewer"
 LOG_DIR="\$HOME/logs"
 
-# Channels (set to "true" to enable)
-TELEGRAM_ENABLED="${TELEGRAM_ENABLED}"
-DISCORD_ENABLED="${DISCORD_ENABLED}"
-
+# Active channel stored in ~/agents/active-channel.txt
 TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
 
 # Daemon intervals (used when scripts are available)
@@ -388,11 +380,7 @@ if [ -n "${PROJECT_NAME:-}" ]; then
   else
     echo -e "  Telegram:     ${DIM}not configured${NC}"
   fi
-  if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
-    echo -e "  Discord:      ${CYAN}enabled${NC}"
-  else
-    echo -e "  Discord:      ${DIM}disabled${NC}"
-  fi
+  echo -e "  Channel:      ${CYAN}${ACTIVE_CHANNEL}${NC}"
   echo -e "  Config:       ${DIM}~/agents/config.env${NC}"
   if [ "$PLIST_UPDATED" = true ]; then
     echo -e "  Launchd:      ${DIM}~/Library/LaunchAgents/com.claudebot.agents.plist${NC}"
@@ -420,22 +408,23 @@ echo -e "  ${STEP}. Start agents:  ${BOLD}~/.claude/scheduled/multi-agent-start.
 STEP=$((STEP + 1))
 
 # Pairing instructions
-if [ "${DISCORD_ENABLED:-false}" = "true" ]; then
+if [ "${ACTIVE_CHANNEL:-telegram}" = "discord" ]; then
   echo -e "  ${STEP}. ${YELLOW}Pair Discord${NC}:"
   echo -e "     a. DM your bot on Discord → bot replies with pairing code"
-  echo -e "     b. In coordinator tmux: ${BOLD}/discord:access pair <code>${NC}"
-  echo -e "     Attach to coordinator: ${DIM}tmux attach -t cc-coordinator${NC}"
+  echo -e "     b. In coordinator: ${BOLD}/discord:access pair <code>${NC}"
+  echo -e "     ${DIM}tmux attach -t cc-coordinator${NC}"
   STEP=$((STEP + 1))
-fi
-
-if [ "${TELEGRAM_ENABLED:-false}" = "true" ] && [ "${TELEGRAM_CHAT_ID:-}" = "your-chat-id" ]; then
-  echo -e "  ${STEP}. ${YELLOW}Pair Telegram${NC}: run ${BOLD}/telegram:access${NC} in coordinator"
-  STEP=$((STEP + 1))
+else
+  if [ "${TELEGRAM_CHAT_ID:-}" = "your-chat-id" ]; then
+    echo -e "  ${STEP}. ${YELLOW}Pair Telegram${NC}: run ${BOLD}/telegram:access${NC} in coordinator"
+    echo -e "     ${DIM}tmux attach -t cc-coordinator${NC}"
+    STEP=$((STEP + 1))
+  fi
 fi
 
 echo -e "  ${STEP}. Send a message to your bot — it should reply!"
 if [ "$PLIST_UPDATED" = true ]; then
-  echo -e "  ${DIM}*${NC} Auto-start:    launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist"
+  echo -e "  ${DIM}*${NC} Auto-start: launchctl load ~/Library/LaunchAgents/com.claudebot.agents.plist"
 fi
-echo -e "  ${DIM}*${NC} Send ${BOLD}/go${NC} on Telegram to begin"
+echo -e "  ${DIM}*${NC} Switch channel later: send ${BOLD}/channel${NC} to your bot"
 echo ""

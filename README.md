@@ -56,7 +56,7 @@ Run in a **separate Terminal** (token is hidden when you type):
 ```bash
 bash ~/Desktop/Projects/ClaudeBot/setup-discord-token.sh
 ```
-Or run `./install.sh` again and choose "Both Telegram + Discord".
+Or run `./install.sh` again and choose Discord.
 
 ### 3. Install the Discord plugin (one time only)
 Open Claude Code (or attach to coordinator) and run:
