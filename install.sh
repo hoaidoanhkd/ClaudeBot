@@ -207,6 +207,16 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   # Telegram setup
   if [ "$TELEGRAM_ENABLED" = "true" ]; then
     echo ""
+    # Install plugin if not installed
+    if ! grep -q '"telegram@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
+      echo -e "  ${DIM}Installing Telegram plugin...${NC}"
+      claude -p "/plugin marketplace add anthropics/claude-plugins-official" &>/dev/null || true
+      claude -p "/plugin install telegram@claude-plugins-official" &>/dev/null && \
+        ok "Telegram plugin installed" || warn "Could not install plugin — install manually: /plugin install telegram@claude-plugins-official"
+    else
+      ok "Telegram plugin already installed"
+    fi
+
     TELEGRAM_CHAT_ID=$(prompt "Telegram chat ID (or Enter to skip)" "")
     if [ -z "$TELEGRAM_CHAT_ID" ]; then
       TELEGRAM_CHAT_ID="your-chat-id"
@@ -222,11 +232,28 @@ if [ ! -f ~/agents/config.env ] || [ "$RECONFIGURE" = true ]; then
   # Discord setup
   if [ "$DISCORD_ENABLED" = "true" ]; then
     echo ""
+    # Install plugin if not installed
+    if ! grep -q '"discord@claude-plugins-official"' ~/.claude/plugins/installed_plugins.json 2>/dev/null; then
+      echo -e "  ${DIM}Installing Discord plugin...${NC}"
+      claude -p "/plugin marketplace add anthropics/claude-plugins-official" &>/dev/null || true
+      claude -p "/plugin install discord@claude-plugins-official" &>/dev/null && \
+        ok "Discord plugin installed" || warn "Could not install plugin — install manually: /plugin install discord@claude-plugins-official"
+    else
+      ok "Discord plugin already installed"
+    fi
+
     DISCORD_BOT_TOKEN=$(prompt "Discord bot token (or Enter to skip)" "")
     if [ -n "$DISCORD_BOT_TOKEN" ]; then
       mkdir -p ~/.claude/channels/discord
       echo "DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}" > ~/.claude/channels/discord/.env
       ok "Saved Discord token"
+    fi
+
+    # Set open access policy for Discord
+    mkdir -p ~/.claude/channels/discord
+    if [ ! -f ~/.claude/channels/discord/access.json ]; then
+      echo '{"policy":"open"}' > ~/.claude/channels/discord/access.json
+      ok "Discord access policy set to open"
     fi
   fi
 

@@ -22,7 +22,7 @@ The installer checks dependencies, configures your project, sets up channels, an
 - **gh** CLI (GitHub)
 - **claude-peers-mcp** (inter-agent communication)
 
-> `install.sh` verifies all of these and tells you what's missing.
+> `install.sh` verifies all of these, tells you what's missing, and auto-installs Telegram/Discord plugins.
 
 ## Agents
 
