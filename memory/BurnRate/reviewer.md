@@ -52,3 +52,21 @@
 - Score: 8/10
 - Issues found: Snowball/avalanche cascade broken for debts[1..n] — `payment = minPay + (i == 0 ? extra : 0)` only gives extra to debt[0]. `totalMonthsElapsed` and `extra` only updated when i==0. All subsequent debts get only minPay. Correct fix: cumulativeExtra rolls to each debt, totalMonthsElapsed updates every iteration. Issue #160 filed.
 - Coder patterns: Decimal locale correct (both text fields use en_US_POSIX). payoffMonths uses .doubleValue not .intValue (anti-pattern learned). .rounded(.up) correct for ceiling. payment > 0 guard returns 999 cleanly. payoffDateLabel handles 999→"N/A" and pluralization. NetWorthView fix (#158) correct — undoes currentMonth transactions before snapshot loop, chart gets 6 proper points (1 live + 5 month-starts). Accessibility thorough. pbxproj entries correct.
+
+## 2026-03-30 — PR #161 — Subscription Detector + Fix Snowball Cascade (#160)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: none blocking. 3 nice-to-haves: (1) force unwrap Decimal(string:"0.05",locale:POSIX)! — safe but stylistic; (2) dismissedNames @State not persisted — session-only dismiss; (3) view normalize() simpler than engine's (no regex whitespace collapse) — potential mismatch for multi-space notes.
+- Coder patterns: Cascade fix correct — cumulativeExtra += minPay is equivalent to cumulativeExtra = previous_payment, correctly models freed minimum rolling to next debt. totalMonthsElapsed accumulates per debt for correct absolute payoff dates. Engine edge cases clean: 2+ occurrence guard, medianAmount > 0, allSatisfy tolerance, integer avg interval fine for ±5d ranges, non-overlapping frequency ranges. Decimal locale correct on engine: NSDecimalNumber for conversion (not intValue). Accessibility thorough. pbxproj entries (2 files) correct.
+
+## 2026-03-30 — PR #162 — Fix locale-unsafe Decimal parsing + intValue (7 fixes, 6 files)
+- Decision: MERGE
+- Score: 10/10
+- Issues found: none
+- Coder patterns: Perfect sweep. All 6 Decimal(string:) calls on user input now use en_US_POSIX locale. NSDecimalNumber.intValue in weeklyRecapBody correctly fixed to Int(.doubleValue) — change = repeating decimal likely (thisWeek/lastWeek ratio * 100). Mechanical, comprehensive, no scope creep.
+
+## 2026-03-30 — PR #163 — Fix 3 P1 UX issues (subscription persistence, debt validation, net worth nav)
+- Decision: MERGE
+- Score: 10/10
+- Issues found: none
+- Coder patterns: (1) AppStorage JSON encode/decode for Set<String> is correct — Set<String> is natively Codable, default "[]" decodes to empty set, try? on both sides handles failure gracefully, no concurrent write risk (dismiss only on user tap). (2) Debt validation: hasEditedPayment gate correctly suppresses error on initial load, only shows after first onChange. Red border + label + error text all correct. (3) NetWorthView hint → NavigationLink(SettingsView) clean: clear affordance label, accessible hint.

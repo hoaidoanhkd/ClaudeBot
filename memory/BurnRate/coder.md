@@ -28,3 +28,9 @@
 - Files: SubscriptionDetectorEngine.swift (new), SubscriptionDetectorView.swift (new), SettingsView.swift, DebtPayoffView.swift
 - Tricky parts: Set.insert() returns tuple, not Void — `withAnimation { set.insert(x) }` won't compile; must use `_ = set.insert(x)`.
 - Lesson: SwiftUI's withAnimation closure expects Void return. Always discard results of Set/Dictionary mutations inside withAnimation blocks.
+
+## 2026-03-30 — DashboardView Refactor
+- Approach: Extracted 4 sub-views (BalanceCard, NavigationCards, BudgetSummary, RecentTransactions) into Components/
+- Files: DashboardView.swift (620→259 LOC), 4 new component files, project.pbxproj
+- Tricky parts: Navigation cards deduped with shared navCard() helper. Kept chart sections inline since they're thin viewModel wrappers. Undo helper stays in Dashboard (tightly coupled).
+- Lesson: Use closures for actions, let for read-only data in extracted sub-views. Keep notification/onChange wiring in the orchestrator.

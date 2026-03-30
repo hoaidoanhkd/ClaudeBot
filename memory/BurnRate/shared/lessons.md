@@ -84,3 +84,46 @@
 - Quality: 8/10
 - Lesson: Debt payoff cascade algorithms must update the rolling extra payment AND elapsed months after EVERY debt is paid off, not just the first. Pattern: `cumulativeExtra = payment` (freed amount rolls to next debt) + `totalMonthsElapsed += months` inside the main loop, not inside an `if i == 0` block.
 - Tags: snowball, avalanche, cascade, financial-calc, debt-payoff, loop-logic
+
+## 2026-03-30 — Review PR #161 — MERGED
+- Quality: 9/10
+- Lesson: For cascade payment algorithms, `cumulativeExtra += minPay` each iteration is equivalent to `cumulativeExtra = previous_payment` — both correctly model freed minimum cascading to next debt. Always verify cascade loops update both the elapsed time counter AND the cumulative extra every iteration, not conditionally.
+- Tags: cascade, snowball, financial-calc, subscription-detection, algorithm
+
+## 2026-03-30 — Async Race Fix PR #156 — SUCCESS
+- Task: Fix UNUserNotificationCenter async race in scheduleBillReminders
+- Outcome: PR #156 merged, score 10/10
+- Lesson: getPendingNotificationRequests callback is async — all dependent scheduling logic must go INSIDE the completion handler, not outside. Pre-filter value-types before the callback to avoid closure capture issues.
+- Tags: notifications, async, concurrency, effort-s
+
+## 2026-03-30 — Net Worth Tracker PR #157 — SUCCESS
+- Task: Add assets/liabilities/net worth dashboard with 6-month trend chart
+- Outcome: PR #157 merged, score 8/10. Follow-up #158 (historical trend bias — undo current month before walking backwards).
+- Lesson: Historical reconstruction walking backwards must undo current period first. "Start from live balance and walk back" pattern requires undoing currentMonth txns before i=0 snapshot.
+- Tags: net-worth, swift-charts, date-math, effort-m
+
+## 2026-03-30 — Debt Payoff Calculator PR #159 — SUCCESS
+- Task: Snowball/avalanche debt payoff planner
+- Outcome: PR #159 merged, score 8/10. Follow-up #160 (snowball cascade only applied to debt[0]).
+- Lesson: Snowball cascade must roll through ALL debts — cumulativeExtra += minPay per paid-off debt. Common off-by-one: cascade guard `if i == 0` prevents rolling to subsequent debts.
+- Tags: debt, snowball, cascade, calculation, effort-m
+
+## 2026-03-30 — Subscription Detector PR #161 — SUCCESS
+- Task: Auto-detect recurring subscriptions from transaction history
+- Outcome: PR #161 merged, score 9/10
+- Lesson: Good detection: group by normalized description, ±5% amount tolerance (use Decimal(1)/20 not force-unwrap literal), 70%+ interval match rate, non-overlapping frequency ranges. session-only @State dismiss is acceptable for v1.
+- Tags: subscription-detection, algorithm, effort-m
+
+## 2026-03-30 — P0 Locale+intValue Fixes PR #162 — SUCCESS
+- Task: Fix 6× bare Decimal(string:) + 1× NSDecimalNumber.intValue across 6 files
+- Outcome: PR #162 merged, score 10/10
+- Duration: ~3m
+- Lesson: Anti-pattern rules in coder.md are working — Coder caught all 7 instances in one sweep. Mechanical correctness fixes are fastest when rules are clear.
+- Tags: locale, decimal, intValue, correctness, effort-s
+
+## 2026-03-30 — P1 UX Fixes PR #163 — SUCCESS
+- Task: Subscription persist, debt validation, net worth nav link (3 fixes)
+- Outcome: PR #163 merged, score 10/10
+- Duration: ~3m
+- Lesson: AppStorage JSON-encoded Set<String> is a clean pattern for persisting small sets (Set<String> is natively Codable, try? handles edge cases, default "[]" decodes to empty). Validation gates should suppress error on initial load (hasEditedPayment pattern).
+- Tags: appstorage, validation, ux, effort-s
