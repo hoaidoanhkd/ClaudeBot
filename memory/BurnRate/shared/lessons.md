@@ -236,3 +236,16 @@
 - Quality: 10/10
 - Lesson: Consistency PR — applying existing pattern to remaining view. Minimal risk, high UX value.
 - Tags: pull-to-refresh, settings, consistency
+
+## 2026-03-31 — Review PR #177 — MERGED
+- Quality: 9/10
+- Lesson: Good refactors improve clarity enough to surface latent bugs — like the liability padding condition that was always true. When extracting view components, re-reading the conditional logic can catch dead conditions that were invisible in the original monolith.
+- Tags: swiftui, refactor, networth, charts, decimal, bug-fix-bonus
+
+## 2026-03-31 — NetWorthView Refactor PR #177 — SUCCESS
+- Task: Decompose NetWorthView 416 LOC → 168 LOC + 3 sub-views
+- Outcome: PR #177 merged, score 9/10
+- Duration: ~25m
+- Retries: 0
+- Lesson: Decimal→Double round-trip in chart Y-axis labels (via formatted2) causes micro floating-point imprecision — negligible for personal finance but worth noting. Dead conditional padding inside isEmpty guard should be fixed.
+- Tags: swiftui, refactor, net-worth, charts, decomposition, effort-s

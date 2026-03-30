@@ -88,3 +88,9 @@
 - Files: NetWorthView.swift (refactored), NetWorthSummaryCard.swift (new), NetWorthAccountViews.swift (new), NetWorthTrendChart.swift (new), project.pbxproj
 - Tricky parts: Committed to main AGAIN — must always verify git branch before committing. #Preview with container.mainContext.insert() needs explicit `return` before the View expression. Missing `import SwiftData` in files using ModelConfiguration in previews.
 - Lesson: ALWAYS run `git branch` before committing to verify on feature branch. For #Preview with multi-line setup (let + insert), always use explicit `return` before the View. Always add `import SwiftData` when previews use ModelConfiguration/ModelContainer.
+
+## 2026-03-31 — Refactor MonthlySummaryView 364→67 LOC
+- Approach: Extracted 2 files: ChartViews (spending+category charts, chart mode enum) and SectionViews (empty state, month selector, delta section, comparison table). Build passed first try.
+- Files: MonthlySummaryView.swift (refactored), MonthlySummaryChartViews.swift (new), MonthlySummarySectionViews.swift (new), project.pbxproj
+- Tricky parts: None — clean extraction. Remembered to verify branch before committing this time.
+- Lesson: When a view has charts + non-chart sections, split into ChartViews + SectionViews files. Nested enums (like ChartMode) must be extracted to standalone when used across files.

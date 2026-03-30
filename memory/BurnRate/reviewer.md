@@ -130,3 +130,9 @@
 - Score: 10/10
 - Issues found: none
 - Coder patterns: Clean minimal PR. Exact match to SavingsGoalsView pattern (@Query auto-refresh + 300ms Task.sleep UX delay). Comment style consistent. Placement after .navigationTitle correct. All 5 main views now have .refreshable.
+
+## 2026-03-31 — PR #177 — NetWorthView refactor 416→168 LOC (3 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: none. 🟢 Decimal(doubleVal).formatted2 in chart Y-axis labels — Double→Decimal micro imprecision (negligible for personal finance).
+- Coder patterns: Applied PR #175 lesson — no custom abs(), uses stdlib. All sub-views pure let. #Preview on all 3 files. pbxproj 12 entries complete. Bug fix bonus: original breakdownSection used .padding(.top, liabilityAccounts.isEmpty ? 0 : 8) inside if !liabilityAccounts.isEmpty — always 8 (dead condition). New AccountBreakdownSection correctly uses assetAccounts.isEmpty ? 0 : 8. import Charts cleanly moved to NetWorthTrendChart.swift. NSDecimalNumber(decimal:).doubleValue locale-safe for Charts conversion.
