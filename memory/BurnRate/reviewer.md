@@ -100,3 +100,9 @@
 - Score: 9/10
 - Issues found: none blocking. 🟢 No #Preview blocks on 3 new files. 🟢 CategoryIconPicker accessibility label uses raw SF Symbol name ("tag.fill") not human name. 🟢 CategoryColorPicker uses hex string ("#FF6B6B") as accessibility label.
 - Coder patterns: Excellent. Pure let + closure pattern (proven in PR #164) correctly applied — CustomCategorySection/BuiltInCategorySection take only let values. @Binding used only for picker selection state (correct). onEdit/onDelete closures keep mutations in orchestrator. CategoryPickerOptions enum cleanly deduplicates icon/color arrays. pbxproj complete for all 3 files (PBXBuildFile + PBXFileReference + group + Sources). EditCategoryView correctly uses .onAppear to seed @State from model; save() directly mutates reference-type model. Type not editable in EditCategoryView — correct design.
+
+## 2026-03-31 — PR #172 — BudgetListView refactor 462→110 LOC (3 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: none. BudgetFormViews.swift at 212 LOC (slightly over 200 target) acceptable.
+- Coder patterns: Addressed PR #171 feedback — all 3 new files have #Preview blocks. Pure let + closure pattern correct throughout (ActiveBudgetsSection, InactiveBudgetsSection, BudgetSuggestionsBanner, BudgetEmptyState). BudgetViewModel mutations (toggleActive, delete, create, update) all called via closures in orchestrator. Decimal(string:locale:en_US_POSIX) locale-safe in both Add/Edit forms. "\(budget.monthlyLimit)" seed is safe — Decimal.description is locale-independent. pbxproj complete all 3 files.

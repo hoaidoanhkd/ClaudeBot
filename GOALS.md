@@ -10,15 +10,15 @@ Last scan: 2026-03-30
 ## 🔴 Critical Fixes
 
 - [ ] ⭐ Add unit tests for ViewModels and Services — coverage is at 1% (62 files, 1 test) — Effort: M
-- [ ] ⭐ Fix SwiftData queries — use #Predicate instead of in-memory filter (#124) — Effort: S
+- [x] ⭐ Fix SwiftData queries — use #Predicate instead of in-memory filter (#124) — PR #165
 - [ ] Empty code blocks cleanup (5 remaining) — Effort: S
 
 ---
 
 ## 🟠 Refactors (Large Files >300 LOC)
 
-- [ ] Refactor CategoryManagementView (496 LOC → sub-views) — Effort: S
-- [ ] Refactor BudgetListView (462 LOC → sub-views) — Effort: S
+- [x] Refactor CategoryManagementView (496→119 LOC) — PR #171
+- [x] Refactor BudgetListView (462→110 LOC) — PR #172
 - [ ] Refactor DebtPayoffView (459 LOC → sub-views) — Effort: S
 - [ ] Refactor NetWorthView (416 LOC → sub-views) — Effort: S
 - [ ] Refactor MonthlySummaryView (364 LOC → sub-views) — Effort: S
@@ -32,10 +32,10 @@ Last scan: 2026-03-30
 
 ## 🟡 Open Issues (from GitHub)
 
-- [ ] ⭐ Pull-to-refresh + skeleton loading states (#122) — Effort: S
-- [ ] Weekly spending recap notification (#140, weeklyRecapEnabled) — Effort: S
+- [x] ⭐ Pull-to-refresh + skeleton loading states (#122) — PR #167
+- [x] Weekly spending recap notification (#140, weeklyRecapEnabled) — PR #169
 - [ ] Multi-currency support — Account.currency field exists but unused (#120) — Effort: M
-- [ ] Fix weeklyRecapEnabled default to false (#138) — Effort: S
+- [x] Fix weeklyRecapEnabled default to false (#138) — PR #169
 - [ ] Service layer consolidation (#123) — Effort: M
 - [ ] Verify HistoryView refactor is complete (#118 — was 333→187 LOC) — Effort: S
 - [ ] Verify custom category management done (#121 — CategoryManagementView exists) — Effort: S
@@ -57,6 +57,11 @@ Last scan: 2026-03-30
 
 ## ✅ Recently Completed
 
+- [x] SwiftData #Predicate optimization (PR #165)
+- [x] Pull-to-refresh + skeleton loading (PR #167)
+- [x] Weekly recap notification + default fix (PR #169)
+- [x] CategoryManagementView refactor 496→119 LOC (PR #171)
+- [x] BudgetListView refactor 462→110 LOC (PR #172)
 - [x] DashboardView refactor 620→259 LOC (PR #164)
 - [x] P1 UX fixes: subscription persist, debt validation, nav link (PR #163)
 - [x] Locale-safe Decimal parsing + intValue fixes (PR #162)

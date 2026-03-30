@@ -187,3 +187,16 @@
 - Retries: 0
 - Lesson: Extracting shared picker logic into a dedicated enum (CategoryPickerOptions) eliminates duplication across Add/Edit forms. Pure let+closure pattern confirmed again. Reviewer flagged missing #Preview blocks on new files — add these going forward. Type field should not be editable in EditCategoryView (design decision).
 - Tags: swiftui, refactor, category, decomposition, effort-s
+
+## 2026-03-31 — Review PR #172 — MERGED
+- Quality: 9/10
+- Lesson: Coder incorporated feedback from PR #171 (missing #Preview blocks) immediately — all 3 new files have multiple preview cases. Shows good review loop. Decimal.description is locale-independent so "\(decimal)" seed in text fields is safe to read back with en_US_POSIX parser.
+- Tags: swiftui, refactor, let-closure-pattern, budget, preview, decimal
+
+## 2026-03-31 — BudgetListView Refactor PR #172 — SUCCESS
+- Task: Decompose BudgetListView 462 LOC → 110 LOC + 3 sub-views
+- Outcome: PR #172 merged, score 9/10
+- Duration: ~70m (multiple file creation approvals)
+- Retries: 0
+- Lesson: #Preview blocks on all new files is expected — reviewer confirmed improvement over PR #171. BudgetFormViews at 212 LOC (slightly over 200 target) is acceptable when it contains two complete forms. Decimal(string:, locale: "en_US_POSIX") confirmed correct; Decimal.description is locale-independent for seeding form fields.
+- Tags: swiftui, refactor, budget, decomposition, effort-s, preview
