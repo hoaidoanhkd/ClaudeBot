@@ -28,3 +28,15 @@
 - Score: 8/10
 - Issues found: Ghost notification after rule deletion — removePendingBillReminders only called when billRemindersEnabled=false; deleted rule IDs never purged. Fix: remove all burnrate.bill.* pending notifications at start of scheduleBillReminders before re-adding. Issue #153 created.
 - Coder patterns: Excellent overall. Triple-guard (isAuthorized && notificationsEnabled && billRemindersEnabled) is correct. Opt-in default false per anti-pattern rule. Static ID per rule (burnrate.bill.{uuid}) for deduplication. Past-date guard correct. 9AM UNCalendarNotificationTrigger correct. Static DateFormatter. Full accessibility (accessibilityLabel + adaptive accessibilityHint + .disabled(!notificationsEnabled)). onAppear rescheduling mitigates property-mutation gap.
+
+## 2026-03-30 — PR #154 — Spending Pace Alerts + Fix Ghost Bill Notifications (#153)
+- Decision: MERGE + follow-up issue #155
+- Score: 9/10
+- Issues found: Async race in ghost cleanup — getPendingNotificationRequests is async; scheduling loop runs synchronously after, so daemon could return snapshot including newly-added notifications if there's XPC lag, causing removal to wipe valid bill reminders. Low practical risk (daemon FIFO), but non-deterministic. Fix: put scheduling loop inside callback. Issue #155 filed.
+- Coder patterns: Excellent feature. Pace formula correct (spentRatio > expectedPace * 1.2). BudgetStatus.percentage confirmed 0.0-2.0 range (capped). Guard spendingRatio < 1.0 correctly excludes budget-exceeded (handled by checkBudgets). Min 5 days guard sensible. Per-day dedup key (categoryName-dayOfMonth) in-memory consistent with existing budget threshold pattern. resetMonthlyTracking extended correctly. Opt-in false. Accessibility complete. Needed rebase (branch predated PR #152/150 merges) — resolved cleanly.
+
+## 2026-03-30 — PR #156 — Fix async race in scheduleBillReminders (closes #155)
+- Decision: MERGE
+- Score: 10/10
+- Issues found: none
+- Coder patterns: Perfect targeted fix. rulesToSchedule pre-filtered outside callback (value-type capture, safe). Scheduling loop inside getPendingNotificationRequests callback guarantees remove-then-add ordering on UNC's internal serial queue. No functional logic changes — same filter/content/trigger/identifier. Exactly matches recommended fix from issue #155.

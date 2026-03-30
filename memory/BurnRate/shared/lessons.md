@@ -48,3 +48,29 @@
 - Quality: 8/10
 - Lesson: When scheduling notifications linked to model objects, always purge ALL stale IDs at the top of the scheduling function (e.g. remove all `burnrate.bill.*` before re-adding). Just adding/replacing current IDs leaves ghost notifications for deleted objects. Pattern: fetch pending, filter by prefix, remove, then reschedule.
 - Tags: notifications, UNUserNotificationCenter, ghost-notification, deletion, cleanup
+
+## 2026-03-30 — Review PR #154 — MERGED (issue #155 filed)
+- Quality: 9/10
+- Lesson: When fixing async notification cleanup (getPendingNotificationRequests + remove), always put the reschedule loop INSIDE the completion handler to guarantee remove-then-add ordering. Running async remove concurrently with synchronous adds creates a non-deterministic race on the notification daemon's XPC queue.
+- Tags: notifications, UNUserNotificationCenter, async, race-condition, ghost-cleanup
+
+## 2026-03-30 — Bill Reminders PR #152 — SUCCESS
+- Task: Add local push notifications 1 day before recurring bills
+- Outcome: PR #152 merged, score 8/10. Follow-up #153 (ghost notifications on rule deletion)
+- Duration: ~5m
+- Retries: 0
+- Lesson: When scheduling notifications per entity, always clear ALL matching prefix notifications before rescheduling (not just on toggle-off). removePendingNotificationRequests should be called at start of scheduleBillReminders.
+- Tags: notifications, recurring, effort-s
+
+## 2026-03-30 — Spending Pace Alerts PR #154 — SUCCESS
+- Task: Mid-month warning when spending 20%+ ahead of budget pace
+- Outcome: PR #154 merged, score 9/10. Follow-up #155 (async race in ghost fix)
+- Duration: ~6m
+- Retries: 0
+- Lesson: UNUserNotificationCenter.getPendingNotificationRequests is async — scheduling loop must go INSIDE the completion handler to avoid XPC race. Pace formula: (spent/budget) > (daysElapsed/daysInMonth) * 1.2 with guard dayOfMonth >= 5 for minimum data.
+- Tags: notifications, budget, pace, async, effort-s
+
+## 2026-03-30 — Review PR #156 — MERGED
+- Quality: 10/10
+- Lesson: Correct pattern for UNUserNotificationCenter remove-then-reschedule: pre-filter rules OUTSIDE the callback (value capture), then inside getPendingNotificationRequests callback: remove stale IDs first, then add new requests. This serializes all operations on UNC's internal queue with guaranteed ordering.
+- Tags: notifications, UNUserNotificationCenter, async, callback, race-fix

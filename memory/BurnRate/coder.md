@@ -10,3 +10,9 @@
 - Files: NotificationManager.swift, SettingsView.swift, DashboardView.swift
 - Tricky parts: Ghost fix uses getPendingNotificationRequests async callback to find all burnrate.bill.* IDs. Pace formula: spendingRatio > expectedPace * 1.2 with dayOfMonth >= 5 guard.
 - Lesson: Cherry-picking works well when building on unremerged PRs. Always clear-all-then-reschedule pattern prevents ghost notifications.
+
+## 2026-03-30 — Net Worth Tracker
+- Approach: New NetWorthView with summary card, account breakdown, 6-month trend chart via transaction history walkback
+- Files: NetWorthView.swift (new), DashboardView.swift, project.pbxproj
+- Tricky parts: Adding files to Xcode project.pbxproj programmatically — first attempt corrupted the file (plutil failed). Fixed by using line-by-line insertion after anchor lines instead of regex replacement.
+- Lesson: When adding new Swift files to .xcodeproj, use line-insertion approach (append after known anchor line), not regex replace. Always validate with `plutil -lint` before building. Always restore from git if corrupted.
