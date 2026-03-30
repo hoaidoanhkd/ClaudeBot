@@ -64,3 +64,9 @@
 - Files: BudgetListView.swift (rewritten), 3 new component files, project.pbxproj
 - Tricky parts: Swipe actions (edit/pause/delete) need closures from orchestrator to keep SwiftData mutations centralized. InactiveBudgetsSection onResume closure passes Budget back to orchestrator.
 - Lesson: Always add #Preview blocks to new component files (reviewer feedback from PR #171). For sections with swipe actions, pass individual action closures rather than a single "action" enum to keep the API clear.
+
+## 2026-03-31 — Fix Double Shimmer + Custom Category Names (#168 #170)
+- Approach: Removed top-level .shimmer() from DashboardSkeleton, added per-element shimmer to raw placeholders. Added @Query CustomCategory to DashboardView, used AppCategory.find(_:custom:) for recap.
+- Files: SkeletonView.swift, DashboardView.swift
+- Tricky parts: Balance card skeleton uses raw RoundedRectangles (no built-in shimmer) — needed individual .shimmer() after removing parent-level one.
+- Lesson: When composing skeleton views, apply .shimmer() at leaf level only. When using AppCategory.find(), always check if custom categories are needed — the no-arg version only searches built-in categories.
