@@ -37,3 +37,8 @@
 - Pattern: `enum CategoryPickerOptions { static let icons = [...]; static let colors = [...] }` as a namespace for shared picker data
 - Benefit: Single source of truth for icon/color options used by both AddCategoryView and EditCategoryView — eliminates duplication, easy to add new options
 - Reuse: Apply this enum-namespace pattern to any shared static data used across multiple sibling views
+
+## View Refactor (DebtPayoffView) — 2026-03-31
+- Pattern: Extract types+helpers to Types file, individual rows to RowView, grouped sections to SectionViews file. Keep @State-heavy inputs in orchestrator.
+- Key code: Renamed private `abs()` to `debtAbs()` when making internal to avoid stdlib conflict. #Preview with complex setup needs explicit `return`.
+- Files: DebtPayoffTypes.swift, DebtRowView.swift, DebtPayoffSectionViews.swift, DebtPayoffView.swift

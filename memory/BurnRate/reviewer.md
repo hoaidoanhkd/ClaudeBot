@@ -106,3 +106,9 @@
 - Score: 9/10
 - Issues found: none. BudgetFormViews.swift at 212 LOC (slightly over 200 target) acceptable.
 - Coder patterns: Addressed PR #171 feedback — all 3 new files have #Preview blocks. Pure let + closure pattern correct throughout (ActiveBudgetsSection, InactiveBudgetsSection, BudgetSuggestionsBanner, BudgetEmptyState). BudgetViewModel mutations (toggleActive, delete, create, update) all called via closures in orchestrator. Decimal(string:locale:en_US_POSIX) locale-safe in both Add/Edit forms. "\(budget.monthlyLimit)" seed is safe — Decimal.description is locale-independent. pbxproj complete all 3 files.
+
+## 2026-03-31 — PR #173 — Fix double shimmer (#168) + custom category recap names (#170) (2 files, +5/-2)
+- Decision: MERGE
+- Score: 10/10
+- Issues found: none. Minor: let custom computed inside map closure (negligible O(n*m) at small scale).
+- Coder patterns: Perfect surgical fixes. Both follow-up issues resolved exactly as suggested. Balance card gets .shimmer() at VStack level (raw shapes only — correct). Title RoundedRectangle in recent-transactions section gets own .shimmer(). Outer VStack .shimmer() removed. @Query customCategories (no filter needed — find uses all types). AppCategory.find(_:custom:) overload used correctly.

@@ -200,3 +200,16 @@
 - Retries: 0
 - Lesson: #Preview blocks on all new files is expected — reviewer confirmed improvement over PR #171. BudgetFormViews at 212 LOC (slightly over 200 target) is acceptable when it contains two complete forms. Decimal(string:, locale: "en_US_POSIX") confirmed correct; Decimal.description is locale-independent for seeding form fields.
 - Tags: swiftui, refactor, budget, decomposition, effort-s, preview
+
+## 2026-03-31 — Review PR #173 — MERGED
+- Quality: 10/10
+- Lesson: Fast, precise follow-up PRs that fix exactly the flagged issues with zero scope creep score highest. When fixing double shimmer: apply shimmer at the level of raw shapes only; never on containers that include sub-components with their own shimmer.
+- Tags: shimmer, skeleton, follow-up, custom-categories, AppCategory
+
+## 2026-03-31 — Fix Shimmer + Category Names PR #173 — SUCCESS
+- Task: Fix double shimmer on DashboardSkeleton (#168) + custom category in recap (#170)
+- Outcome: PR #173 merged, score 10/10
+- Duration: ~20m
+- Retries: 0
+- Lesson: When composing skeleton views, shimmer must be applied at leaf level only — parent containers with children that shimmer internally must NOT add .shimmer() at parent level. AppCategory.find(_:custom:) always needs the custom: array — missing it silently falls back to "Other Expense". let custom = customCategories.map(\.asAppCategory) inside .map{} is negligible for <30 items.
+- Tags: shimmer, skeleton, custom-categories, notifications, effort-s

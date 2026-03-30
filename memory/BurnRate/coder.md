@@ -70,3 +70,9 @@
 - Files: SkeletonView.swift, DashboardView.swift
 - Tricky parts: Balance card skeleton uses raw RoundedRectangles (no built-in shimmer) — needed individual .shimmer() after removing parent-level one.
 - Lesson: When composing skeleton views, apply .shimmer() at leaf level only. When using AppCategory.find(), always check if custom categories are needed — the no-arg version only searches built-in categories.
+
+## 2026-03-31 — Refactor DebtPayoffView 459→221 LOC
+- Approach: Extracted 3 component files: DebtPayoffTypes (enum, struct, helpers), DebtRowView (row+progress bar), DebtPayoffSectionViews (4 section views). Kept payment input in orchestrator (needs @State bindings).
+- Files: DebtPayoffView.swift (refactored), DebtPayoffTypes.swift (new), DebtRowView.swift (new), DebtPayoffSectionViews.swift (new), project.pbxproj
+- Tricky parts: Private `abs()` helper renamed to `debtAbs()` to avoid stdlib conflict when made internal. #Preview with multi-line setup needs explicit `return` for type inference. Committed to main by mistake — used `git branch -f` + `git reset --hard` to move commit to feature branch.
+- Lesson: Always verify `git branch` before committing. When creating feature branch, immediately switch to it before making changes. Private helpers renamed to internal need unique names to avoid stdlib clashes.
