@@ -34,3 +34,9 @@
 - Files: DashboardView.swift (620→259 LOC), 4 new component files, project.pbxproj
 - Tricky parts: Navigation cards deduped with shared navCard() helper. Kept chart sections inline since they're thin viewModel wrappers. Undo helper stays in Dashboard (tightly coupled).
 - Lesson: Use closures for actions, let for read-only data in extracted sub-views. Keep notification/onChange wiring in the orchestrator.
+
+## 2026-03-30 — SwiftData #Predicate Optimization (#124)
+- Approach: Replaced in-memory .filter {} on @Query results with #Predicate macros across 8 files. Split single queries into multiple filtered queries (expense/income, active/inactive).
+- Files: CategoryManagementView, AddTransactionView, BudgetListView, RecurringRulesView, DebtPayoffView, SavingsGoalsView, TransactionService, BudgetViewModel
+- Tricky parts: Transaction.type (enum) cannot be used in #Predicate — SwiftData crashes with enum rawValue. SavingsGoal.isComplete is computed, so used underlying expression (currentAmount >= targetAmount) in predicate. When splitting @Query, must update ALL references to old variable name.
+- Lesson: SwiftData #Predicate works well with stored String/Bool/Decimal properties but NOT with enum types. When splitting a single @Query into multiple filtered queries, grep ALL usages of the old variable name — easy to miss .onChange, .isEmpty checks, and function arguments.

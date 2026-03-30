@@ -127,3 +127,11 @@
 - Duration: ~3m
 - Lesson: AppStorage JSON-encoded Set<String> is a clean pattern for persisting small sets (Set<String> is natively Codable, try? handles edge cases, default "[]" decodes to empty). Validation gates should suppress error on initial load (hasEditedPayment pattern).
 - Tags: appstorage, validation, ux, effort-s
+
+## 2026-03-30 — DashboardView Refactor PR #164 — SUCCESS
+- Task: Decompose DashboardView 620 LOC → 4 sub-views
+- Outcome: PR #164 merged, score 10/10. 620 → 259 LOC (58% reduction)
+- Duration: ~5m
+- Retries: 0
+- Lesson: Pure let + closure sub-view pattern (from PR #108) scales well. Keep complex chart wrappers and notification onChange in orchestrator — they're inherently tied to view state. Target <200 LOC is aspirational; 259 with good decomposition is acceptable. All 4 sub-views need pbxproj entries (PBXBuildFile + PBXFileReference + group + Sources phase).
+- Tags: swiftui, refactor, dashboard, decomposition, effort-m

@@ -8,3 +8,14 @@
 - Pattern: Persist a `Set<String>` via @AppStorage by JSON-encoding to String
 - Key code: `@AppStorage("key") var json: String = "[]"` + computed var decodes + mutating func encodes back
 - Files: SubscriptionDetectorView.swift (PR #163)
+
+## SwiftUI Sub-view Extract: let + closure pattern — 2026-03-30
+- Pattern: When extracting sub-views from a large view, pass state as `let` value types and mutations as `() -> Void` closures. Never pass viewModel/EnvironmentObject to sub-views unless truly needed.
+- Key: mutations stay in parent, passed down as closures — sub-views are pure display
+- Files: DashboardBalanceCard, DashboardRecentTransactions (PR #164)
+
+## SwiftData #Predicate Optimization — 2026-03-30
+- Pattern: Replace @Query + .filter {} with @Query(filter: #Predicate<Model> { ... }) for stored properties
+- Key code: `@Query(filter: #Predicate<CustomCategory> { $0.type == "expense" }, sort: \CustomCategory.createdAt)`
+- Limitation: Enum properties crash in #Predicate — keep enum filtering in-memory
+- Files: Multiple views using @Query with CustomCategory, Budget, RecurringRule, Account, SavingsGoal
