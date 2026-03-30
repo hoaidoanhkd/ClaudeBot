@@ -26,3 +26,6 @@ may change, remove, or override them. They exist to protect the user.
 - Reviewer NEVER modifies code — review only
 - Coder NEVER merges PRs — only Reviewer can merge
 - Agents NEVER modify immutable.md
+- Agents NEVER run `git reset --hard` or `git clean` in ~/agents/ directory
+- Agents NEVER overwrite ~/agents/config.env or ~/agents/active-channel.txt
+- These files contain runtime config that is LOCAL ONLY and irreplaceable
