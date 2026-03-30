@@ -94,3 +94,9 @@
 - Score: 8/10
 - Issues found: 🟡 AppCategory.find($0.categoryId) without custom: array → custom categories fall back to all.last! (last built-in). Notification shows wrong name for users with custom expense categories as top spend. Tracked #170. 🟢 Comment "inside completion handler" is stale/misleading (code correct, no handler used). 🟢 changeInt != 0 silently omits comparison for <1% changes.
 - Coder patterns: NSDecimalNumber(.doubleValue) + Int() correctly avoids .intValue repeating-decimal bug (lesson from PR #162). Default false for weeklyRecapEnabled clean fix. Remove-then-add for notification replacement is correct (removePending is sync). categoryBreakdown parameter has default [] for backward compat. guard thisWeek > 0 zero-spend path correct.
+
+## 2026-03-30 — PR #171 — CategoryManagementView refactor 496→119 LOC (3 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: none blocking. 🟢 No #Preview blocks on 3 new files. 🟢 CategoryIconPicker accessibility label uses raw SF Symbol name ("tag.fill") not human name. 🟢 CategoryColorPicker uses hex string ("#FF6B6B") as accessibility label.
+- Coder patterns: Excellent. Pure let + closure pattern (proven in PR #164) correctly applied — CustomCategorySection/BuiltInCategorySection take only let values. @Binding used only for picker selection state (correct). onEdit/onDelete closures keep mutations in orchestrator. CategoryPickerOptions enum cleanly deduplicates icon/color arrays. pbxproj complete for all 3 files (PBXBuildFile + PBXFileReference + group + Sources). EditCategoryView correctly uses .onAppear to seed @State from model; save() directly mutates reference-type model. Type not editable in EditCategoryView — correct design.

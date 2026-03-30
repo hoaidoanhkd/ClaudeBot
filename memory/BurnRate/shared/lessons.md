@@ -174,3 +174,16 @@
 - Retries: 0
 - Lesson: When looking up AppCategory by ID, always pass custom: customCategories.map(\.asAppCategory) — missing this causes custom categories to fall back to "Other Expense". NSDecimalNumber(decimal:).doubleValue + Int() is the correct pattern for week-over-week % (avoids intValue bug). removePendingNotificationRequests is synchronous — no completion handler needed for remove-only calls.
 - Tags: notifications, weekly-recap, appstorage, custom-categories, async
+
+## 2026-03-30 — Review PR #171 — MERGED
+- Quality: 9/10
+- Lesson: Pure let + closure pattern scales cleanly to category management — sub-views with let categories + onEdit/onDelete closures keep all SwiftData mutations in the orchestrator, making state flow explicit and testable. CategoryPickerOptions enum for shared static arrays is the right dedup pattern.
+- Tags: swiftui, refactor, let-closure-pattern, category-management, pbxproj
+
+## 2026-03-30 — CategoryManagementView Refactor PR #171 — SUCCESS
+- Task: Decompose CategoryManagementView 496 LOC → 119 LOC + 3 sub-views
+- Outcome: PR #171 merged, score 9/10
+- Duration: ~60m (several file creation prompts approved)
+- Retries: 0
+- Lesson: Extracting shared picker logic into a dedicated enum (CategoryPickerOptions) eliminates duplication across Add/Edit forms. Pure let+closure pattern confirmed again. Reviewer flagged missing #Preview blocks on new files — add these going forward. Type field should not be editable in EditCategoryView (design decision).
+- Tags: swiftui, refactor, category, decomposition, effort-s

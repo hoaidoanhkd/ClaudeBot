@@ -32,3 +32,8 @@
 - Key code: `.refreshable { viewModel.refresh(...); try? await Task.sleep(for: .milliseconds(300)) }`
 - Shimmer: LinearGradient overlay with repeatForever animation, masked by content shape
 - Files: SkeletonView.swift for reusable components
+
+## 2026-03-30 — CategoryPickerOptions enum for shared static option arrays (PR #171)
+- Pattern: `enum CategoryPickerOptions { static let icons = [...]; static let colors = [...] }` as a namespace for shared picker data
+- Benefit: Single source of truth for icon/color options used by both AddCategoryView and EditCategoryView — eliminates duplication, easy to add new options
+- Reuse: Apply this enum-namespace pattern to any shared static data used across multiple sibling views

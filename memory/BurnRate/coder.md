@@ -58,3 +58,9 @@
 - Files: CategoryManagementView.swift (rewritten), 3 new component files, project.pbxproj
 - Tricky parts: AddCategoryView and EditCategoryView had identical icon/color picker grids — extracted to shared components with @Binding. Kept delete/transaction reassignment logic in orchestrator.
 - Lesson: When Add and Edit forms share identical sub-views (pickers, grids), extract as shared component with @Binding. This deduplication is the biggest LOC win in refactors.
+
+## 2026-03-31 — Refactor BudgetListView (462→110 LOC)
+- Approach: Extracted 3 sub-view files: BudgetRowView (active + inactive rows), BudgetSectionView (sections + empty state + suggestions banner), BudgetFormViews (Add + Edit sheets). Added #Preview blocks to all new files.
+- Files: BudgetListView.swift (rewritten), 3 new component files, project.pbxproj
+- Tricky parts: Swipe actions (edit/pause/delete) need closures from orchestrator to keep SwiftData mutations centralized. InactiveBudgetsSection onResume closure passes Budget back to orchestrator.
+- Lesson: Always add #Preview blocks to new component files (reviewer feedback from PR #171). For sections with swipe actions, pass individual action closures rather than a single "action" enum to keep the API clear.
