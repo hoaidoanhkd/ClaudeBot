@@ -40,3 +40,9 @@
 - Score: 10/10
 - Issues found: none
 - Coder patterns: Perfect targeted fix. rulesToSchedule pre-filtered outside callback (value-type capture, safe). Scheduling loop inside getPendingNotificationRequests callback guarantees remove-then-add ordering on UNC's internal serial queue. No functional logic changes — same filter/content/trigger/identifier. Exactly matches recommended fix from issue #155.
+
+## 2026-03-30 — PR #157 — Add Net Worth Tracker (assets/liabilities + 6-month trend)
+- Decision: MERGE + follow-up issue #158
+- Score: 8/10
+- Issues found: Historical trend bias — monthlySnapshots starts from live netWorth (includes current month's transactions) but never undoes current month before stepping backwards. All historical points (i>=1) are biased by current month's net delta. Fix: undo current month's transactions from currentNetWorth before the i=0 snapshot. Issue #158 filed.
+- Coder patterns: Good overall structure. assets/liabilities/netWorth computed properties correct. assetAccounts >= 0 includes zero-balance (minor). singleAccountHint condition correct (shows for 0-1 accounts with no liabilities). NSDecimalNumber(..).doubleValue used correctly for chart (not .intValue). All display uses .formatted2. Accessibility thorough: accessibilityElement(children: .combine), adaptive accessibilityLabel, icons hidden. pbxproj entries correct (PBXBuildFile + PBXFileReference + Sources). abs() Decimal helper clean.

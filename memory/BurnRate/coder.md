@@ -16,3 +16,9 @@
 - Files: NetWorthView.swift (new), DashboardView.swift, project.pbxproj
 - Tricky parts: Adding files to Xcode project.pbxproj programmatically — first attempt corrupted the file (plutil failed). Fixed by using line-by-line insertion after anchor lines instead of regex replacement.
 - Lesson: When adding new Swift files to .xcodeproj, use line-insertion approach (append after known anchor line), not regex replace. Always validate with `plutil -lint` before building. Always restore from git if corrupted.
+
+## 2026-03-30 — Debt Payoff Calculator + Net Worth Trend Fix
+- Approach: DebtPayoffView with snowball/avalanche strategies, payment inputs, timeline. Fixed #158 net worth trend bias.
+- Files: DebtPayoffView.swift (new), NetWorthView.swift (fix + nav link), project.pbxproj
+- Tricky parts: Payoff schedule calculation with minimum payments rolling to next debt. Net worth trend fix required careful ordering: record current snapshot, then undo current month txns, then walk backwards.
+- Lesson: Historical balance reconstruction must undo transactions in correct order. Always start with live balance, then undo current partial month first.

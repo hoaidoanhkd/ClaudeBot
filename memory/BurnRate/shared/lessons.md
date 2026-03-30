@@ -74,3 +74,8 @@
 - Quality: 10/10
 - Lesson: Correct pattern for UNUserNotificationCenter remove-then-reschedule: pre-filter rules OUTSIDE the callback (value capture), then inside getPendingNotificationRequests callback: remove stale IDs first, then add new requests. This serializes all operations on UNC's internal queue with guaranteed ordering.
 - Tags: notifications, UNUserNotificationCenter, async, callback, race-fix
+
+## 2026-03-30 — Review PR #157 — MERGED (issue #158 filed)
+- Quality: 8/10
+- Lesson: When reconstructing historical balances by walking backwards from a live value, ALWAYS undo the current (partial) period's transactions FIRST before stepping to prior periods. Starting from live balance without undoing the current month biases all historical points by the current month's net delta.
+- Tags: historical-reconstruction, trend-chart, date-math, net-worth, off-by-period
