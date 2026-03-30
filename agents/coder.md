@@ -30,69 +30,15 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 - NEVER edit files outside your assigned project directory
 - When done, notify the coordinator via claude-peers send_message
 
-## SwiftData Delete Orphan Guard — REQUIRED
-Any task involving SwiftData entity deletion MUST include:
-(a) Count affected references before delete
-(b) Show confirmation alert with affected count
-(c) Define reassign or graceful fallback strategy
-Never silently delete entities that may be referenced by other models.
+## Platform Rules — Load based on PROJECT_TYPE
+On startup, read `~/agents/config.env` for PROJECT_TYPE, then load:
+- ALWAYS: `~/.claude/agents/rules/platforms/general.md`
+- ios-swiftui or ios-uikit: `~/.claude/agents/rules/platforms/ios-swiftui.md`
+- web: `~/.claude/agents/rules/platforms/web-react.md`
+- python: `~/.claude/agents/rules/platforms/python.md`
+- Other types: only general.md
 
-## SwiftData Delete+Dismiss — REQUIRED (Task pattern)
-When deleting a SwiftData model from a detail view, ALWAYS use dismiss-first pattern:
-1. Call `dismiss()` first
-2. Capture `modelContext` + object reference as local constants BEFORE dismiss
-3. Delete via `Task { @MainActor in context.delete(captured) }`
-NEVER: delete then dismiss — the view renders a tombstoned @Bindable model during
-the dismiss animation, causing a crash.
-
-## Decimal(string:) Locale — REQUIRED
-ALL `Decimal(string:)` calls on user input MUST specify locale:
-```swift
-Decimal(string: text, locale: Locale(identifier: "en_US_POSIX"))
-```
-NEVER: bare `Decimal(string: text)` — returns nil on non-US locales (comma separator).
-Cache as: `static let posixLocale = Locale(identifier: "en_US_POSIX")`
-
-## SwiftData #Predicate Enum Restriction — REQUIRED
-Inside `#Predicate<SwiftData>`, ONLY use:
-- Date comparisons
-- Decimal/Double/Int comparisons
-- String equality on stored String properties
-NEVER: enum `.rawValue`, enum cases, or nested enum properties inside #Predicate.
-These compile but crash at runtime (SQLite cannot translate).
-PATTERN: Filter by date/amount at DB level, filter enum type in-memory with `.filter{}`
-
-## N-Month Historical Analysis — Upper Bound Rule
-When bucketing expenses into N complete monthly slots:
-```
-fetch from: startOfMonth(-N) to: startOfCurrentMonth  (NOT to: Date())
-```
-REASON: Using `Date()` as upper bound includes partial current month, inflating averages
-and potentially overflowing bucket indices.
-
-## Simulator Query — REQUIRED before build/test
-Always query available simulators before any xcodebuild or xcrun simctl command:
-```bash
-xcrun simctl list devices available | grep -i iphone
-```
-Use the first booted device, or boot one: `xcrun simctl boot "iPhone 17 Pro"`
-NEVER hardcode "iPhone 16" — it doesn't exist on Xcode 26.3.
-Default simulator: iPhone 17 Pro (Xcode 26.3 / iOS 26.2).
-
-## No git reset --hard in agents repo — CRITICAL
-NEVER run `git reset --hard` or `git clean` in `~/agents/` or the ClaudeBot repo.
-These commands wipe untracked local memory files (lessons.md, anti_patterns.md, etc.).
-For targeted resets: use `git checkout -- <specific-file>` only.
-For stashing: use `git stash` (then `git stash pop` after).
-Memory files are untracked by design — they are local-only and irreplaceable.
-
-## NSDecimalNumber.intValue — FORBIDDEN
-Never use `NSDecimalNumber(...).intValue` — it returns 0 for repeating decimals
-(e.g. 1000/3 = 333.333… → `intValue` = 0).
-Fix: use `.doubleValue` then `Int()` truncation:
-```swift
-Int(NSDecimalNumber(decimal: result).doubleValue)
-```
+These files contain learned rules from past projects. Follow them strictly.
 
 ## FORBIDDEN — Cost & Security
 - NEVER add features that call external paid APIs (OpenAI, Google Cloud, AWS, etc.)

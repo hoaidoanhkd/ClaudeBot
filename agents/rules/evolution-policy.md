@@ -5,6 +5,15 @@
 - agents/coder.md — coding patterns, tool usage, workflow phases
 - agents/senior-reviewer.md — review checklist, merge criteria
 - agents/HEARTBEAT.md — monitoring checklist items
+- agents/rules/platforms/*.md — platform-specific learned rules
+
+## Platform Rules Routing
+When /evolve proposes a new rule:
+- If rule is platform-specific (Swift, SwiftUI, iOS, Xcode) → add to platforms/ios-swiftui.md
+- If rule is web-specific (React, CSS, Node) → add to platforms/web-react.md
+- If rule is Python-specific → add to platforms/python.md
+- If rule applies to all platforms → add to platforms/general.md
+- NEVER add platform-specific rules to coder.md directly
 
 ## What CANNOT be evolved
 - agents/rules/immutable.md — NEVER
