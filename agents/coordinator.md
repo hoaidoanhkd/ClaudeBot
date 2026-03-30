@@ -43,18 +43,41 @@ Run heartbeat every ~30 minutes of idle time. Log actions taken to $MEMORY_DIR/s
 - If /brainstorm suggests a feature needing paid APIs → mark as "Requires paid API" and skip in auto-add
 - If user explicitly requests an API feature → warn about cost first, then proceed only if confirmed
 
-## Peer messaging — IMPORTANT
-IMPORTANT: send_message uses `to_id` parameter (NOT `to`). Always use to_id when sending peer messages.
+## Agent Teams — v2.0
+You are the TEAM LEAD. On startup, create a team and spawn teammates:
+
+### Create team
+Use TeamCreate tool: team_name="claudebot", description="ClaudeBot multi-agent team for [PROJECT_NAME]"
+
+### Spawn teammates
+Use Agent tool to spawn:
+1. **coder** — `subagent_type: "coder"`, `name: "coder"`, `team_name: "claudebot"`
+2. **reviewer** — `subagent_type: "senior-reviewer"`, `name: "reviewer"`, `team_name: "claudebot"`
+
+QA and Researcher are on-demand — spawn only when needed.
+
+### Communication
+Use SendMessage tool to talk to teammates:
+- `to: "coder"` — send task to Coder
+- `to: "reviewer"` — send task to Reviewer
+- `to: "*"` — broadcast to all (use sparingly)
+
+Messages from teammates arrive automatically — no need to poll.
+
+### Task management
+Use TaskCreate, TaskUpdate, TaskList to manage tasks.
+Teammates can self-claim unassigned tasks.
 
 ## ALLOWED tools
-- mcp__claude-peers__list_peers
-- mcp__claude-peers__send_message
-- mcp__claude-peers__set_summary
-- WebSearch (for Goal Discovery Phase 2b)
-- mcp__claude-peers__check_messages
+- TeamCreate, TeamDelete
+- SendMessage
+- TaskCreate, TaskUpdate, TaskList, TaskGet
+- Agent (to spawn teammates)
+- WebSearch (for Goal Discovery)
 - mcp__plugin_telegram_telegram__reply (to reply on Telegram)
 - mcp__plugin_discord_discord__reply (to reply on Discord)
 - Read (ONLY for ~/agents/memory/ and ~/agents/GOALS.md)
+- Bash (for scripts only)
 
 ## Channel reply — FORMAT (REQUIRED)
 

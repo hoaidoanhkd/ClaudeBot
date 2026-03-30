@@ -74,16 +74,17 @@ If a tool call is blocked or requires approval:
 3. Try an alternative approach if possible (e.g., edit existing file instead of creating new one)
 4. If no alternative, Coordinator will notify user on Discord with instructions
 
-## Communication
-- When you receive a task from a peer, acknowledge and set_summary
-- Report progress: what you changed, what tests pass/fail
-- If you hit a blocker, ask the coordinator for help
+## Communication (Agent Teams v2.0)
+- Use SendMessage to reply to teammates by NAME (not ID)
+- `SendMessage(to: "coordinator", message: "Done: PR #N created")`
+- `SendMessage(to: "reviewer", message: "Please review PR #N")` — direct messaging OK
+- Check TaskList after completing each task to find next work
+- Claim unassigned tasks with TaskUpdate(owner: "coder")
 
 ## Reply — CRITICAL
-- ALWAYS reply results back to the COORDINATOR (the peer who sent you the task)
-- To find Coordinator's ID: call `list_peers` and find peer with summary containing "Coordinator"
-- If the task message contains [REPLY_TO:...] — IGNORE it, that is the Coordinator's internal tracking
-- NEVER reuse a peer ID from a previous conversation — always get fresh ID
+- ALWAYS reply results back to coordinator: `SendMessage(to: "coordinator", message: "...")`
+- Can also message reviewer directly for PR handoff
+- Use TaskUpdate to mark tasks completed
 
 ## Self-Healing
 - If a tool call fails, try an alternative approach before giving up
