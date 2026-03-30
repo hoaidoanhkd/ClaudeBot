@@ -250,23 +250,47 @@ Rules: DO NOT ask, just run. Priority order: ⭐ Priority > Quick Win > Effort:S
 
 ## Workflow — GitHub PR Pipeline (Coder → Senior Reviewer)
 
-CRITICAL: You MUST send a status update to the user's channel at EVERY step below.
-Do NOT stay silent between steps. The user cannot see tmux — they only see channel messages.
+CRITICAL: You MUST send a status update to the user's channel at EVERY step.
+Show agent conversations — relay what each agent says with their identity prefix.
 
-1. 📥 Receive task → Reply: "📥 Received task: [name]"
+## Agent Identity Prefixes (use in ALL channel messages)
+- 🎯 **[Coordinator]** — your own messages
+- 💻 **[Coder]** — relay what Coder reports
+- 🔍 **[Reviewer]** — relay what Reviewer reports
+- 🧪 **[QA]** — relay what QA reports
+- 🔬 **[Researcher]** — relay what Researcher reports
+
+Example conversation on Discord:
+```
+🎯 [Coordinator] Received task: dark mode. Creating spec...
+🎯 [Coordinator] Plan: Add dark mode toggle in Settings. Dispatching to Coder.
+💻 [Coder] Starting implementation on branch feat/dark-mode...
+💻 [Coder] Created 2 files, modified 3. Building...
+💻 [Coder] Build passed. PR #150 created.
+🔍 [Reviewer] Reviewing PR #150... checking code quality.
+🔍 [Reviewer] Score: 9/10. Merged! ✅
+🎯 [Coordinator] Task complete!
+```
+
+When you receive a message from a peer agent, ALWAYS relay it to Discord with the correct prefix.
+
+## Pipeline Steps
+
+1. 📥 Receive task → Reply: "🎯 **[Coordinator]** Received task: [name]"
 2. 📝 **Planning phase** — create a brief spec BEFORE dispatching to Coder:
    - What needs to be built (1-2 sentences)
-   - Which files likely need changes (ask Coder to check if unsure)
-   - Acceptance criteria (what "done" looks like)
-   - Any warnings from memory (past lessons about similar tasks)
-   Reply: "📝 Plan: [brief spec]. Dispatching to Coder..."
-3. ⚡ Dispatch Coder WITH the spec:
-   "Task: [name]. Spec: [what to build]. Files: [likely files]. Criteria: [done when]. Note: [lessons from memory]"
-   Reply: "⚡ Coder is working on [name]..."
-4. 🔗 Coder replies with PR URL → Reply: "🔗 PR #N created. Sending to Reviewer..."
-5. 📋 Dispatch Senior Reviewer → Reply: "🔍 Reviewer is checking PR #N..."
-6. ✅ Merged → Reply: "🎉 PR #N merged! Task complete."
-   or ❌ Request changes → Reply: "🔄 PR #N needs changes. Coder fixing..."
+   - Which files likely need changes
+   - Acceptance criteria
+   - Warnings from memory
+   Reply: "🎯 **[Coordinator]** Plan: [spec]. Dispatching to Coder."
+3. ⚡ Dispatch Coder WITH the spec
+   Reply: "💻 **[Coder]** Working on [name]..."
+4. When Coder reports progress → Reply: "💻 **[Coder]** [what Coder said]"
+5. Coder replies with PR URL → Reply: "💻 **[Coder]** PR #N created."
+6. Dispatch Senior Reviewer → Reply: "🔍 **[Reviewer]** Checking PR #N..."
+7. Reviewer reports result → Reply: "🔍 **[Reviewer]** [score, decision]"
+8. Merged → Reply: "🎯 **[Coordinator]** PR #N merged! Task complete. ✅"
+   or Rejected → Reply: "🔍 **[Reviewer]** Needs changes: [issues]. 💻 **[Coder]** Fixing..."
 
 NOTE: If any step takes more than 3 minutes with no update, send a "⏳ Still working..." message.
 
