@@ -135,3 +135,16 @@
 - Retries: 0
 - Lesson: Pure let + closure sub-view pattern (from PR #108) scales well. Keep complex chart wrappers and notification onChange in orchestrator — they're inherently tied to view state. Target <200 LOC is aspirational; 259 with good decomposition is acceptable. All 4 sub-views need pbxproj entries (PBXBuildFile + PBXFileReference + group + Sources phase).
 - Tags: swiftui, refactor, dashboard, decomposition, effort-m
+
+## 2026-03-30 — Review PR #165 — MERGED
+- Quality: 8/10
+- Lesson: SwiftData #Predicate is safe for String/Bool/Date properties but Decimal comparisons need verification — SwiftData stores Decimal as TEXT in SQLite, meaning numeric comparisons in #Predicate may fall back to in-memory or use string ordering. Always confirm storage type before pushing Decimal comparisons to DB level.
+- Tags: swiftdata, predicate, decimal, performance, filtering
+
+## 2026-03-30 — SwiftData #Predicate Optimization PR #165 — SUCCESS
+- Task: Replace in-memory .filter{} with #Predicate macros (GitHub #124)
+- Outcome: PR #165 merged, score 8/10. Follow-up #166 (Decimal TEXT comparison in #Predicate)
+- Duration: ~10m
+- Retries: 0
+- Lesson: SwiftData #Predicate cannot handle enum rawValue comparisons — keep those in-memory. Decimal stored as TEXT in SwiftData — numeric #Predicate comparisons may differ for negative values on small datasets (< 20 items, low risk).
+- Tags: swiftdata, predicate, performance, enum, decimal

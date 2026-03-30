@@ -19,3 +19,16 @@
 - Key code: `@Query(filter: #Predicate<CustomCategory> { $0.type == "expense" }, sort: \CustomCategory.createdAt)`
 - Limitation: Enum properties crash in #Predicate — keep enum filtering in-memory
 - Files: Multiple views using @Query with CustomCategory, Budget, RecurringRule, Account, SavingsGoal
+
+## 2026-03-30 — Split @Query with #Predicate for String/Bool filtering (PR #165)
+- Pattern: Replace `@Query var all: [T]` + computed `var filtered` with two typed `@Query(filter: #Predicate {...})` properties
+- Example: `@Query(filter: #Predicate<CustomCategory> { $0.type == "expense" }) var expenseCategories`
+- Benefit: DB-level filtering, no post-fetch in-memory pass, SwiftUI auto-updates on predicate match changes
+- Safe for: String, Bool, Date, Int properties
+- Avoid for: Decimal, enum rawValue (known SwiftData crash)
+
+## Pull-to-refresh + Skeleton Loading — 2026-03-30
+- Pattern: @State isLoading = true + .task { sleep + withAnimation { isLoading = false } } for skeleton transition
+- Key code: `.refreshable { viewModel.refresh(...); try? await Task.sleep(for: .milliseconds(300)) }`
+- Shimmer: LinearGradient overlay with repeatForever animation, masked by content shape
+- Files: SkeletonView.swift for reusable components

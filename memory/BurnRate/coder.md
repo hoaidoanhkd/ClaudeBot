@@ -40,3 +40,9 @@
 - Files: CategoryManagementView, AddTransactionView, BudgetListView, RecurringRulesView, DebtPayoffView, SavingsGoalsView, TransactionService, BudgetViewModel
 - Tricky parts: Transaction.type (enum) cannot be used in #Predicate — SwiftData crashes with enum rawValue. SavingsGoal.isComplete is computed, so used underlying expression (currentAmount >= targetAmount) in predicate. When splitting @Query, must update ALL references to old variable name.
 - Lesson: SwiftData #Predicate works well with stored String/Bool/Decimal properties but NOT with enum types. When splitting a single @Query into multiple filtered queries, grep ALL usages of the old variable name — easy to miss .onChange, .isEmpty checks, and function arguments.
+
+## 2026-03-30 — Pull-to-refresh + Skeleton Loading (#122)
+- Approach: Created reusable SkeletonView.swift with shimmer modifier + placeholder components. Added .refreshable to HistoryView, BudgetListView, SavingsGoalsView. Added isLoading state with .task sleep for skeleton-to-content transition.
+- Files: SkeletonView.swift (new), DashboardView, HistoryView, BudgetListView, SavingsGoalsView, project.pbxproj
+- Tricky parts: SwiftData @Query auto-refreshes on pull-to-refresh without explicit reload — just need brief sleep for UX. Skeleton needs if/else wrapping around existing content blocks.
+- Lesson: For SwiftData views, .refreshable just needs a brief delay — the @Query properties auto-update. Use .task { sleep + withAnimation } for skeleton-to-content transitions. Keep skeleton components reusable and under 200 LOC.
