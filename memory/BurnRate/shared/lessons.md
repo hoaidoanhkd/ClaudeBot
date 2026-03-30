@@ -148,3 +148,16 @@
 - Retries: 0
 - Lesson: SwiftData #Predicate cannot handle enum rawValue comparisons — keep those in-memory. Decimal stored as TEXT in SwiftData — numeric #Predicate comparisons may differ for negative values on small datasets (< 20 items, low risk).
 - Tags: swiftdata, predicate, performance, enum, decimal
+
+## 2026-03-30 — Review PR #167 — MERGED
+- Quality: 8/10
+- Lesson: When composing skeleton components, shimmer should be applied at ONE level only — either the leaf component OR the parent container, never both. Nested .shimmer() calls create double gradient overlays with independent animation phases.
+- Tags: swiftui, skeleton, animation, shimmer, ux, accessibility
+
+## 2026-03-30 — Pull-to-refresh + Skeleton Loading PR #167 — SUCCESS
+- Task: Add .refreshable and skeleton shimmer loading to main screens (#122)
+- Outcome: PR #167 merged, score 8/10. Follow-up #168 (double shimmer on DashboardSkeleton)
+- Duration: ~15m
+- Retries: 0
+- Lesson: When composing skeleton components, apply .shimmer() at the leaf level only — never at both parent and child. ShimmerModifier rendering content twice via .mask(content) is acceptable for simple shapes. SavingsGoalsView .refreshable can rely on @Query auto-update without manual refresh.
+- Tags: skeleton, shimmer, pull-to-refresh, animation, swiftui

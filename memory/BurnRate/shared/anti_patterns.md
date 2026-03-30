@@ -4,3 +4,9 @@
 - Risk: SwiftData stores Decimal as TEXT in SQLite → string comparison semantics differ from numeric (e.g., "-50" > "-100" as strings but -50 > -100 numerically is false)
 - Fix: Keep Decimal comparisons as in-memory `.filter {}` OR verify SwiftData's actual storage type and predicate translation behavior first
 - Safe alternatives: Use Int (points/cents) for amounts if DB-level filtering is needed, or store a computed Bool property (e.g., `isNegative: Bool`) and filter on that
+
+## 2026-03-30 — Nested .shimmer() in skeleton hierarchy (PR #167)
+- Anti-pattern: Applying .shimmer() to a container view (DashboardSkeleton) that already contains sub-components (SkeletonCard, SkeletonRow) which call .shimmer() internally
+- Risk: Double gradient overlay with competing @State phase animations → overly bright or visually inconsistent shimmer effect
+- Fix: Apply shimmer at ONE level only. Either (a) remove top-level shimmer from DashboardSkeleton, or (b) make SkeletonCard/SkeletonRow not shimmer and let parent apply it
+- Rule: If a composable skeleton is used standalone AND inside a parent skeleton, extract a ShimmerFree variant

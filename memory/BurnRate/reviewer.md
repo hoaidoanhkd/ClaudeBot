@@ -82,3 +82,9 @@
 - Score: 8/10
 - Issues found: 🟡 Decimal in #Predicate — DebtPayoffView `$0.balance < 0` and SavingsGoalsView `$0.currentAmount < $0.targetAmount` use Decimal at SQLite level; SwiftData stores Decimal as TEXT, string comparison may differ from numeric. Small datasets so low impact. Tracked in issue #166.
 - Coder patterns: Clean predicate migration. String/Bool/Date predicates all correct. Enum rawValue workaround properly documented. TransactionService 4-branch logic correct (if-let guards ensure category is non-nil when used in predicate). BudgetViewModel filter redundancy correctly removed. onChange sum trick (expenseCount + incomeCount) valid since categories don't change type.
+
+## 2026-03-30 — PR #167 — Skeleton loading + pull-to-refresh (6 files, SkeletonView new)
+- Decision: MERGE
+- Score: 8/10
+- Issues found: 🟡 Double shimmer — DashboardSkeleton applies .shimmer() at top level while its child SkeletonCard/SkeletonRow also each call .shimmer(); produces double gradient overlay with competing phase animations. Tracked #168. 🟢 ShimmerModifier renders content twice via .mask(content). 🟢 DashboardView else-block indentation cosmetic.
+- Coder patterns: Pull-to-refresh correctly triggers ViewModel refresh (HistoryView + BudgetListView) or relies on @Query auto-update (SavingsGoalsView with comment explaining why). Accessibility labels on skeleton components correct (.accessibilityElement + .accessibilityLabel). isLoading time-based pattern (300-400ms) is pragmatic for SwiftData on-device load. pbxproj entries present for new file (non-standard IDs but build passes).

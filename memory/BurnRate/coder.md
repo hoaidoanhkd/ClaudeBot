@@ -46,3 +46,9 @@
 - Files: SkeletonView.swift (new), DashboardView, HistoryView, BudgetListView, SavingsGoalsView, project.pbxproj
 - Tricky parts: SwiftData @Query auto-refreshes on pull-to-refresh without explicit reload — just need brief sleep for UX. Skeleton needs if/else wrapping around existing content blocks.
 - Lesson: For SwiftData views, .refreshable just needs a brief delay — the @Query properties auto-update. Use .task { sleep + withAnimation } for skeleton-to-content transitions. Keep skeleton components reusable and under 200 LOC.
+
+## 2026-03-30 — Weekly Recap Notification (#138 #140)
+- Approach: Fixed weeklyRecapEnabled default to false. Enhanced notification with category breakdown (top spend, count). Changed schedule to Sunday 8PM.
+- Files: NotificationManager.swift, DashboardView.swift, SettingsView.swift
+- Tricky parts: Passing category data through — used tuple array (name: String, amount: Decimal) to avoid coupling NotificationManager to CategorySpend model. Pre-compute body before scheduling.
+- Lesson: For notifications with dynamic content, pre-compute the body string as value types, then schedule. Keep the notification manager decoupled from view models using simple tuple/struct parameters.
