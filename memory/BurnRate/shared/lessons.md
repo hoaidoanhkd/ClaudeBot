@@ -161,3 +161,16 @@
 - Retries: 0
 - Lesson: When composing skeleton components, apply .shimmer() at the leaf level only — never at both parent and child. ShimmerModifier rendering content twice via .mask(content) is acceptable for simple shapes. SavingsGoalsView .refreshable can rely on @Query auto-update without manual refresh.
 - Tags: skeleton, shimmer, pull-to-refresh, animation, swiftui
+
+## 2026-03-30 — Review PR #169 — MERGED
+- Quality: 8/10
+- Lesson: When mapping model IDs to display names for notifications/UI, always use the overload that accepts custom categories — AppCategory.find(id, custom: customCategories) not AppCategory.find(id). The no-custom overload silently falls back to a built-in, producing wrong names for user-created categories.
+- Tags: notifications, custom-categories, AppCategory, UNUserNotificationCenter, weekly-recap
+
+## 2026-03-30 — Weekly Recap Notification PR #169 — SUCCESS
+- Task: Fix weeklyRecapEnabled default (true→false) + implement rich weekly recap notification (#138 #140)
+- Outcome: PR #169 merged, score 8/10. Follow-up #170 (custom category name fallback missing custom: array)
+- Duration: ~6m
+- Retries: 0
+- Lesson: When looking up AppCategory by ID, always pass custom: customCategories.map(\.asAppCategory) — missing this causes custom categories to fall back to "Other Expense". NSDecimalNumber(decimal:).doubleValue + Int() is the correct pattern for week-over-week % (avoids intValue bug). removePendingNotificationRequests is synchronous — no completion handler needed for remove-only calls.
+- Tags: notifications, weekly-recap, appstorage, custom-categories, async

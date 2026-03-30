@@ -52,3 +52,9 @@
 - Files: NotificationManager.swift, DashboardView.swift, SettingsView.swift
 - Tricky parts: Passing category data through — used tuple array (name: String, amount: Decimal) to avoid coupling NotificationManager to CategorySpend model. Pre-compute body before scheduling.
 - Lesson: For notifications with dynamic content, pre-compute the body string as value types, then schedule. Keep the notification manager decoupled from view models using simple tuple/struct parameters.
+
+## 2026-03-30 — Refactor CategoryManagementView (496→119 LOC)
+- Approach: Extracted 3 sub-view files: CategoryPickerComponents (shared icon/color pickers), CategorySectionView (section + empty state), CategoryFormViews (Add + Edit sheets). Deduplicated ~120 LOC of icon/color picker code.
+- Files: CategoryManagementView.swift (rewritten), 3 new component files, project.pbxproj
+- Tricky parts: AddCategoryView and EditCategoryView had identical icon/color picker grids — extracted to shared components with @Binding. Kept delete/transaction reassignment logic in orchestrator.
+- Lesson: When Add and Edit forms share identical sub-views (pickers, grids), extract as shared component with @Binding. This deduplication is the biggest LOC win in refactors.

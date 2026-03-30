@@ -88,3 +88,9 @@
 - Score: 8/10
 - Issues found: 🟡 Double shimmer — DashboardSkeleton applies .shimmer() at top level while its child SkeletonCard/SkeletonRow also each call .shimmer(); produces double gradient overlay with competing phase animations. Tracked #168. 🟢 ShimmerModifier renders content twice via .mask(content). 🟢 DashboardView else-block indentation cosmetic.
 - Coder patterns: Pull-to-refresh correctly triggers ViewModel refresh (HistoryView + BudgetListView) or relies on @Query auto-update (SavingsGoalsView with comment explaining why). Accessibility labels on skeleton components correct (.accessibilityElement + .accessibilityLabel). isLoading time-based pattern (300-400ms) is pragmatic for SwiftData on-device load. pbxproj entries present for new file (non-standard IDs but build passes).
+
+## 2026-03-30 — PR #169 — weeklyRecapEnabled default fix + rich recap notification (3 files)
+- Decision: MERGE
+- Score: 8/10
+- Issues found: 🟡 AppCategory.find($0.categoryId) without custom: array → custom categories fall back to all.last! (last built-in). Notification shows wrong name for users with custom expense categories as top spend. Tracked #170. 🟢 Comment "inside completion handler" is stale/misleading (code correct, no handler used). 🟢 changeInt != 0 silently omits comparison for <1% changes.
+- Coder patterns: NSDecimalNumber(.doubleValue) + Int() correctly avoids .intValue repeating-decimal bug (lesson from PR #162). Default false for weeklyRecapEnabled clean fix. Remove-then-add for notification replacement is correct (removePending is sync). categoryBreakdown parameter has default [] for backward compat. guard thisWeek > 0 zero-spend path correct.

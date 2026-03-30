@@ -10,3 +10,9 @@
 - Risk: Double gradient overlay with competing @State phase animations → overly bright or visually inconsistent shimmer effect
 - Fix: Apply shimmer at ONE level only. Either (a) remove top-level shimmer from DashboardSkeleton, or (b) make SkeletonCard/SkeletonRow not shimmer and let parent apply it
 - Rule: If a composable skeleton is used standalone AND inside a parent skeleton, extract a ShimmerFree variant
+
+## 2026-03-30 — AppCategory.find without custom categories (PR #169)
+- Anti-pattern: AppCategory.find($0.categoryId) when categoryId may belong to a custom category
+- Risk: Falls back to all.last! (last built-in expense category) → wrong display name shown
+- Fix: Always use AppCategory.find(id, custom: customCategories.map(\.asAppCategory)) when custom categories may be present
+- Rule: Any place that resolves a categoryId string to a display name must consider custom categories
