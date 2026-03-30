@@ -46,3 +46,9 @@
 - Score: 8/10
 - Issues found: Historical trend bias — monthlySnapshots starts from live netWorth (includes current month's transactions) but never undoes current month before stepping backwards. All historical points (i>=1) are biased by current month's net delta. Fix: undo current month's transactions from currentNetWorth before the i=0 snapshot. Issue #158 filed.
 - Coder patterns: Good overall structure. assets/liabilities/netWorth computed properties correct. assetAccounts >= 0 includes zero-balance (minor). singleAccountHint condition correct (shows for 0-1 accounts with no liabilities). NSDecimalNumber(..).doubleValue used correctly for chart (not .intValue). All display uses .formatted2. Accessibility thorough: accessibilityElement(children: .combine), adaptive accessibilityLabel, icons hidden. pbxproj entries correct (PBXBuildFile + PBXFileReference + Sources). abs() Decimal helper clean.
+
+## 2026-03-30 — PR #159 — Debt Payoff Calculator + Fix Net Worth Trend (#158)
+- Decision: MERGE + follow-up issue #160
+- Score: 8/10
+- Issues found: Snowball/avalanche cascade broken for debts[1..n] — `payment = minPay + (i == 0 ? extra : 0)` only gives extra to debt[0]. `totalMonthsElapsed` and `extra` only updated when i==0. All subsequent debts get only minPay. Correct fix: cumulativeExtra rolls to each debt, totalMonthsElapsed updates every iteration. Issue #160 filed.
+- Coder patterns: Decimal locale correct (both text fields use en_US_POSIX). payoffMonths uses .doubleValue not .intValue (anti-pattern learned). .rounded(.up) correct for ceiling. payment > 0 guard returns 999 cleanly. payoffDateLabel handles 999→"N/A" and pluralization. NetWorthView fix (#158) correct — undoes currentMonth transactions before snapshot loop, chart gets 6 proper points (1 live + 5 month-starts). Accessibility thorough. pbxproj entries correct.

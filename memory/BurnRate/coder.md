@@ -22,3 +22,9 @@
 - Files: DebtPayoffView.swift (new), NetWorthView.swift (fix + nav link), project.pbxproj
 - Tricky parts: Payoff schedule calculation with minimum payments rolling to next debt. Net worth trend fix required careful ordering: record current snapshot, then undo current month txns, then walk backwards.
 - Lesson: Historical balance reconstruction must undo transactions in correct order. Always start with live balance, then undo current partial month first.
+
+## 2026-03-30 — Subscription Detector + Snowball Fix
+- Approach: Engine groups expenses by normalized note, checks amount ±5% and interval consistency. View with cost summary + dismiss.
+- Files: SubscriptionDetectorEngine.swift (new), SubscriptionDetectorView.swift (new), SettingsView.swift, DebtPayoffView.swift
+- Tricky parts: Set.insert() returns tuple, not Void — `withAnimation { set.insert(x) }` won't compile; must use `_ = set.insert(x)`.
+- Lesson: SwiftUI's withAnimation closure expects Void return. Always discard results of Set/Dictionary mutations inside withAnimation blocks.

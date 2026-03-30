@@ -79,3 +79,8 @@
 - Quality: 8/10
 - Lesson: When reconstructing historical balances by walking backwards from a live value, ALWAYS undo the current (partial) period's transactions FIRST before stepping to prior periods. Starting from live balance without undoing the current month biases all historical points by the current month's net delta.
 - Tags: historical-reconstruction, trend-chart, date-math, net-worth, off-by-period
+
+## 2026-03-30 — Review PR #159 — MERGED (issue #160 filed)
+- Quality: 8/10
+- Lesson: Debt payoff cascade algorithms must update the rolling extra payment AND elapsed months after EVERY debt is paid off, not just the first. Pattern: `cumulativeExtra = payment` (freed amount rolls to next debt) + `totalMonthsElapsed += months` inside the main loop, not inside an `if i == 0` block.
+- Tags: snowball, avalanche, cascade, financial-calc, debt-payoff, loop-logic
