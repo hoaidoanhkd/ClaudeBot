@@ -136,3 +136,9 @@
 - Score: 9/10
 - Issues found: none. 🟢 Decimal(doubleVal).formatted2 in chart Y-axis labels — Double→Decimal micro imprecision (negligible for personal finance).
 - Coder patterns: Applied PR #175 lesson — no custom abs(), uses stdlib. All sub-views pure let. #Preview on all 3 files. pbxproj 12 entries complete. Bug fix bonus: original breakdownSection used .padding(.top, liabilityAccounts.isEmpty ? 0 : 8) inside if !liabilityAccounts.isEmpty — always 8 (dead condition). New AccountBreakdownSection correctly uses assetAccounts.isEmpty ? 0 : 8. import Charts cleanly moved to NetWorthTrendChart.swift. NSDecimalNumber(decimal:).doubleValue locale-safe for Charts conversion.
+
+## 2026-03-31 — PR #178 — MonthlySummaryView refactor 364→67 LOC (2 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: 🟢 Pre-existing bug preserved: MonthlyCategoryChart uses AppCategory.find(catId) without custom: — custom categories show as "Other Expense" in chart legend. Tracked #179 (same root cause as #170).
+- Coder patterns: Clean. 7 sub-views all pure let. MonthSelectorView onSelect closure wires to viewModel.selectedMonthIndex in orchestrator. ChartMode→MonthlyChartMode rename good for collision avoidance. import Charts moved to chart file. NSDecimalNumber(decimal:).doubleValue locale-safe on all 3 chart value conversions. ForEach(monthlyData.reversed()) valid with Identifiable. pbxproj 8 entries complete.

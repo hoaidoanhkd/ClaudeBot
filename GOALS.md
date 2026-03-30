@@ -19,9 +19,9 @@ Last scan: 2026-03-30
 
 - [x] Refactor CategoryManagementView (496→119 LOC) — PR #171
 - [x] Refactor BudgetListView (462→110 LOC) — PR #172
-- [ ] Refactor DebtPayoffView (459 LOC → sub-views) — Effort: S
-- [ ] Refactor NetWorthView (416 LOC → sub-views) — Effort: S
-- [ ] Refactor MonthlySummaryView (364 LOC → sub-views) — Effort: S
+- [x] Refactor DebtPayoffView (459→221 LOC) — PR #175
+- [x] Refactor NetWorthView (416→168 LOC) — PR #177
+- [x] Refactor MonthlySummaryView (364→67 LOC) — PR #178
 - [ ] Refactor CashFlowForecastView (361 LOC → sub-views) — Effort: S
 - [ ] Refactor NotificationManager (354 LOC → split concerns) — Effort: S
 - [ ] Refactor RecurringRulesView (353 LOC → sub-views) — Effort: S
@@ -40,6 +40,7 @@ Last scan: 2026-03-30
 - [ ] Verify HistoryView refactor is complete (#118 — was 333→187 LOC) — Effort: S
 - [ ] Verify custom category management done (#121 — CategoryManagementView exists) — Effort: S
 - [ ] Close duplicate AI Spending Coach issues (8 duplicates of #149/#139) — Effort: S
+- [ ] Fix MonthlyCategoryChart custom category names (#179) — AppCategory.find missing custom: array — Effort: S
 
 ---
 

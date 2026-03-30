@@ -249,3 +249,15 @@
 - Retries: 0
 - Lesson: Decimal→Double round-trip in chart Y-axis labels (via formatted2) causes micro floating-point imprecision — negligible for personal finance but worth noting. Dead conditional padding inside isEmpty guard should be fixed.
 - Tags: swiftui, refactor, net-worth, charts, decomposition, effort-s
+
+## 2026-03-31 — Review PR #178 — MERGED
+- Quality: 9/10
+- Lesson: AppCategory.find without custom: is a recurring pattern to watch across ALL views — chart components, notification bodies, and display labels. Grep for AppCategory.find( without ,custom: to find remaining instances.
+- Tags: swiftui, refactor, monthly-summary, charts, AppCategory, custom-categories
+
+## 2026-03-31 — NetWorthView + MonthlySummaryView Refactor PRs #177/#178 — SUCCESS
+- Task: Decompose NetWorthView (416 LOC) and MonthlySummaryView (364 LOC) → sub-views
+- Outcome: PR #177 merged 9/10, PR #178 merged 9/10. Follow-up #179 (AppCategory.find missing custom: in MonthlyCategoryChart)
+- Duration: ~90m
+- Lesson: AppCategory.find(catId) without custom: is a recurring pattern — ALL callsites need the custom: array. Should do a global search for AppCategory.find calls missing custom: and fix in one sweep.
+- Tags: swiftui, refactor, net-worth, monthly-summary, custom-categories
