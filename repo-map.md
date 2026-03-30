@@ -1,8 +1,8 @@
 # Repo Map — BurnRate
-Generated: 2026-03-30 20:34
+Generated: 2026-03-31 06:15
 
 ## Overview
-- swift: 63 files
+- swift: 74 files
 
 ## File Tree
 ```
@@ -39,25 +39,25 @@ BurnRateWidget/BurnRateWidget.swift
 ```
 
 ## Key Files (by size)
-- BurnRate/Views/Screens/CategoryManagementView.swift (496 lines)
-- BurnRate/Views/Screens/BudgetListView.swift (462 lines)
-- BurnRate/Views/Screens/DebtPayoffView.swift (459 lines)
 - BurnRate/Views/Screens/NetWorthView.swift (416 lines)
+- BurnRate/Services/NotificationManager.swift (391 lines)
 - BurnRate/Views/Screens/MonthlySummaryView.swift (364 lines)
 - BurnRate/Views/Screens/CashFlowForecastView.swift (361 lines)
-- BurnRate/Services/NotificationManager.swift (354 lines)
-- BurnRate/Views/Screens/RecurringRulesView.swift (353 lines)
+- BurnRate/Views/Screens/RecurringRulesView.swift (358 lines)
 - BurnRate/Views/Screens/SavingsGoalDetailView.swift (308 lines)
 - BurnRate/Views/Screens/SubscriptionDetectorView.swift (290 lines)
-- BurnRate/Views/Screens/SettingsView.swift (286 lines)
-- BurnRate/Views/Screens/DashboardView.swift (259 lines)
+- BurnRate/Views/Screens/SettingsView.swift (290 lines)
+- BurnRate/Views/Screens/DashboardView.swift (276 lines)
 - BurnRate/Services/TransactionExporter.swift (259 lines)
 - BurnRate/Views/Screens/SmartBudgetSuggestionsView.swift (238 lines)
+- BurnRate/Services/TransactionService.swift (233 lines)
+- BurnRate/Views/Screens/SavingsGoalsView.swift (232 lines)
 - BurnRate/Views/Screens/OnboardingView.swift (228 lines)
-- BurnRate/Services/TransactionService.swift (222 lines)
-- BurnRate/Views/Screens/SavingsGoalsView.swift (220 lines)
+- BurnRate/Views/Screens/DebtPayoffView.swift (221 lines)
+- BurnRate/Views/Components/BudgetFormViews.swift (212 lines)
 - BurnRate/Services/BurnRateEngine.swift (206 lines)
 - BurnRate/Views/Sheets/AddSavingsGoalView.swift (203 lines)
+- BurnRate/Views/Screens/HistoryView.swift (202 lines)
 - BurnRateWidget/BurnRateWidget.swift (197 lines)
 
 ## Definitions (Swift)

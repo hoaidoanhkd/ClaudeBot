@@ -42,3 +42,8 @@
 - Pattern: Extract types+helpers to Types file, individual rows to RowView, grouped sections to SectionViews file. Keep @State-heavy inputs in orchestrator.
 - Key code: Renamed private `abs()` to `debtAbs()` when making internal to avoid stdlib conflict. #Preview with complex setup needs explicit `return`.
 - Files: DebtPayoffTypes.swift, DebtRowView.swift, DebtPayoffSectionViews.swift, DebtPayoffView.swift
+
+## 2026-03-31 — PR #174 — NSDecimalNumber .doubleValue pattern
+- Pattern: `Int(NSDecimalNumber(decimal: value).doubleValue)` instead of `.intValue`
+- Why: .intValue returns 0 for repeating decimals (Foundation bug). Now used consistently in runway() and notification formatting.
+- Reuse: Any Decimal→Int conversion in the project should use this pattern.

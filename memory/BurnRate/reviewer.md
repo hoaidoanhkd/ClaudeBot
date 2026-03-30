@@ -112,3 +112,21 @@
 - Score: 10/10
 - Issues found: none. Minor: let custom computed inside map closure (negligible O(n*m) at small scale).
 - Coder patterns: Perfect surgical fixes. Both follow-up issues resolved exactly as suggested. Balance card gets .shimmer() at VStack level (raw shapes only — correct). Title RoundedRectangle in recent-transactions section gets own .shimmer(). Outer VStack .shimmer() removed. @Query customCategories (no filter needed — find uses all types). AppCategory.find(_:custom:) overload used correctly.
+
+## 2026-03-31 — PR #174 — Fix runway() Decimal division returning 0
+- Decision: MERGE
+- Score: 10/10
+- Issues found: none. Perfect surgical 1-line fix.
+- Coder patterns: Correctly reused NSDecimalNumber(.doubleValue)+Int() pattern from PR #162. Comment explains the Foundation bug clearly. No scope creep.
+
+## 2026-03-31 — PR #175 — DebtPayoffView refactor 459→221 LOC (3 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: none. 🟢 debtAbs() free function redundant with abs(Decimal) (SignedNumeric). 🟢 payoffMonths/payoffDateLabel/debtAbs are bare module-level free functions rather than namespaced.
+- Coder patterns: Cascade logic fully preserved (cumulativeExtra += minPay, totalMonthsElapsed += months). NSDecimalNumber(decimal:).doubleValue.rounded(.up) correctly used in payoffMonths. PayoffStrategy promoted from private to internal scope correctly for cross-file access. All sub-views pure let. #Preview on all 3 files. pbxproj 12 entries complete.
+
+## 2026-03-31 — PR #176 — Add pull-to-refresh on SettingsView
+- Decision: MERGE
+- Score: 10/10
+- Issues found: none
+- Coder patterns: Clean minimal PR. Exact match to SavingsGoalsView pattern (@Query auto-refresh + 300ms Task.sleep UX delay). Comment style consistent. Placement after .navigationTitle correct. All 5 main views now have .refreshable.

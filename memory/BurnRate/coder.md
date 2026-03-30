@@ -76,3 +76,15 @@
 - Files: DebtPayoffView.swift (refactored), DebtPayoffTypes.swift (new), DebtRowView.swift (new), DebtPayoffSectionViews.swift (new), project.pbxproj
 - Tricky parts: Private `abs()` helper renamed to `debtAbs()` to avoid stdlib conflict when made internal. #Preview with multi-line setup needs explicit `return` for type inference. Committed to main by mistake — used `git branch -f` + `git reset --hard` to move commit to feature branch.
 - Lesson: Always verify `git branch` before committing. When creating feature branch, immediately switch to it before making changes. Private helpers renamed to internal need unique names to avoid stdlib clashes.
+
+## 2026-03-31 — Pull-to-refresh on SettingsView
+- Approach: Added .refreshable with 300ms delay, matching existing pattern in 4 other views
+- Files: SettingsView.swift (4 lines added)
+- Tricky parts: None — straightforward addition. iPhone 16 Pro simulator not available, used iPhone 17 Pro.
+- Lesson: Check available simulator names before building. Project now uses iOS 26.2 simulators (iPhone 17 series).
+
+## 2026-03-31 — Refactor NetWorthView 416→168 LOC
+- Approach: Extracted 3 component files: NetWorthSummaryCard, NetWorthAccountViews (4 views), NetWorthTrendChart + NetWorthSnapshot type. Removed custom abs() (stdlib works for Decimal).
+- Files: NetWorthView.swift (refactored), NetWorthSummaryCard.swift (new), NetWorthAccountViews.swift (new), NetWorthTrendChart.swift (new), project.pbxproj
+- Tricky parts: Committed to main AGAIN — must always verify git branch before committing. #Preview with container.mainContext.insert() needs explicit `return` before the View expression. Missing `import SwiftData` in files using ModelConfiguration in previews.
+- Lesson: ALWAYS run `git branch` before committing to verify on feature branch. For #Preview with multi-line setup (let + insert), always use explicit `return` before the View. Always add `import SwiftData` when previews use ModelConfiguration/ModelContainer.

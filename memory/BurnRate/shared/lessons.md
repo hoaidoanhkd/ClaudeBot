@@ -213,3 +213,26 @@
 - Retries: 0
 - Lesson: When composing skeleton views, shimmer must be applied at leaf level only — parent containers with children that shimmer internally must NOT add .shimmer() at parent level. AppCategory.find(_:custom:) always needs the custom: array — missing it silently falls back to "Other Expense". let custom = customCategories.map(\.asAppCategory) inside .map{} is negligible for <30 items.
 - Tags: shimmer, skeleton, custom-categories, notifications, effort-s
+
+## 2026-03-31 — Review PR #174 — MERGED
+- Quality: 10/10
+- Lesson: NSDecimalNumber.intValue is unreliable for repeating decimals — always use .doubleValue+Int() for Decimal→Int conversion
+- Tags: swift, foundation, decimal, bug-fix
+
+## 2026-03-31 — Review PR #175 — MERGED
+- Quality: 9/10
+- Lesson: When extracting private types/enums to separate files, verify visibility promotion (private→internal) is intentional and correct. Module-level free functions work but should ideally be namespaced under an enum or extension to avoid polluting global scope.
+- Tags: swiftui, refactor, debt-payoff, cascade, decimal, free-functions
+
+## 2026-03-31 — DebtPayoffView Refactor PR #175 — SUCCESS
+- Task: Decompose DebtPayoffView 459 LOC → 221 LOC + 3 sub-views
+- Outcome: PR #175 merged, score 9/10
+- Duration: ~90m (many file creation approvals)
+- Retries: 0
+- Lesson: Free functions extracted to a Types file should be namespaced under an enum (e.g. DebtPayoffHelpers) to avoid polluting global module scope. abs(Decimal) works natively — no need for custom debtAbs() helper. PayoffStrategy enum must be internal (not private) when used across files.
+- Tags: swiftui, refactor, debt, decomposition, effort-s
+
+## 2026-03-31 — Review PR #176 — MERGED
+- Quality: 10/10
+- Lesson: Consistency PR — applying existing pattern to remaining view. Minimal risk, high UX value.
+- Tags: pull-to-refresh, settings, consistency
