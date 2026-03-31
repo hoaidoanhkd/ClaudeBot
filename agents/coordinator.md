@@ -573,20 +573,49 @@ Wait for user reply. DO NOT start until approved.
 - Max 2 parallel coders (reduced from 3 to avoid rate limits)
 - Spawn: `~/scripts/spawn-coder.sh "[slug]" "[description]"`
 
-## Self-Learning System — CRITICAL
+## Memory System — THREE-LAYER (CRITICAL)
 
-### ON STARTUP — Read lessons (SELECTIVE, max 2K tokens)
-1. Read ONLY the last 20 lines of `$MEMORY_DIR/coordinator.md` (recent lessons)
-2. Read ONLY the last 20 lines of `$MEMORY_DIR/shared/lessons.md` (recent team lessons)
-3. Do NOT read successful_patterns.md or anti_patterns.md on startup — search them ONLY when relevant task arrives
+### ON STARTUP — Layer 1: INDEX.md (ALWAYS)
+1. Read `$MEMORY_DIR/INDEX.md` — lightweight index (~40 lines, topics + recent decisions + active tasks)
+2. This replaces reading lessons.md on startup — INDEX is the single source of truth
+3. Do NOT read topic files on startup — fetch them only when relevant task arrives
 
-### PRE-TASK — Auto-inject memory context (RECOMMENDED)
-Before dispatching a task, get relevant memories with progressive disclosure:
-```bash
-~/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh --task "[task description]"
-```
-This shows a summary with token cost. If relevant entries found, include the summary in dispatch message to Coder.
-For full detail: add `--full` flag. Fallback: `~/scripts/memory-search.sh "[keywords]"`
+### PRE-TASK — Layer 2: Fetch relevant topics
+Before dispatching a task:
+1. Read INDEX.md → identify relevant [topic-id]
+2. Fetch ONLY the topic file(s) needed: `$MEMORY_DIR/topics/[topic-id].md`
+3. Also run: `~/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh --task "[task description]"`
+4. Include topic context + memory-inject results in dispatch message to Coder
+
+### POST-TASK — Update topics + transcript
+After every completed pipeline:
+1. Log to transcript: `~/Desktop/Projects/ClaudeBot/scripts/memory-log.sh "COORDINATOR" "PR #N: [summary]"`
+2. If new knowledge about a topic → tell Coder to update the topic file
+3. If topic status changed → update INDEX.md (ONLY Coordinator writes INDEX)
+
+### LAYER 3 — Transcripts (grep-only, NEVER read full)
+- Daily logs at `$MEMORY_DIR/transcripts/YYYY-MM-DD-session.log`
+- Use `grep "pattern" $MEMORY_DIR/transcripts/*.log` when need specific past event
+- Auto-archived after 7 days by KAIROS
+
+## KAIROS — Background Consolidation Mode
+
+### Trigger
+- No Telegram/Discord message for 15 minutes AND /go loop done
+- OR user sends `/dream`
+
+### autoDream Cycle
+Run: `~/Desktop/Projects/ClaudeBot/scripts/kairos-dream.sh`
+1. Scan today's transcript → count merges, errors, decisions
+2. Check INDEX.md consistency (missing topic files, orphan topics)
+3. Archive transcripts >7 days
+4. Telegram: "🌙 [KAIROS] Consolidation done. [N] merges, [N] errors, INDEX OK/issues."
+
+### KAIROS Rules
+- KHÔNG tạo PR hoặc commit code
+- KHÔNG dispatch Coder — chỉ đọc + ghi memory
+- Nếu phát hiện issue → Telegram alert, KHÔNG tự fix
+- Max 3 autoDream cycles liên tiếp → sleep
 
 ### PRE-TASK — GOALS.md verification (REQUIRED)
 Before dispatching any task to Coder, first ask Coder to verify the feature/fix is NOT already implemented in the codebase. Check GOALS.md status against actual code. This prevents wasted cycles on already-completed work.
