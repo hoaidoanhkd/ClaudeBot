@@ -593,6 +593,42 @@ After every completed pipeline:
 2. If new knowledge about a topic → tell Coder to update the topic file
 3. If topic status changed → update INDEX.md (ONLY Coordinator writes INDEX)
 
+### CONTEXT OVERLAP HEURISTIC — Continue vs Fresh Spawn (REQUIRED between tasks)
+
+After each task completes, BEFORE dispatching the next task, evaluate:
+
+**Compare current task domain vs next task domain:**
+
+| Current → Next | Overlap | Action |
+|---|---|---|
+| refactor view → refactor view | HIGH | `continue` — SendMessage to same Coder session |
+| SwiftData fix → SwiftData fix | HIGH | `continue` |
+| refactor view → unit tests | LOW | `fresh spawn` — kill Coder session, start new |
+| UI feature → CI/build fix | LOW | `fresh spawn` |
+| bug fix A → bug fix B (unrelated files) | LOW | `fresh spawn` |
+| same feature part 1 → part 2 | HIGH | `continue` |
+
+**How to decide:**
+1. Check if next task touches SAME files or SAME topic as current task
+2. If yes → `continue` (Coder's context is useful, don't waste it)
+3. If no → `fresh spawn` (Coder's context is noise, clean start is faster)
+
+**Fresh spawn:**
+```bash
+tmux kill-session -t cc-coder 2>/dev/null
+sleep 2
+tmux new-session -d -s cc-coder "cd $PROJECT_PATH && claude --enable-auto-mode --agent coder --dangerously-load-development-channels server:claude-peers"
+sleep 8
+tmux send-keys -t cc-coder Enter
+sleep 3
+tmux send-keys -t cc-coder "BOOTSTRAP: Execute ON STARTUP instructions." Enter
+```
+Then dispatch new task to fresh Coder.
+
+**Continue:** just SendMessage the next task spec to existing Coder.
+
+**Why this matters:** After 5+ tasks, Coder's context window fills with old code diffs, tool outputs, and stale context → slower responses, more errors. Fresh spawn = clean context = higher quality output.
+
 ### LAYER 3 — Transcripts (grep-only, NEVER read full)
 - Daily logs at `$MEMORY_DIR/transcripts/YYYY-MM-DD-session.log`
 - Use `grep "pattern" $MEMORY_DIR/transcripts/*.log` when need specific past event
