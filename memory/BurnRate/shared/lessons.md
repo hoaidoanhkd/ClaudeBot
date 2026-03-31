@@ -315,3 +315,17 @@
 - Retries: 0
 - Lesson: Self-contained feature sheets (AddRecurringRuleView with own @Query) are appropriate when the sheet is a complete add-flow. Group placement matters: display rows → Components, add/edit sheets → Sheets. try? modelContext.save() silently swallows errors — pre-existing pattern to watch.
 - Tags: swiftui, refactor, recurring-rules, decomposition, effort-s
+
+## 2026-04-01 — Review PR #204 — MERGED (SavingsGoalDetailView refactor)
+- Quality: 9/10
+- Lesson: When refactoring, helper functions should move to the file that consumes them — not stay in the orchestrator. daysUntilDeadline/deadlineColor moved to SavingsGoalDetailsSection, progressColor moved to SavingsGoalProgressView. Co-location of helpers with their consuming views reduces coupling and improves readability.
+- Lesson 2: Race condition caution — coordinator hold messages can arrive simultaneously with merge completion. Always check CI before merging when CI is enabled. The billing issue caused a false alarm here.
+- Tags: swiftui, refactor, savings-goal, helper-colocation, ci-billing
+
+## 2026-03-31 — SavingsGoalDetailView Refactor PR #204 — SUCCESS
+- Task: Decompose SavingsGoalDetailView 308 LOC → 147 LOC + 2 sub-view files
+- Outcome: PR #204 merged (race condition with hold — build was clean). CI failure was GitHub Actions billing cap, NOT code issue.
+- Duration: ~30m
+- Retries: 0
+- Lesson: GitHub Actions billing caps can cause CI to fail in 4s without running any code. When CI fails instantly with billing annotation, check GitHub Settings → Billing & Plans — no code investigation needed. Always confirm "job ran" before assuming code regression.
+- Tags: swiftui, refactor, savings-goal, ci-failure, billing, effort-s

@@ -136,3 +136,9 @@
 - Files: SavingsGoalDetailView.swift, SavingsGoalProgressView.swift, SavingsGoalDetailSections.swift
 - Tricky parts: Account lookup needed a computed property (linkedAccount) in orchestrator since sub-views don't have @Query
 - Lesson: When sub-view needs data from @Query, resolve it in orchestrator and pass as let. Group related small sections (actions, details, danger) into one file with multiple structs rather than 3 separate files.
+
+## 2026-04-01 — Empty code blocks cleanup + verify issues #118 #121
+- Approach: Searched all .swift files for empty catch blocks, empty functions, no-op stubs. Found 4 silent catch blocks swallowing errors. Added #if DEBUG print logging. Verified HistoryView (204 LOC) and CategoryManagementView (119 LOC) exist.
+- Files: TransactionExporter.swift, NotificationManager.swift, BiometricAuthManager.swift
+- Tricky parts: Most "empty blocks" were actually valid patterns (preview closures, protocol stubs, @unknown default:break). Real issues were silent error swallowing.
+- Lesson: For "empty block cleanup" tasks, focus on silent catch blocks that swallow errors — preview closures with {} are normal. Use python3 script to analyze AST-like patterns when grep isn't specific enough.

@@ -1,8 +1,8 @@
 # Repo Map — BurnRate
-Generated: 2026-04-01 02:38
+Generated: 2026-04-01 05:10
 
 ## Overview
-- swift: 86 files
+- swift: 99 files
 
 ## File Tree
 ```
@@ -22,6 +22,9 @@ BurnRate/Services/BiometricAuthManager.swift
 BurnRate/Services/BurnRateEngine.swift
 BurnRate/Services/CashFlowForecastEngine.swift
 BurnRate/Services/NotificationManager.swift
+BurnRate/Services/NotificationManager+BudgetAlerts.swift
+BurnRate/Services/NotificationManager+RunwayAlerts.swift
+BurnRate/Services/NotificationManager+Scheduling.swift
 BurnRate/Services/RecurringTransactionService.swift
 BurnRate/Services/SavingsGoalService.swift
 BurnRate/Services/SmartBudgetSuggestionEngine.swift
@@ -35,19 +38,21 @@ BurnRate/ViewModels/HistoryViewModel.swift
 BurnRate/ViewModels/MonthlySummaryViewModel.swift
 BurnRate/ViewModels/TransactionViewModel.swift
 BurnRateTests/BudgetStatusTests.swift
+BurnRateTests/BudgetSuggestionTests.swift
 BurnRateTests/BurnRateEngineTests.swift
 BurnRateTests/CashFlowForecastEngineTests.swift
+BurnRateTests/DashboardViewModelTests.swift
 BurnRateTests/HistoryViewModelTests.swift
 BurnRateTests/MonthlySummaryViewModelTests.swift
 BurnRateTests/RecurringFrequencyTests.swift
+BurnRateTests/SavingsGoalTests.swift
+BurnRateTests/SubscriptionDetectorEngineTests.swift
+BurnRateTests/TransactionServiceTests.swift
 BurnRateTests/TransactionViewModelTests.swift
 BurnRateWidget/BurnRateWidget.swift
 ```
 
 ## Key Files (by size)
-- BurnRate/Services/NotificationManager.swift (391 lines)
-- BurnRate/Views/Screens/RecurringRulesView.swift (360 lines)
-- BurnRate/Views/Screens/SavingsGoalDetailView.swift (308 lines)
 - BurnRate/Views/Screens/SubscriptionDetectorView.swift (290 lines)
 - BurnRate/Views/Screens/SettingsView.swift (290 lines)
 - BurnRate/Views/Screens/DashboardView.swift (277 lines)
@@ -60,13 +65,38 @@ BurnRateWidget/BurnRateWidget.swift
 - BurnRateTests/HistoryViewModelTests.swift (224 lines)
 - BurnRate/Views/Screens/DebtPayoffView.swift (221 lines)
 - BurnRate/Views/Components/BudgetFormViews.swift (212 lines)
+- BurnRateTests/SubscriptionDetectorEngineTests.swift (207 lines)
 - BurnRate/Services/BurnRateEngine.swift (206 lines)
 - BurnRate/Views/Screens/HistoryView.swift (204 lines)
 - BurnRate/Views/Sheets/AddSavingsGoalView.swift (203 lines)
 - BurnRateWidget/BurnRateWidget.swift (197 lines)
 - BurnRate/Views/Components/SkeletonView.swift (189 lines)
+- BurnRateTests/CashFlowForecastEngineTests.swift (188 lines)
+- BurnRateTests/BurnRateEngineTests.swift (187 lines)
 
 ## Definitions (Swift)
+### BurnRateTests/DashboardViewModelTests.swift
+  - 9:    func test_runwayColor_greenWhenOver60Days() {
+  - 15:    func test_runwayColor_greenWhenExactly61Days() {
+  - 21:    func test_runwayColor_yellowWhenBetween31And60() {
+  - 27:    func test_runwayColor_yellowWhenExactly60() {
+  - 33:    func test_runwayColor_orangeWhenBetween15And30() {
+  - 39:    func test_runwayColor_orangeWhenExactly30() {
+  - 45:    func test_runwayColor_redWhenUnder15() {
+  - 51:    func test_runwayColor_redWhenExactly14() {
+  - 57:    func test_runwayColor_redWhenZero() {
+  - 65:    func test_runwayProgress_normalCase() {
+### BurnRateTests/SavingsGoalTests.swift
+  - 8:    func test_progress_normalCase() {
+  - 13:    func test_progress_zeroTarget_returnsZero() {
+  - 18:    func test_progress_zeroSaved_returnsZero() {
+  - 23:    func test_progress_complete_returnsOne() {
+  - 28:    func test_progress_overFunded_cappedAtOne() {
+  - 33:    func test_progress_smallAmounts() {
+  - 40:    func test_percentComplete_halfWay() {
+  - 45:    func test_percentComplete_zero() {
+  - 50:    func test_percentComplete_full() {
+  - 55:    func test_percentComplete_roundsCorrectly() {
 ### BurnRateTests/RecurringFrequencyTests.swift
   - 21:    func test_daily_advancesOneDay() {
   - 29:    func test_daily_crossesMonthBoundary() {
@@ -111,6 +141,17 @@ BurnRateWidget/BurnRateWidget.swift
   - 52:    func test_isValid_emptyAmount_returnsFalse() {
   - 58:    func test_isValid_invalidText_returnsFalse() {
   - 66:    func test_isEditing_initiallyFalse() {
+### BurnRateTests/SubscriptionDetectorEngineTests.swift
+  - 24:    func test_detect_monthlySubscription_twoOccurrences() {
+  - 37:    func test_detect_monthlySubscription_threeOccurrences() {
+  - 49:    func test_detect_multipleSubscriptions_sortedByMonthlyCost() {
+  - 65:    func test_detect_weeklySubscription() {
+  - 78:    func test_detect_yearlySubscription() {
+  - 92:    func test_detect_ignoresIncomeTransactions() {
+  - 101:    func test_detect_requiresAtLeastTwoOccurrences() {
+  - 109:    func test_detect_inconsistentAmounts_notDetected() {
+  - 118:    func test_detect_irregularIntervals_notDetected() {
+  - 128:    func test_detect_emptyTransactions_returnsEmpty() {
 ### BurnRateTests/MonthlySummaryViewModelTests.swift
   - 20:    func test_refresh_noTransactions_returns6EmptyMonths() {
   - 28:    func test_refresh_withTransactions_returns6Months() {
@@ -122,6 +163,17 @@ BurnRateWidget/BurnRateWidget.swift
   - 79:    func test_expenseDelta_nil_whenNoPreviousMonth() {
   - 86:    func test_expenseDelta_nil_whenPreviousExpensesZero() {
   - 97:    func test_expenseDelta_positive_whenCurrentHigherThanPrevious() {
+### BurnRateTests/BudgetSuggestionTests.swift
+  - 8:    func test_roundedAmount_roundsUpToNearest10() {
+  - 13:    func test_roundedAmount_alreadyRound() {
+  - 18:    func test_roundedAmount_justOverRound() {
+  - 23:    func test_roundedAmount_smallAmount() {
+  - 28:    func test_roundedAmount_largeAmount() {
+  - 33:    func test_roundedAmount_zeroAmount() {
+  - 40:    func test_budgetAlert_hasUniqueId() {
+  - 46:    func test_budgetAlert_overLimit() {
+  - 53:    func test_budgetAlert_warningRange() {
+  - 61:    func test_transaction_signedAmount_expense_isNegative() {
 ### BurnRateTests/BurnRateEngineTests.swift
   - 20:    func test_dailyBurnRate_noTransactions_returnsZero() {
   - 25:    func test_dailyBurnRate_onlyIncome_returnsZero() {
@@ -133,6 +185,16 @@ BurnRateWidget/BurnRateWidget.swift
   - 74:    func test_runway_zeroBalance_returnsZero() {
   - 79:    func test_runway_negativeBalance_returnsZero() {
   - 84:    func test_runway_normalCase_calculatesCorrectly() {
+### BurnRateTests/TransactionServiceTests.swift
+  - 8:    func test_adjustBalance_addExpense_subtractsFromAccount() {
+  - 14:    func test_adjustBalance_removeExpense_addsBackToAccount() {
+  - 22:    func test_adjustBalance_addIncome_addsToAccount() {
+  - 28:    func test_adjustBalance_removeIncome_subtractsFromAccount() {
+  - 36:    func test_adjustBalance_nilAccount_noOp() {
+  - 44:    func test_adjustBalance_zeroAmount_noChange() {
+  - 52:    func test_adjustBalance_largeExpense_canGoNegative() {
+  - 60:    func test_adjustBalance_multipleOperations_correctBalance() {
+  - 71:    func test_adjustBalance_decimalPrecision() {
 ### BurnRateTests/HistoryViewModelTests.swift
   - 27:    func test_updateTransactions_setsFilteredTransactions() {
   - 33:    func test_updateTransactions_emptyList() {

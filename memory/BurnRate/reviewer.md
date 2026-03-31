@@ -178,3 +178,9 @@
 - Score: 9/10
 - Issues found: 🟢 try? modelContext.save() silently swallows errors — pre-existing, not a regression.
 - Coder patterns: Correct placement — RecurringRuleRow + RecurringRuleSectionViews in Components group, AddRecurringRuleView in Sheets group. AppCategory.find() with custom: verified in orchestrator (@Query customCategories → .map(\.asAppCategory) threaded correctly to both active and paused rows). AddRecurringRuleView self-contained with own @Query — appropriate for feature sheet. #Preview on all 4 files. pbxproj 12 entries (4×3). LOC counts 133/99/45/149 verified.
+
+## 2026-04-01 — PR #204 — SavingsGoalDetailView 308→147 LOC (2 new component files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: 🟢 none. CI failure was billing/spending limit (not code). Post-merge local build clean.
+- Coder patterns: Clean. SavingsGoalProgressView and SavingsGoalDetailSections (3 sub-views) all pure let. linkedAccount computed property correctly extracted to orchestrator. daysUntilDeadline/deadlineColor/progressColor helpers co-located with consuming views. Emoji unicode escapes cleaned to literals — nice touch. 8 #Preview variants (claimed 7). pbxproj 8 entries (4×2) complete.

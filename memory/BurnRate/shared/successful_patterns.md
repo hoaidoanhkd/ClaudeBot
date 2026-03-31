@@ -70,3 +70,8 @@
 - Key targets: SubscriptionDetectorEngine.detect(from:), TransactionService.adjustBalance(), SavingsGoal computed properties, BudgetSuggestion.roundedAmount
 - Key code: `import SwiftUI` needed when testing ViewModel Color properties
 - Files: BurnRateTests/SubscriptionDetectorEngineTests.swift, DashboardViewModelTests.swift, TransactionServiceTests.swift, SavingsGoalTests.swift, BudgetSuggestionTests.swift
+
+## Silent catch cleanup — 2026-04-01
+- Pattern: Add #if DEBUG print("[ClassName] description: \(error)") #endif to catch blocks that return nil/false
+- Key code: `catch { #if DEBUG \n print("[X] msg: \(error)") \n #endif \n return nil }`
+- Files: TransactionExporter.swift, NotificationManager.swift, BiometricAuthManager.swift
