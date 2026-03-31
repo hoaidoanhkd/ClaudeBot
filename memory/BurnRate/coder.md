@@ -118,3 +118,9 @@
 - Files: 5 new test files in BurnRateTests/, updated project.pbxproj
 - Tricky parts: DashboardViewModelTests needed `import SwiftUI` for Color comparison. Build failed first time without it.
 - Lesson: When testing SwiftUI ViewModel with Color properties, must import SwiftUI in the test file. Focus on pure-logic testable code first — SubscriptionDetectorEngine.detect(from:) and TransactionService.adjustBalance are ideal because they take plain objects, no ModelContext needed.
+
+## 2026-04-01 — Refactor NotificationManager 392→63 LOC
+- Approach: Split using Swift extensions into 4 files by concern: core, runway alerts, budget alerts, scheduling
+- Files: NotificationManager.swift (modified), +RunwayAlerts.swift, +BudgetAlerts.swift, +Scheduling.swift (new), project.pbxproj
+- Tricky parts: Had to change private → internal for properties/enum accessed by extensions. Added isNotificationsEnabled convenience property.
+- Lesson: For service classes (not views), Swift extensions in separate files are the cleanest split pattern. No #Preview needed. Must open up private access for cross-file extensions.
