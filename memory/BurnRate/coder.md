@@ -124,3 +124,9 @@
 - Files: NotificationManager.swift (modified), +RunwayAlerts.swift, +BudgetAlerts.swift, +Scheduling.swift (new), project.pbxproj
 - Tricky parts: Had to change private → internal for properties/enum accessed by extensions. Added isNotificationsEnabled convenience property.
 - Lesson: For service classes (not views), Swift extensions in separate files are the cleanest split pattern. No #Preview needed. Must open up private access for cross-file extensions.
+
+## 2026-04-01 — Refactor RecurringRulesView 353→133 LOC
+- Approach: Extracted RecurringRuleRow (pure display), RecurringRuleSectionViews (empty state with onAdd closure), AddRecurringRuleView (self-contained form). Kept mutations in orchestrator.
+- Files: RecurringRulesView.swift (modified), RecurringRuleRow.swift, RecurringRuleSectionViews.swift, AddRecurringRuleView.swift (new), project.pbxproj
+- Tricky parts: Preview macros with multi-statement setup need `import SwiftData` and `return` keyword before the view. First build failed due to missing SwiftData import in extracted file.
+- Lesson: Always add `import SwiftData` when extracting views that use ModelConfiguration/ModelContainer in #Preview. The `return` keyword is required in multi-statement #Preview blocks.
