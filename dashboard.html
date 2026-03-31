@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaudeBot Agent Teams — Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242836;
+    --border: #2e3345;
+    --text: #e2e4ed;
+    --text2: #8b8fa3;
+    --accent: #7c6aef;
+    --accent2: #5b4cc4;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --orange: #fb923c;
+    --pink: #f472b6;
+    --cyan: #22d3ee;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 20px 28px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+    border-radius: 11px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+  }
+  .header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.5px; }
+  .header h1 span { color: var(--text2); font-weight: 400; }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  /* Mode toggle */
+  .mode-toggle {
+    display: flex; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+  }
+  .mode-btn {
+    padding: 6px 14px; font-family: inherit; font-size: 12px; font-weight: 500;
+    background: none; border: none; color: var(--text2); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn.active { background: var(--accent); color: white; }
+  .mode-btn:hover:not(.active) { color: var(--text); }
+
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+    animation: livePulse 2s ease infinite; margin-right: 4px; display: inline-block;
+  }
+  .live-dot.offline { background: var(--red); animation: none; }
+  @keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .status-badge {
+    font-size: 12px; padding: 5px 12px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .btn {
+    padding: 7px 18px; border: none; border-radius: 8px;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,106,239,0.3); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+  .btn-secondary:hover { color: var(--text); border-color: var(--text2); }
+
+  .speed-control { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+  .speed-control input[type="range"] { width: 70px; accent-color: var(--accent); }
+
+  .step-counter {
+    font-size: 12px; color: var(--text2); background: var(--surface);
+    padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .step-counter b { color: var(--accent); }
+
+  /* ── Progress bar ── */
+  .progress-bar { height: 3px; background: var(--surface2); overflow: hidden; }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--pink));
+    border-radius: 2px; width: 0%; transition: width 0.5s ease;
+  }
+
+  /* ── Agent Cards ── */
+  .agents-bar { display: flex; gap: 10px; padding: 16px 28px; overflow-x: auto; }
+  .agent-card {
+    flex: 1; min-width: 170px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+    transition: all 0.4s ease; position: relative; overflow: hidden;
+  }
+  .agent-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--agent-color); opacity: 0.5; transition: opacity 0.3s;
+  }
+  .agent-card.working::before { opacity: 1; }
+  .agent-card.working { border-color: var(--agent-color); box-shadow: 0 0 20px rgba(124,106,239,0.08); }
+  .agent-card.offline { opacity: 0.5; }
+
+  .agent-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .agent-name { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+  .agent-icon {
+    width: 26px; height: 26px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; background: var(--agent-color); opacity: 0.9;
+  }
+  .status-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--text2); transition: all 0.3s;
+  }
+  .status-dot.idle { background: var(--text2); }
+  .status-dot.working { background: var(--yellow); animation: pulse 1.5s ease-in-out infinite; }
+  .status-dot.reviewing { background: var(--blue); animation: pulse 1.5s ease-in-out infinite; }
+  .status-dot.done { background: var(--green); }
+  .status-dot.delegating { background: var(--orange); animation: pulse 1s ease-in-out infinite; }
+  .status-dot.offline { background: var(--red); }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 currentColor; } 50% { box-shadow: 0 0 0 5px transparent; } }
+
+  .agent-status { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .agent-task {
+    font-size: 11px; color: var(--text2); margin-top: 7px; padding-top: 7px;
+    border-top: 1px solid var(--border); min-height: 16px; transition: all 0.3s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .agent-task.active { color: var(--text); }
+  .agent-activity {
+    font-size: 10px; color: var(--text2); margin-top: 5px;
+    opacity: 0.7; font-style: italic;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .agent-seen {
+    font-size: 9px; color: var(--text2); opacity: 0.5; margin-top: 3px;
+  }
+
+  /* Chains */
+  .chain-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  .chain-header {
+    font-size: 14px; font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .chain-pr-tag {
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    background: var(--accent); color: white;
+  }
+  .chain-steps {
+    display: flex; flex-direction: column; gap: 6px; padding-left: 16px;
+    border-left: 2px solid var(--border);
+  }
+  .chain-step {
+    font-size: 12px; display: flex; align-items: center; gap: 8px;
+    padding: 4px 0;
+  }
+  .chain-step-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    margin-left: -20px;
+  }
+  .chain-step-agent { font-weight: 600; min-width: 80px; }
+  .chain-step-action { color: var(--text2); }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: 2px; padding: 0 28px; border-bottom: 1px solid var(--border); }
+  .tab {
+    padding: 9px 18px; font-family: inherit; font-size: 12px; font-weight: 500;
+    background: none; border: none; color: var(--text2); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 17px; height: 17px; padding: 0 5px; border-radius: 9px;
+    background: var(--surface2); font-size: 10px; margin-left: 5px;
+  }
+  .tab.active .tab-badge { background: var(--accent); color: white; }
+
+  /* ── Content ── */
+  .content { padding: 18px 28px 40px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Kanban */
+  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .kanban-col {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; min-height: 260px;
+  }
+  .kanban-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .kanban-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .kanban-title .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .col-todo .kanban-title .dot { background: var(--text2); }
+  .col-progress .kanban-title .dot { background: var(--yellow); }
+  .col-done .kanban-title .dot { background: var(--green); }
+  .kanban-count { font-size: 11px; color: var(--text2); background: var(--surface2); padding: 2px 7px; border-radius: 5px; }
+
+  .task-card {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 9px;
+    padding: 10px 11px; margin-bottom: 7px;
+    border-left: 3px solid var(--card-color, var(--text2));
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .task-card-title { font-size: 12px; font-weight: 500; margin-bottom: 5px; line-height: 1.4; }
+  .task-card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: var(--text2); }
+  .task-agent-tag {
+    padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; opacity: 0.85;
+    color: white;
+  }
+  .task-effort {
+    padding: 1px 6px; border-radius: 3px; font-size: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .task-pr {
+    padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 600;
+    background: var(--accent); color: white; opacity: 0.85;
+  }
+  .task-auto {
+    padding: 1px 5px; border-radius: 3px; font-size: 9px;
+    background: var(--green); color: var(--bg); font-weight: 600; opacity: 0.8;
+  }
+  .task-category {
+    font-size: 10px; color: var(--text2); margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+
+  /* Mailbox */
+  .mailbox { display: flex; flex-direction: column; gap: 8px; max-width: 720px; }
+  .mail-item {
+    display: flex; gap: 12px; padding: 12px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 11px;
+    animation: slideIn 0.3s ease; transition: all 0.3s;
+  }
+  .mail-item:hover { border-color: var(--text2); }
+  .mail-arrow { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 80px; font-size: 10px; font-weight: 600; }
+  .mail-from { color: var(--from-color, var(--accent)); }
+  .mail-to { color: var(--to-color, var(--green)); }
+  .mail-arrow-icon { font-size: 14px; color: var(--text2); }
+  .mail-body { flex: 1; }
+  .mail-subject { font-size: 12px; font-weight: 500; margin-bottom: 3px; }
+  .mail-preview { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .mail-time { font-size: 10px; color: var(--text2); white-space: nowrap; margin-top: 2px; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 30px; max-width: 720px; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; padding: 0 0 16px 0; animation: slideIn 0.3s ease; }
+  .tl-dot { position: absolute; left: -25px; top: 4px; width: 11px; height: 11px; border-radius: 50%; background: var(--dot-color, var(--text2)); border: 2px solid var(--bg); z-index: 1; }
+  .tl-time { font-size: 10px; color: var(--text2); margin-bottom: 3px; }
+  .tl-text { font-size: 12px; line-height: 1.5; }
+  .tl-text b { font-weight: 600; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 50px 20px; color: var(--text2); }
+  .empty-state .icon { font-size: 36px; margin-bottom: 10px; opacity: 0.5; }
+  .empty-state p { font-size: 12px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 18px; font-size: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s ease; z-index: 100; max-width: 340px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Daemon bar */
+  .daemon-bar {
+    display: flex; gap: 14px; padding: 0 28px 8px; font-size: 11px; color: var(--text2);
+  }
+  .daemon-item { display: flex; align-items: center; gap: 5px; }
+  .daemon-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .daemon-dot.on { background: var(--green); }
+  .daemon-dot.off { background: var(--red); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .kanban { grid-template-columns: 1fr; }
+    .agents-bar { flex-wrap: wrap; }
+    .agent-card { min-width: 140px; }
+    .header { flex-direction: column; gap: 10px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">C</div>
+    <h1>Agent Teams <span>— Dashboard</span></h1>
+  </div>
+  <div class="header-right">
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="setMode('live')" id="mode-live">Live</button>
+      <button class="mode-btn" onclick="setMode('demo')" id="mode-demo">Demo</button>
+    </div>
+
+    <!-- Live mode controls -->
+    <div id="live-controls" style="display:flex; gap:8px; align-items:center;">
+      <div class="status-badge">
+        <span class="live-dot" id="liveDot"></span>
+        <span id="liveStatus">Connecting...</span>
+      </div>
+      <div class="status-badge" id="peersBadge" style="display:none">
+        <span id="peersCount">0</span> peers
+      </div>
+    </div>
+
+    <!-- Demo mode controls -->
+    <div id="demo-controls" style="display:none; display:flex; gap:8px; align-items:center;">
+      <div class="speed-control">
+        <span>Speed</span>
+        <input type="range" id="speedSlider" min="1" max="5" value="3">
+        <span id="speedLabel">1x</span>
+      </div>
+      <div class="step-counter">Step <b id="stepNum">0</b> / <b>12</b></div>
+      <button class="btn btn-secondary" onclick="resetSim()">Reset</button>
+      <button class="btn btn-primary" id="startBtn" onclick="startSim()">Start simulation</button>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- Daemon bar (live only) -->
+<div class="daemon-bar" id="daemonBar">
+  <div class="daemon-item"><span class="daemon-dot off" id="d-watchdog"></span> watchdog</div>
+  <div class="daemon-item"><span class="daemon-dot off" id="d-keepalive"></span> keepalive</div>
+  <div class="daemon-item"><span class="daemon-dot off" id="d-ci-monitor"></span> ci-monitor</div>
+</div>
+
+<!-- Agent Cards -->
+<div class="agents-bar" id="agentsBar"></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('board', this)">
+    Task Board <span class="tab-badge" id="badge-board">0</span>
+  </button>
+  <button class="tab" onclick="switchTab('mailbox', this)">
+    Mailbox <span class="tab-badge" id="badge-mailbox">0</span>
+  </button>
+  <button class="tab" onclick="switchTab('timeline', this)">
+    Timeline <span class="tab-badge" id="badge-timeline">0</span>
+  </button>
+  <button class="tab" onclick="switchTab('chains', this)">
+    Chains <span class="tab-badge" id="badge-chains">0</span>
+  </button>
+</div>
+
+<div class="content">
+  <div class="tab-content active" id="tab-board">
+    <div class="kanban">
+      <div class="kanban-col col-todo">
+        <div class="kanban-header">
+          <div class="kanban-title"><span class="dot"></span> Todo</div>
+          <div class="kanban-count" id="count-todo">0</div>
+        </div>
+        <div id="col-todo"></div>
+      </div>
+      <div class="kanban-col col-progress">
+        <div class="kanban-header">
+          <div class="kanban-title"><span class="dot"></span> In Progress</div>
+          <div class="kanban-count" id="count-progress">0</div>
+        </div>
+        <div id="col-progress"></div>
+      </div>
+      <div class="kanban-col col-done">
+        <div class="kanban-header">
+          <div class="kanban-title"><span class="dot"></span> Done</div>
+          <div class="kanban-count" id="count-done">0</div>
+        </div>
+        <div id="col-done"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-mailbox">
+    <div class="mailbox" id="mailboxList">
+      <div class="empty-state"><div class="icon">📭</div><p>No messages yet.</p></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-timeline">
+    <div class="timeline" id="timelineList">
+      <div class="empty-state"><div class="icon">🕐</div><p>No events yet.</p></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-chains">
+    <div id="chainsList" style="max-width:720px">
+      <div class="empty-state"><div class="icon">🔗</div><p>No correlated chains yet. Events with PR numbers are auto-grouped.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  SHARED STATE
+// ════════════════════════════════════════════════════════
+let currentMode = 'live'; // 'live' or 'demo'
+let mailCount = 0;
+let timelineCount = 0;
+let lastEventId = null;
+let pollTimer = null;
+let prevAgentsHash = '';
+let prevBoardHash = '';
+
+// Agent color map
+const AGENT_COLORS = {
+  coordinator: '#7c6aef',
+  coder: '#60a5fa',
+  frontend: '#34d399',
+  reviewer: '#fb923c',
+  qa: '#f472b6',
+  researcher: '#22d3ee',
+};
+
+function agentColor(name) {
+  return AGENT_COLORS[name] || '#8b8fa3';
+}
+
+function timeAgo(isoStr) {
+  if (!isoStr) return '';
+  const diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+  if (diff < 5) return 'just now';
+  if (diff < 60) return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
+
+// ════════════════════════════════════════════════════════
+//  MODE SWITCHING
+// ════════════════════════════════════════════════════════
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-live').classList.toggle('active', mode === 'live');
+  document.getElementById('mode-demo').classList.toggle('active', mode === 'demo');
+  document.getElementById('live-controls').style.display = mode === 'live' ? '' : 'none';
+  document.getElementById('demo-controls').style.display = mode === 'demo' ? 'flex' : 'none';
+  document.getElementById('daemonBar').style.display = mode === 'live' ? 'flex' : 'none';
+
+  clearUI();
+
+  if (mode === 'live') {
+    startLivePolling();
+  } else {
+    stopLivePolling();
+    initDemoAgents();
+  }
+}
+
+function clearUI() {
+  document.getElementById('col-todo').innerHTML = '';
+  document.getElementById('col-progress').innerHTML = '';
+  document.getElementById('col-done').innerHTML = '';
+  document.getElementById('mailboxList').innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>No messages yet.</p></div>';
+  document.getElementById('timelineList').innerHTML = '<div class="empty-state"><div class="icon">🕐</div><p>No events yet.</p></div>';
+  mailCount = 0; timelineCount = 0; lastEventId = null;
+  prevAgentsHash = ''; prevBoardHash = '';
+  updateBadges();
+  document.getElementById('progressFill').style.width = '0%';
+}
+
+function updateBadges() {
+  document.getElementById('badge-mailbox').textContent = mailCount;
+  document.getElementById('badge-timeline').textContent = timelineCount;
+}
+
+// ════════════════════════════════════════════════════════
+//  SHARED UI HELPERS
+// ════════════════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function renderAgentCards(agents) {
+  const bar = document.getElementById('agentsBar');
+  const hash = JSON.stringify(agents);
+  if (hash === prevAgentsHash) return; // no change, skip re-render
+  prevAgentsHash = hash;
+
+  // Check if cards already exist — if so, update in-place
+  const existingIds = new Set();
+  bar.querySelectorAll('[data-agent-id]').forEach(el => existingIds.add(el.dataset.agentId));
+
+  for (const [id, a] of Object.entries(agents)) {
+    const color = a.color || agentColor(id);
+    const isActive = a.status === 'working' || a.status === 'reviewing' || a.status === 'delegating';
+    const isOffline = a.status === 'offline';
+    const status = a.status || 'idle';
+
+    let card = bar.querySelector(`[data-agent-id="${id}"]`);
+    // Clean task text — strip agent role prefix for brevity
+    const taskText = (a.task || '—').replace(/^(Coder agent|Senior Reviewer|Coordinator)\s*[—–-]\s*/i, '');
+    const activityText = a.activity || '';
+    const seenText = a.last_seen ? timeAgo(a.last_seen) : '';
+
+    if (card) {
+      // Update existing card in-place (no flicker)
+      card.className = 'agent-card' + (isActive ? ' working' : '') + (isOffline ? ' offline' : '');
+      const dot = card.querySelector('.status-dot');
+      if (dot) dot.className = 'status-dot ' + status;
+      const statusEl = card.querySelector('.agent-status');
+      if (statusEl) statusEl.textContent = status;
+      const taskEl = card.querySelector('.agent-task');
+      if (taskEl) {
+        taskEl.textContent = taskText;
+        taskEl.className = 'agent-task' + (isActive ? ' active' : '');
+      }
+      const actEl = card.querySelector('.agent-activity');
+      if (actEl) actEl.textContent = activityText;
+      const seenEl = card.querySelector('.agent-seen');
+      if (seenEl) seenEl.textContent = seenText ? 'seen ' + seenText : '';
+      existingIds.delete(id);
+    } else {
+      // Create new card
+      const div = document.createElement('div');
+      div.dataset.agentId = id;
+      div.className = 'agent-card' + (isActive ? ' working' : '') + (isOffline ? ' offline' : '');
+      div.style.cssText = `--agent-color: ${color}`;
+      div.innerHTML = `
+        <div class="agent-top">
+          <div class="agent-name">
+            <div class="agent-icon" style="background:${color}">${a.icon || id[0].toUpperCase()}</div>
+            ${a.name || id}
+          </div>
+          <div class="status-dot ${status}"></div>
+        </div>
+        <div class="agent-status">${status}</div>
+        <div class="agent-task ${isActive ? 'active' : ''}">${taskText}</div>
+        <div class="agent-activity">${activityText}</div>
+        <div class="agent-seen">${seenText ? 'seen ' + seenText : ''}</div>`;
+      bar.appendChild(div);
+    }
+  }
+
+  // Remove cards for agents no longer present
+  existingIds.forEach(id => {
+    const el = bar.querySelector(`[data-agent-id="${id}"]`);
+    if (el) el.remove();
+  });
+}
+
+function renderTaskCard(task) {
+  const color = agentColor(task.agent);
+  const agentName = task.agent ? task.agent.charAt(0).toUpperCase() + task.agent.slice(1) : '';
+  const prBadge = task.pr ? `<span class="task-pr">PR #${task.pr}</span>` : '';
+  const autoBadge = task.auto_detected ? '<span class="task-auto">auto</span>' : '';
+  return `<div class="task-card" style="--card-color: ${color}">
+    ${task.category ? `<div class="task-category">${task.category}</div>` : ''}
+    <div class="task-card-title">${task.title}</div>
+    <div class="task-card-meta">
+      <span style="display:flex;gap:4px;align-items:center">
+        ${agentName ? `<span class="task-agent-tag" style="background:${color}">${agentName}</span>` : ''}
+        ${prBadge}${autoBadge}
+      </span>
+      <span class="task-effort">${task.effort || task.priority || ''}</span>
+    </div>
+  </div>`;
+}
+
+function renderBoard(tasks) {
+  const hash = JSON.stringify(tasks);
+  if (hash === prevBoardHash) return; // no change, skip re-render
+  prevBoardHash = hash;
+
+  const cols = { todo: [], progress: [], done: [] };
+  for (const t of tasks) cols[t.col]?.push(t);
+
+  for (const col of ['todo', 'progress', 'done']) {
+    document.getElementById('col-' + col).innerHTML = cols[col].map(renderTaskCard).join('');
+    document.getElementById('count-' + col).textContent = cols[col].length;
+  }
+  document.getElementById('badge-board').textContent = tasks.length;
+}
+
+function addMailItem(from, to, subject, body, time) {
+  const list = document.getElementById('mailboxList');
+  if (mailCount === 0) list.innerHTML = '';
+  mailCount++;
+  const fc = agentColor(from), tc = agentColor(to);
+  const fromName = from.charAt(0).toUpperCase() + from.slice(1);
+  const toName = to.charAt(0).toUpperCase() + to.slice(1);
+  list.insertAdjacentHTML('afterbegin', `
+    <div class="mail-item" style="--from-color:${fc};--to-color:${tc}">
+      <div class="mail-arrow">
+        <span class="mail-from">${fromName}</span>
+        <span class="mail-arrow-icon">↓</span>
+        <span class="mail-to">${toName}</span>
+      </div>
+      <div class="mail-body">
+        <div class="mail-subject">${subject}</div>
+        <div class="mail-preview">${body}</div>
+      </div>
+      <div class="mail-time">${time}</div>
+    </div>`);
+  document.getElementById('badge-mailbox').textContent = mailCount;
+}
+
+function addTimelineItem(text, color, time) {
+  const list = document.getElementById('timelineList');
+  if (timelineCount === 0) list.innerHTML = '';
+  timelineCount++;
+  list.insertAdjacentHTML('beforeend', `
+    <div class="tl-item" style="--dot-color:${color}">
+      <div class="tl-dot"></div>
+      <div class="tl-time">${time}</div>
+      <div class="tl-text">${text}</div>
+    </div>`);
+  document.getElementById('badge-timeline').textContent = timelineCount;
+}
+
+// ════════════════════════════════════════════════════════
+//  LIVE MODE — reads from local data API
+// ════════════════════════════════════════════════════════
+//
+// The dashboard calls 3 shell scripts via a tiny local server:
+//   /api/agents  → agent-status-json.sh
+//   /api/goals   → goals-to-json.sh
+//   /api/events  → reads /tmp/claudebot-events.json
+//
+// Since browsers can't call shell scripts directly, we provide 2 options:
+//   A) Run the included dashboard-server.sh (Node/Python HTTP server)
+//   B) Fallback: read /tmp/claudebot-events.json directly via fetch (file://)
+//
+// For now we poll /tmp/claudebot-events.json via the included data-refresh mechanism.
+
+const EVENT_LOG_URL = 'http://localhost:7842';
+let liveConnected = false;
+
+function startLivePolling() {
+  pollLive();
+  pollTimer = setInterval(pollLive, 3000);
+}
+
+function stopLivePolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+}
+
+async function pollLive() {
+  try {
+    // Try to fetch from local server
+    const res = await fetch(EVENT_LOG_URL + '/api/all', { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error('not ok');
+    const data = await res.json();
+    liveConnected = true;
+    document.getElementById('liveDot').className = 'live-dot';
+    document.getElementById('liveStatus').textContent = 'Live — polling 3s';
+    applyLiveData(data);
+  } catch (e) {
+    liveConnected = false;
+    document.getElementById('liveDot').className = 'live-dot offline';
+    document.getElementById('liveStatus').textContent = 'Offline — start dashboard-server';
+  }
+}
+
+function applyLiveData(data) {
+  // Agents
+  if (data.agents) {
+    renderAgentCards(data.agents.agents || {});
+    // Daemons
+    const daemons = data.agents.daemons || {};
+    for (const [name, info] of Object.entries(daemons)) {
+      const el = document.getElementById('d-' + name);
+      if (el) el.className = 'daemon-dot ' + (info.running ? 'on' : 'off');
+    }
+    // Peers count
+    const pb = document.getElementById('peersBadge');
+    const pc = document.getElementById('peersCount');
+    if (data.agents.broker_online) {
+      pb.style.display = '';
+      pc.textContent = data.agents.peers_count || 0;
+    } else {
+      pb.style.display = 'none';
+    }
+  }
+
+  // Tasks from GOALS.md + inject active tasks from agent summaries
+  if (data.goals) {
+    let tasks = data.goals.tasks || [];
+
+    // Inject active work from peer summaries + tmux activity into "In Progress"
+    const agentsData = data.agents?.agents || {};
+    for (const [agentId, agentInfo] of Object.entries(agentsData)) {
+      // Only coder and reviewer do actual work — skip coordinator
+      if (agentId === 'coordinator') continue;
+      if (!agentInfo.alive) continue;
+      if (agentInfo.status !== 'working' && agentInfo.status !== 'reviewing') continue;
+
+      // Use best available title: specific summary > activity > generic
+      let title = '';
+
+      // 1. Try peer summary (cleaned)
+      const summary = (agentInfo.summary || agentInfo.task || '')
+        .replace(/^(Coder agent|Senior Reviewer|Coordinator)\s*[—–-]\s*/i, '')
+        .replace(/\s*\[opus\].*$/i, '')
+        .replace(/\s*\|.*$/i, '')
+        .trim();
+
+      // 2. Check if summary is generic
+      const isGeneric = /^(implements features|expert review|auto-merge|ready to review|standing by|idle|delegates)/i.test(summary);
+
+      if (!isGeneric && summary.length > 5) {
+        title = summary;
+      } else {
+        // 3. Fallback to tmux activity line
+        const activity = (agentInfo.activity || '').trim();
+        if (activity.length > 5) {
+          title = activity;
+        }
+      }
+
+      if (!title) continue;
+
+      // Try to match a GOALS.md todo task
+      const titleWords = title.toLowerCase().split(/\s+/);
+      let matched = false;
+      for (const t of tasks) {
+        if (t.col !== 'todo') continue;
+        const tw = t.title.toLowerCase().split(/\s+/);
+        const overlap = titleWords.filter(w => w.length > 3 && tw.includes(w));
+        if (overlap.length >= 2) {
+          t.col = 'progress';
+          t.agent = t.agent || agentId;
+          matched = true;
+          break;
+        }
+      }
+
+      // No match — inject as standalone card
+      if (!matched) {
+        tasks.push({
+          id: 9000 + Object.keys(agentsData).indexOf(agentId),
+          title: title.substring(0, 80),
+          category: 'Active (from agent)',
+          col: 'progress',
+          effort: '',
+          agent: agentId,
+          priority: 'active',
+        });
+      }
+    }
+
+    renderBoard(tasks);
+  }
+
+  // Events → mailbox + timeline
+  if (data.events && data.events.events) {
+    const events = data.events.events;
+    // Find new events since last render
+    let startIdx = 0;
+    if (lastEventId) {
+      const idx = events.findIndex(e => e.id === lastEventId);
+      if (idx >= 0) startIdx = idx + 1;
+    }
+
+    for (let i = startIdx; i < events.length; i++) {
+      const ev = events[i];
+      lastEventId = ev.id;
+      const d = ev.data || {};
+      const agentName = ev.agent.charAt(0).toUpperCase() + ev.agent.slice(1);
+      const color = agentColor(ev.agent);
+
+      // Mailbox: messages + received messages
+      if (ev.type === 'message') {
+        addMailItem(ev.agent, d.to || '?', d.subject || 'Message', d.body || d.message || '', ev.time || '');
+      } else if (ev.type === 'message_received') {
+        addMailItem(d.from || 'peer', ev.agent, 'Received', d.body || '', ev.time || '');
+      }
+
+      // All events go to timeline
+      let text = '';
+      switch(ev.type) {
+        case 'status':
+          text = `<b>${agentName}</b> → ${d.message || d.status}${d.task ? ': ' + d.task : ''}`;
+          break;
+        case 'message':
+          text = `<b>${agentName}</b> → <b>${d.to || '?'}</b>: ${(d.subject || d.message || '').substring(0, 80)}`;
+          break;
+        case 'message_received':
+          text = `<b>${agentName}</b> received: ${(d.body || '').substring(0, 80)}`;
+          break;
+        case 'task_update':
+          text = `<b>${agentName}</b> moved "${d.title || d.task_id}" to ${d.to || '?'}`;
+          break;
+        case 'pr_created':
+          text = `<b>${agentName}</b> created PR #${d.pr}`;
+          break;
+        case 'pr_merged':
+          text = `<b>${agentName}</b> merged PR #${d.pr} ${d.score ? '(' + d.score + ')' : ''}`;
+          break;
+        case 'pr_review':
+          text = `<b>${agentName}</b> ${d.action} PR #${d.pr}`;
+          break;
+        case 'channel_reply':
+          text = `<b>${agentName}</b> → Discord: ${(d.message || '').substring(0, 80)}`;
+          break;
+        case 'tool_call':
+          text = `<b>${agentName}</b> ${d.tool}(${(d.args || '').substring(0, 60)})`;
+          break;
+        case 'pipeline':
+          text = `<b>${agentName}</b> pipeline ${d.action}: ${d.task || ''}`;
+          break;
+        default:
+          text = `<b>${agentName}</b> [${ev.type}] ${(d.message || d.body || JSON.stringify(d)).substring(0, 80)}`;
+      }
+      addTimelineItem(text, color, ev.time || '');
+    }
+
+    // Build correlation chains from events with corr_id
+    buildChains(events);
+  }
+}
+
+function buildChains(events) {
+  const chains = {};
+  for (const ev of events) {
+    const cid = ev.corr_id;
+    if (!cid) continue;
+    if (!chains[cid]) chains[cid] = [];
+    chains[cid].push(ev);
+  }
+
+  const container = document.getElementById('chainsList');
+  const chainKeys = Object.keys(chains).sort().reverse();
+  document.getElementById('badge-chains').textContent = chainKeys.length;
+
+  if (chainKeys.length === 0) return;
+
+  // Only rebuild if chain count changed
+  if (container.dataset.count === String(chainKeys.length)) return;
+  container.dataset.count = String(chainKeys.length);
+  container.innerHTML = '';
+
+  for (const cid of chainKeys) {
+    const steps = chains[cid];
+    const prNum = cid.replace('pr-', '#');
+
+    let html = `<div class="chain-card">
+      <div class="chain-header">
+        <span class="chain-pr-tag">PR ${prNum}</span>
+        ${steps.length} events across ${new Set(steps.map(s => s.agent)).size} agent(s)
+      </div>
+      <div class="chain-steps">`;
+
+    for (const step of steps) {
+      const color = agentColor(step.agent);
+      const name = step.agent.charAt(0).toUpperCase() + step.agent.slice(1);
+      const d = step.data || {};
+      let action = step.type;
+      if (step.type === 'pr_merged') action = 'merged ' + (d.score || '');
+      else if (step.type === 'pr_created') action = 'created PR';
+      else if (step.type === 'message') action = '→ ' + (d.to || '?') + ': ' + (d.subject || '').substring(0, 50);
+      else if (step.type === 'message_received') action = 'received: ' + (d.body || '').substring(0, 50);
+      else if (step.type === 'tool_call') action = d.tool + '(' + (d.args || '').substring(0, 40) + ')';
+      else if (step.type === 'pr_review') action = d.action + ' PR';
+
+      html += `<div class="chain-step">
+        <span class="chain-step-dot" style="background:${color}"></span>
+        <span class="chain-step-agent" style="color:${color}">${name}</span>
+        <span class="chain-step-action">${action}</span>
+        <span style="font-size:10px;color:var(--text2);margin-left:auto">${step.time || ''}</span>
+      </div>`;
+    }
+
+    html += '</div></div>';
+    container.insertAdjacentHTML('beforeend', html);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  DEMO MODE — simulation (same as before)
+// ════════════════════════════════════════════════════════
+const DEMO_AGENTS = {
+  coordinator: { name: 'Coordinator', color: '#7c6aef', icon: 'C', status: 'idle', task: '—' },
+  backend:     { name: 'Backend',     color: '#60a5fa', icon: 'B', status: 'idle', task: '—' },
+  frontend:    { name: 'Frontend',    color: '#34d399', icon: 'F', status: 'idle', task: '—' },
+  reviewer:    { name: 'Reviewer',    color: '#fb923c', icon: 'R', status: 'idle', task: '—' },
+};
+
+const DEMO_TASKS = [
+  { id: 1, title: 'Design API schema', agent: 'backend', priority: 'high', effort: 'S' },
+  { id: 2, title: 'Build REST endpoints', agent: 'backend', priority: 'high', effort: 'M' },
+  { id: 3, title: 'Create dashboard UI', agent: 'frontend', priority: 'high', effort: 'M' },
+  { id: 4, title: 'Integrate API calls', agent: 'frontend', priority: 'medium', effort: 'S' },
+  { id: 5, title: 'Review all PRs', agent: 'reviewer', priority: 'medium', effort: 'S' },
+  { id: 6, title: 'Write tests', agent: 'backend', priority: 'low', effort: 'S' },
+];
+
+const STEPS = [
+  { agent: { coordinator: { status: 'delegating', task: 'Planning: User Dashboard' } },
+    timeline: { text: '<b>Coordinator</b> received task from Telegram: "Build user dashboard"', color: '#7c6aef' }, time: '10:00' },
+  { agent: { coordinator: { status: 'delegating', task: 'Delegating tasks' } },
+    tasks: [1,2,3,4,5,6].map(id => ({ id, col: 'todo' })),
+    timeline: { text: '<b>Coordinator</b> created 6 tasks and assigned to agents', color: '#7c6aef' }, time: '10:01' },
+  { agent: { coordinator: { status: 'idle', task: 'Monitoring' }, backend: { status: 'working', task: 'Designing API schema' } },
+    tasks: [{ id: 1, col: 'progress' }],
+    timeline: { text: '<b>Backend</b> started API schema design', color: '#60a5fa' }, time: '10:02' },
+  { agent: { frontend: { status: 'working', task: 'Building dashboard layout' } },
+    tasks: [{ id: 3, col: 'progress' }],
+    timeline: { text: '<b>Frontend</b> started dashboard UI', color: '#34d399' }, time: '10:03' },
+  { agent: { backend: { status: 'working', task: 'Building REST endpoints' } },
+    tasks: [{ id: 1, col: 'done' }, { id: 2, col: 'progress' }],
+    mail: { from: 'backend', to: 'frontend', subject: 'API Schema ready', body: 'Schema at /api/schema.json — 12 endpoints. Use GET /api/dashboard for main data.' },
+    timeline: { text: '<b>Backend</b> finished schema, sent to <b>Frontend</b>', color: '#60a5fa' }, time: '10:15' },
+  { agent: { frontend: { status: 'working', task: 'Integrating API calls' } },
+    tasks: [{ id: 4, col: 'progress' }],
+    timeline: { text: '<b>Frontend</b> integrating API endpoints', color: '#34d399' }, time: '10:20' },
+  { agent: { backend: { status: 'working', task: 'Writing unit tests' } },
+    tasks: [{ id: 2, col: 'done' }, { id: 6, col: 'progress' }],
+    mail: { from: 'backend', to: 'reviewer', subject: 'PR #42: REST endpoints', body: 'All 12 endpoints. PR ready at github.com/org/repo/pull/42' },
+    timeline: { text: '<b>Backend</b> completed endpoints, opened PR #42', color: '#60a5fa' }, time: '10:35' },
+  { agent: { reviewer: { status: 'reviewing', task: 'Reviewing PR #42' } },
+    tasks: [{ id: 5, col: 'progress' }],
+    timeline: { text: '<b>Reviewer</b> started reviewing PR #42', color: '#fb923c' }, time: '10:36' },
+  { agent: { frontend: { status: 'done', task: 'Dashboard complete' } },
+    tasks: [{ id: 3, col: 'done' }, { id: 4, col: 'done' }],
+    mail: { from: 'frontend', to: 'reviewer', subject: 'PR #43: Dashboard UI', body: 'Dashboard with 4 charts + WebSocket updates. PR: github.com/org/repo/pull/43' },
+    timeline: { text: '<b>Frontend</b> completed, opened PR #43', color: '#34d399' }, time: '10:50' },
+  { agent: { reviewer: { status: 'reviewing', task: 'Reviewing PR #43' } },
+    mail: { from: 'reviewer', to: 'backend', subject: 'PR #42 approved ✓', body: 'LGTM! Add rate limiting to /api/dashboard. Merged.' },
+    timeline: { text: '<b>Reviewer</b> approved PR #42, reviewing PR #43', color: '#fb923c' }, time: '11:05' },
+  { agent: { backend: { status: 'done', task: 'All done' }, reviewer: { status: 'done', task: 'All PRs reviewed' } },
+    tasks: [{ id: 6, col: 'done' }, { id: 5, col: 'done' }],
+    mail: { from: 'reviewer', to: 'frontend', subject: 'PR #43 approved ✓', body: 'Excellent! Approved and merged.' },
+    timeline: { text: '<b>Backend</b> tests done. <b>Reviewer</b> merged PR #43.', color: '#fb923c' }, time: '11:15' },
+  { agent: { coordinator: { status: 'done', task: 'Feature shipped!' } },
+    timeline: { text: '<b>Coordinator</b> → Telegram: "Dashboard shipped — 6 tasks, 2 PRs, all merged ✅"', color: '#7c6aef' }, time: '11:16' },
+];
+
+let demoStep = 0;
+let demoInterval = null;
+let demoTaskState = {};
+let speed = 1;
+
+const speeds = [0.5, 0.75, 1, 1.5, 2];
+document.getElementById('speedSlider').addEventListener('input', function() {
+  speed = speeds[this.value - 1];
+  document.getElementById('speedLabel').textContent = speed + 'x';
+});
+
+function initDemoAgents() {
+  renderAgentCards(DEMO_AGENTS);
+}
+
+function startSim() {
+  if (demoStep >= 12) return;
+  document.getElementById('startBtn').textContent = 'Running...';
+  document.getElementById('startBtn').disabled = true;
+  function next() {
+    if (demoStep < 12) { executeDemoStep(STEPS[demoStep]); demoInterval = setTimeout(next, 2000 / speed); }
+  }
+  next();
+}
+
+function executeDemoStep(step) {
+  demoStep++;
+  document.getElementById('stepNum').textContent = demoStep;
+  document.getElementById('progressFill').style.width = (demoStep / 12 * 100) + '%';
+
+  // Update agents
+  if (step.agent) {
+    for (const [id, s] of Object.entries(step.agent)) {
+      if (DEMO_AGENTS[id]) { DEMO_AGENTS[id].status = s.status; DEMO_AGENTS[id].task = s.task; }
+    }
+    renderAgentCards(DEMO_AGENTS);
+  }
+
+  // Update tasks
+  if (step.tasks) {
+    for (const t of step.tasks) demoTaskState[t.id] = t.col;
+    const allTasks = DEMO_TASKS.map(t => ({ ...t, col: demoTaskState[t.id] || 'todo' })).filter(t => demoTaskState[t.id]);
+    renderBoard(allTasks);
+  }
+
+  if (step.mail) addMailItem(step.mail.from, step.mail.to, step.mail.subject, step.mail.body, step.time);
+  if (step.timeline) addTimelineItem(step.timeline.text, step.timeline.color, step.time);
+
+  showToast(`Step ${demoStep}: ${step.timeline?.text?.replace(/<[^>]+>/g, '') || ''}`);
+
+  if (demoStep >= 12) {
+    clearTimeout(demoInterval);
+    document.getElementById('startBtn').textContent = 'Completed';
+    setTimeout(() => showToast('Simulation complete! All tasks shipped. ✅'), 1000);
+  }
+}
+
+function resetSim() {
+  clearTimeout(demoInterval);
+  demoStep = 0; demoTaskState = {};
+  mailCount = 0; timelineCount = 0;
+  document.getElementById('stepNum').textContent = '0';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('startBtn').textContent = 'Start simulation';
+  document.getElementById('startBtn').disabled = false;
+  for (const a of Object.values(DEMO_AGENTS)) { a.status = 'idle'; a.task = '—'; }
+  clearUI();
+  initDemoAgents();
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+setMode('live');
+</script>
+</body>
+</html>

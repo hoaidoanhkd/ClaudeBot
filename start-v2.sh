@@ -7,6 +7,22 @@ set -uo pipefail
 
 source "$HOME/agents/config.env"
 
+# Update additionalDirectories in settings.json with current project path
+python3 -c "
+import json, os, sys
+settings_path = os.path.expanduser('~/.claude/settings.json')
+project_path = os.path.expandvars(sys.argv[1])
+with open(settings_path, 'r') as f:
+    s = json.load(f)
+dirs = s.setdefault('permissions', {}).setdefault('additionalDirectories', [])
+base = [os.path.expanduser('~/agents')]
+if project_path not in base:
+    base.append(project_path)
+s['permissions']['additionalDirectories'] = base
+with open(settings_path, 'w') as f:
+    json.dump(s, f, indent=2)
+" "$PROJECT_PATH" 2>/dev/null || true
+
 # Load active channel
 ACTIVE_CHANNEL=$(cat ~/agents/active-channel.txt 2>/dev/null || echo "telegram")
 CHANNEL=""

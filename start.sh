@@ -8,6 +8,23 @@ set -euo pipefail
 # Load config
 source "$HOME/agents/config.env"
 
+# Update additionalDirectories in settings.json with current project path
+python3 -c "
+import json, os, sys
+settings_path = os.path.expanduser('~/.claude/settings.json')
+project_path = os.path.expandvars(sys.argv[1])
+with open(settings_path, 'r') as f:
+    s = json.load(f)
+dirs = s.setdefault('permissions', {}).setdefault('additionalDirectories', [])
+# Always keep ~/agents, add current project if not already there
+base = [os.path.expanduser('~/agents')]
+if project_path not in base:
+    base.append(project_path)
+s['permissions']['additionalDirectories'] = base
+with open(settings_path, 'w') as f:
+    json.dump(s, f, indent=2)
+" "$PROJECT_PATH" 2>/dev/null || true
+
 # Load active channel (only 1 channel at a time)
 ACTIVE_CHANNEL=$(cat ~/agents/active-channel.txt 2>/dev/null || echo "telegram")
 CHANNELS=""
@@ -121,10 +138,22 @@ fi
 echo ""
 echo "⏳ Auto-bootstrap via tmux input..."
 sleep 5
+
+# Pre-generate memory summary for agents
+echo "📚 Pre-loading memory context..."
+MEMORY_SUMMARY=$("$HOME/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh" --summary 2>/dev/null || echo "")
+
 for s in cc-coordinator cc-coder cc-reviewer; do
   tmux send-keys -t $s "BOOTSTRAP: Execute your ON STARTUP instructions now. Set summary, list peers, read memory files, read lessons.md." Enter
   sleep 2
 done
+
+# Inject memory context hint to Coder (the one who benefits most)
+if [ -n "$MEMORY_SUMMARY" ]; then
+  sleep 3
+  tmux send-keys -t cc-coder "MEMORY CONTEXT: $MEMORY_SUMMARY. Before each task, run: ~/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh --task \"[task description]\" to get relevant memories auto-loaded. Use --full flag if you need detail." Enter
+fi
+
 echo "✅ Bootstrap triggered"
 
 echo "⏳ Waiting for bootstrap completion (15s)..."

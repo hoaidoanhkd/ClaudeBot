@@ -30,6 +30,12 @@ NOTE: Do NOT call list_peers on startup. Only call it when you need to reply to 
 - NEVER edit files outside your assigned project directory
 - When done, notify the coordinator via claude-peers send_message
 
+## Model Hints
+Coordinator may prefix tasks with `[MODEL:sonnet]` or `[MODEL:haiku]`.
+- `[MODEL:sonnet]` → simple task, keep implementation minimal, skip deep analysis
+- `[MODEL:opus]` or no prefix → complex task, full analysis + quality checklist
+- Adjust effort level accordingly to save tokens on simple tasks
+
 ## Platform Rules — Load based on PROJECT_TYPE
 On startup, read `~/agents/config.env` for PROJECT_TYPE, then load:
 - ALWAYS: `~/.claude/agents/rules/platforms/general.md`
@@ -81,6 +87,24 @@ If a tool call is blocked or requires approval:
 - Check TaskList after completing each task to find next work
 - Claim unassigned tasks with TaskUpdate(owner: "coder")
 
+## Dashboard Event Logging — REQUIRED
+Log events at key moments using `~/scripts/event-logger.sh` for the real-time dashboard.
+
+```bash
+# When starting a task
+~/scripts/event-logger.sh status coder "working" '{"task":"[task name]"}'
+
+# When sending a message to another agent
+~/scripts/event-logger.sh message coder '{"to":"coordinator","subject":"PR created","body":"PR #N: [title]"}'
+~/scripts/event-logger.sh message coder '{"to":"reviewer","subject":"Please review","body":"PR #N ready"}'
+
+# When creating a PR
+~/scripts/event-logger.sh pr_created coder '{"pr":[N],"title":"[title]","branch":"[branch]"}'
+
+# When task is done
+~/scripts/event-logger.sh status coder "idle" '{"task":""}'
+```
+
 ## Reply — CRITICAL
 - ALWAYS reply results back to coordinator: `SendMessage(to: "coordinator", message: "...")`
 - Can also message reviewer directly for PR handoff
@@ -99,8 +123,15 @@ If a tool call is blocked or requires approval:
 3. **Repo map**: If first task in session, generate project overview:
    `~/scripts/repo-map.sh $PROJECT_PATH` — scan file tree, key files, definitions
    This helps you understand the codebase without reading every file.
-4. **Memory search** (complex tasks only): `~/scripts/memory-search.sh "[keywords]"` for related lessons
-5. **Docs lookup**: If task uses a framework/library/API, search docs FIRST:
+4. **Memory inject** (RECOMMENDED for every task): `~/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh --task "[task description]"`
+   - Shows summary with token cost → decide if you need full detail
+   - Use `--full` flag for detailed context: `~/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh [keywords] --full`
+   - Fallback: `~/scripts/memory-search.sh "[keywords]"` for grep-based search
+5. **Knowledge search** (SwiftUI tasks): `~/Desktop/Projects/ClaudeBot/scripts/knowledge-search.sh "[topic]"`
+   - Returns ranked Do/Don't rules with code examples
+   - Use `--full` for code snippets: `knowledge-search.sh "SwiftData delete" --full`
+   - Check BEFORE writing code to avoid known anti-patterns
+6. **Docs lookup**: If task uses a framework/library/API, search docs FIRST:
    - Use context7 MCP tool: `resolve-library-id` → `query-docs` for the specific API
    - Or WebSearch for "[framework] [feature] documentation 2026"
    - Read the docs BEFORE writing any code
@@ -135,17 +166,12 @@ If a tool call is blocked or requires approval:
 14. For EACH new function/method, think: "What happens with empty data? Nil? Wrong locale? Large numbers?"
 15. Fix any issues found. Only proceed when checklist passes.
 
-### Phase 5: PR + CI Verification
+### Phase 5: PR + Local Verification
 15. Create branch, commit, push, create PR
-16. **Wait for CI** (if GitHub Actions configured):
-    - Run: `gh pr checks [PR_NUMBER] --watch --fail-after 300` (wait max 5 min)
-    - If CI PASSES → proceed to reflection
-    - If CI FAILS:
-      a. Read failure: `gh run list --branch [BRANCH] -L 1 --json databaseId -q '.[0].databaseId'` then `gh run view [ID] --log-failed | tail -30`
-      b. Fix the issue
-      c. Push fix commit to same branch
-      d. Re-check CI (max 2 fix attempts)
-    - If still failing → notify coordinator with error log, don't wait forever
+16. **Local build verify** (GitHub Actions CI is DISABLED — billing):
+    - Do NOT run `gh pr checks` — it will fail or hang
+    - Instead verify locally: build + test passed in Phase 3 is sufficient
+    - Proceed directly to reflection
 17. **REFLECTION** (see below)
 17. send_message results back to coordinator with PR URL
 

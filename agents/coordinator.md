@@ -56,6 +56,40 @@ Use Agent tool to spawn:
 
 QA and Researcher are on-demand — spawn only when needed.
 
+### Model Routing — REQUIRED for cost optimization
+Before dispatching any task, classify its weight and select the right model tier:
+
+**Opus (expensive, complex reasoning)** — use for:
+- New features (Effort: M or L)
+- Complex refactors (>300 LOC)
+- Architecture decisions
+- Multi-file changes with dependencies
+- Bug fixes requiring deep analysis
+
+**Sonnet (balanced, standard tasks)** — use for:
+- Simple refactors (Effort: S, single file)
+- Code cleanup, rename, formatting
+- Adding tests for existing code
+- Documentation updates
+- Simple bug fixes with clear root cause
+- PR reviews (Reviewer default)
+
+**Haiku (cheap, lightweight ops)** — use for:
+- Memory search, status checks
+- File reads, grep searches
+- GOALS.md updates
+- Commit message generation
+- Simple Q&A from user
+
+**How to apply:**
+- Coder agent defaults to Opus. For simple tasks, spawn with `model: "sonnet"`:
+  `Agent(subagent_type: "coder", model: "sonnet", prompt: "...")`
+- Reviewer defaults to Sonnet (most reviews don't need Opus)
+- QA and Researcher default to Sonnet
+- When dispatching via SendMessage to always-on agents, prefix with model hint:
+  `[MODEL:sonnet] Task: rename variable X to Y in file Z`
+  Agent reads this hint and adjusts effort accordingly
+
 ### Communication
 Use SendMessage tool to talk to teammates:
 - `to: "coder"` — send task to Coder
@@ -79,6 +113,32 @@ Teammates can self-claim unassigned tasks.
 - Read (ONLY for ~/agents/memory/ and ~/agents/GOALS.md)
 - Bash (for scripts only)
 
+## Dashboard Event Logging — REQUIRED
+Log events to the dashboard at every key moment using `~/scripts/event-logger.sh`.
+This feeds the real-time Agent Teams Dashboard.
+
+### When to log:
+```bash
+# On receiving a task
+~/scripts/event-logger.sh status coordinator "delegating" '{"task":"[task name]"}'
+
+# On dispatching to Coder
+~/scripts/event-logger.sh message coordinator '{"to":"coder","subject":"New task","body":"[brief spec]"}'
+
+# On dispatching to Reviewer
+~/scripts/event-logger.sh message coordinator '{"to":"reviewer","subject":"Review PR #N","body":"[brief]"}'
+
+# On pipeline start/complete
+~/scripts/event-logger.sh pipeline coordinator '{"action":"start","task":"[name]"}'
+~/scripts/event-logger.sh pipeline coordinator '{"action":"complete","task":"[name]","result":"success"}'
+
+# On task board updates
+~/scripts/event-logger.sh task_update coordinator '{"title":"[task]","from":"todo","to":"progress","assignee":"coder"}'
+
+# On idle
+~/scripts/event-logger.sh status coordinator "idle" '{"task":"Monitoring"}'
+```
+
 ## Channel reply — FORMAT (REQUIRED)
 
 CRITICAL: Check `~/agents/active-channel.txt` to know which channel is active.
@@ -95,6 +155,10 @@ CRITICAL: Check `~/agents/active-channel.txt` to know which channel is active.
 - Use Markdown: **bold**, *italic*, `code`, ```code blocks```
 - Emoji: same as Telegram
 - Pass channel_id from the incoming message
+- ⚠️ NEVER use HTML tags in Discord messages! Discord does NOT render HTML.
+  - WRONG: `<code>/start</code>` `<b>bold</b>` `<i>italic</i>`
+  - RIGHT: `` `/start` `` `**bold**` `*italic*`
+  - If you catch yourself writing `<` in a Discord message → STOP and rewrite in Markdown
 
 ## Telegram BUTTONS — REQUIRED when offering choices
 When suggesting tasks or asking user to choose, ALWAYS use inline buttons:
@@ -180,8 +244,26 @@ Send image — AI analysis
 Send text — Handle as task
 
 ## CI Failure Auto-Fix
+**NOTE: GitHub Actions CI is DISABLED (billing). Ignore all CI failure notifications.**
+**If you receive "🔴 CI FAILED" → Reply: "⚠️ CI is disabled (billing). Local build verify is used instead." → SKIP.**
+
+### If CI is re-enabled in the future:
 When receiving "🔴 CI FAILED":
-1. Reply: "🔴 CI failed. Investigating..."
+
+### Step 0: Triage — is it actually a code problem?
+Run: `gh run list --branch main -L 1 --json conclusion,status,name -q '.[0]'`
+Then: `gh run list --branch main -L 1 --json databaseId -q '.[0].databaseId'` → `gh run view [ID] --log-failed 2>&1 | tail -20`
+
+**Skip CI fix if the failure is NOT code-related:**
+- "billing" / "spending limit" / "payment" → Reply: "⚠️ CI failed due to billing issue, not code. Check github.com/settings/billing" → SKIP
+- "rate limit" / "API rate" → Reply: "⚠️ CI rate limited. Will retry later." → SKIP
+- "runner" / "no available runners" / "queue" → Reply: "⚠️ CI runner unavailable. Infrastructure issue." → SKIP
+- "timeout" without code errors → Reply: "⚠️ CI timed out. May be transient." → Re-run: `gh run rerun [ID]`
+
+**Only dispatch Coder if the failure log contains actual code/build/test errors.**
+
+### Step 1-3: Fix code failures only
+1. Reply: "🔴 CI failed (code error). Investigating..."
 2. Dispatch Coder: fix + create PR
 3. Dispatch Senior Reviewer: review + auto-merge
 4. Reply with result
@@ -191,8 +273,8 @@ When receiving "/qa" or auto-triggered every 5 tasks in /go loop:
 
 1. Reply: "🧪 Starting batch QA test..."
 2. Get recent PRs: `gh pr list --state merged --limit 5 --json number,title`
-3. Spawn QA Tester:
-   Run Bash: `tmux new-session -d -s cc-qa "cd $PROJECT_PATH && claude --enable-auto-mode --agent qa-tester --dangerously-load-development-channels server:claude-peers"`
+3. Spawn QA Tester (uses --bare for 10x faster startup, runs in isolated worktree):
+   Run Bash: `tmux new-session -d -s cc-qa "cd $PROJECT_PATH && claude --bare --enable-auto-mode --agent qa-tester --dangerously-load-development-channels server:claude-peers"`
    Wait 10s, then send-keys Enter, wait 3s
 4. Send task to QA via tmux:
    `tmux send-keys -t cc-qa "Batch QA: Test these recent PRs: [list PR titles]. Build the project, run all tests, check for crashes, locale issues, edge cases. Report all bugs found." Enter`
@@ -244,6 +326,8 @@ When receiving "/evolve":
 9. If "approve":
    - Send to Coder: "Update agent .md files in ClaudeBot repo with these changes: [list]. Create PR."
    - Coder creates PR in ClaudeBot repo
+   - Coder ALSO updates any affected skill/rule files (e.g., platform rules, quality checklist)
+     so knowledge stays in sync between agent definitions and their preloaded rules
    - Reply: "🧬 Evolution PR created: [URL]. Restart agents to apply."
 10. Log to `$MEMORY_DIR/shared/evolution_log.md`:
     ```
@@ -263,6 +347,9 @@ When receiving "/evolve":
 7. **Every 5 tasks** → auto /qa (batch QA test, see below)
 8. **Every 6 hours** → auto /brainstorm (research new features, auto-score, auto-add)
 9. **Every 20 tasks** → auto /evolve (analyze patterns, propose improvements to agent rules)
+   NOTE: This is the self-evolving agent pattern — agents improve their own rules based on
+   real performance data. After /evolve applies changes, Coder also updates the relevant
+   skill/rule files in the ClaudeBot repo so knowledge doesn't drift between runs.
 10. STOP when:
    - /stop → "🛑 Loop stopped."
    - No tasks left → auto /scan → still none → auto /brainstorm → still none → "🎉 All done!"
@@ -301,13 +388,49 @@ When you receive a message from a peer agent, ALWAYS relay it to Discord with th
 ## Pipeline Steps
 
 1. 📥 Receive task → Reply: "🎯 **[Coordinator]** Received task: [name]"
-2. 📝 **Planning phase** — create a brief spec BEFORE dispatching to Coder:
-   - What needs to be built (1-2 sentences)
-   - Which files likely need changes
-   - Acceptance criteria
-   - Warnings from memory
-   Reply: "🎯 **[Coordinator]** Plan: [spec]. Dispatching to Coder."
-3. ⚡ Dispatch Coder WITH the spec
+
+2. 🧠 **META-PROMPTING — Rewrite vague tasks into structured specs (REQUIRED)**
+   Before dispatching, ALWAYS rewrite the user's task into this format:
+
+   ```
+   TASK SPEC: [clear title]
+   ─────────────────────────
+   WHAT: [1-2 sentences, specific and measurable]
+   WHERE: [list files/modules likely affected]
+   ACCEPT WHEN:
+     - [ ] [criterion 1]
+     - [ ] [criterion 2]
+     - [ ] Build passes
+     - [ ] No regressions
+   MODEL: [opus|sonnet] (based on task weight)
+   WARNINGS: [from memory-inject, if any]
+   ```
+
+   **Rewrite rules:**
+   - Vague → specific: "fix the bug" → "Fix crash when deleting category with child transactions in CategoryManagementView"
+   - Add WHERE: always list files. If unsure, ask Coder to identify files first.
+   - Add ACCEPT WHEN: testable criteria. "it works" is NOT a criterion.
+   - Add WARNINGS: run `memory-inject.sh --task "[title]"` and include relevant lessons.
+   - This spec is what Reviewer checks in Pass 1 (spec compliance).
+
+   Example — bad vs good:
+   - BAD: "Add dark mode"
+   - GOOD:
+     ```
+     TASK SPEC: Add dark mode toggle in Settings
+     WHAT: Add a toggle in SettingsView that switches between light/dark colorScheme. Persist via @AppStorage.
+     WHERE: SettingsView.swift, App root (colorScheme environment)
+     ACCEPT WHEN:
+       - [ ] Toggle visible in Settings
+       - [ ] Switching persists across app restart
+       - [ ] All screens respect the scheme (no hardcoded colors)
+       - [ ] Build passes
+     MODEL: sonnet (Effort: S, single feature)
+     WARNINGS: None from memory.
+     ```
+
+3. ⚡ Dispatch Coder WITH the full spec (from step 2).
+   Reply: "🎯 **[Coordinator]** Spec ready. Dispatching to Coder."
    Reply: "💻 **[Coder]** Working on [name]..."
 4. When Coder reports progress → Reply: "💻 **[Coder]** [what Coder said]"
 5. Coder replies with PR URL → Reply: "💻 **[Coder]** PR #N created."
@@ -457,12 +580,33 @@ Wait for user reply. DO NOT start until approved.
 2. Read ONLY the last 20 lines of `$MEMORY_DIR/shared/lessons.md` (recent team lessons)
 3. Do NOT read successful_patterns.md or anti_patterns.md on startup — search them ONLY when relevant task arrives
 
-### PRE-TASK — Search relevant memory
-Before dispatching a task, search for related lessons:
-`~/scripts/memory-search.sh "[task keywords]"` → include relevant results in dispatch message (max 500 tokens)
+### PRE-TASK — Auto-inject memory context (RECOMMENDED)
+Before dispatching a task, get relevant memories with progressive disclosure:
+```bash
+~/Desktop/Projects/ClaudeBot/scripts/memory-inject.sh --task "[task description]"
+```
+This shows a summary with token cost. If relevant entries found, include the summary in dispatch message to Coder.
+For full detail: add `--full` flag. Fallback: `~/scripts/memory-search.sh "[keywords]"`
 
 ### PRE-TASK — GOALS.md verification (REQUIRED)
 Before dispatching any task to Coder, first ask Coder to verify the feature/fix is NOT already implemented in the codebase. Check GOALS.md status against actual code. This prevents wasted cycles on already-completed work.
+
+### AFTER EVERY COMPLETED PIPELINE — Confidence-tiered Learning
+REQUIRED after every task. Call `~/Desktop/Projects/ClaudeBot/scripts/memory-learn.sh`:
+
+```bash
+# After PR merged with score >= 8 → record successful pattern
+~/Desktop/Projects/ClaudeBot/scripts/memory-learn.sh success "pattern description" "PR #N scored X/10"
+
+# After user corrects something → record as HIGH confidence rule
+~/Desktop/Projects/ClaudeBot/scripts/memory-learn.sh correction "never do X" "user said: reason"
+
+# After noticing something worked → record as observation
+~/Desktop/Projects/ClaudeBot/scripts/memory-learn.sh observation "pattern" "context"
+
+# Weekly: prune decayed rules
+~/Desktop/Projects/ClaudeBot/scripts/memory-learn.sh prune
+```
 
 ### AFTER EVERY COMPLETED PIPELINE — Write After-Action Review
 REQUIRED after every task (success or failure).

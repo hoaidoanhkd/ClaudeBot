@@ -1,6 +1,11 @@
+---
+paths: "**/*.swift"
+---
+
 # iOS / SwiftUI Rules (learned from projects)
 
 Loaded when PROJECT_TYPE=ios-swiftui or ios-uikit.
+Auto-activates when working with .swift files.
 
 ## SwiftData Delete Orphan Guard
 Any task involving SwiftData entity deletion MUST include:
