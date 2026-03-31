@@ -9,9 +9,9 @@ Last scan: 2026-03-30
 
 ## 🔴 Critical Fixes
 
-- [ ] ⭐ Add unit tests for ViewModels and Services — coverage is at 1% (62 files, 1 test) — Effort: M
+- [x] ⭐ Add unit tests for ViewModels and Services (126→209 total) — PRs #198 #200
 - [x] ⭐ Fix SwiftData queries — use #Predicate instead of in-memory filter (#124) — PR #165
-- [ ] Empty code blocks cleanup (5 remaining) — Effort: S
+- [x] Empty code blocks cleanup — already clean, no empty blocks found
 
 ---
 
@@ -40,7 +40,7 @@ Last scan: 2026-03-30
 - [ ] Verify HistoryView refactor is complete (#118 — was 333→187 LOC) — Effort: S
 - [ ] Verify custom category management done (#121 — CategoryManagementView exists) — Effort: S
 - [ ] Close duplicate AI Spending Coach issues (8 duplicates of #149/#139) — Effort: S
-- [ ] Fix MonthlyCategoryChart custom category names (#179) — AppCategory.find missing custom: array — Effort: S
+- [x] Fix MonthlyCategoryChart custom category names (#179) — fixed in PR #196
 
 ---
 

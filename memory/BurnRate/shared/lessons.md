@@ -276,3 +276,29 @@
 - Quality: 9/10
 - Lesson: CashFlowForecastView refactor completes the trilogy (#177 NetWorth, #178 MonthlySummary, #199 CashFlow). The @ChartContentBuilder pattern for extracting chart marks into computed vars is clean and reusable — consider applying to any remaining monolithic chart views. Dead @State vars should be pruned during refactors (selectedPoint removed here is a good example).
 - Tags: swiftui, refactor, cashflow, charts, ChartContentBuilder, decomposition, effort-s
+
+## 2026-04-01 — Review PR #200 — MERGED (83 unit tests, 126→209)
+- Quality: 9/10
+- Lesson: SubscriptionDetectorEngineTests is a gold standard — covers normalization (case+whitespace), frequency detection (weekly/monthly/yearly), filtering (income ignored, single-occurrence ignored, inconsistent amounts, irregular intervals), monthlyCost conversion, and enum display properties. Future test files should aspire to this coverage breadth.
+- Tags: unit-tests, subscription-detector, normalization, edge-cases
+
+## 2026-04-01 — Review PR #201 — MERGED (NotificationManager refactor)
+- Quality: 9/10
+- Lesson: When refactoring a class into Swift extensions across multiple files, `private` members must be widened to `internal` (no modifier). This is a required Swift language constraint — not a code smell. Always check that the Identifier enum and state properties are accessible from extension files. Also: DRY guard conditions into a computed property (isNotificationsEnabled pattern) rather than repeating `isAuthorized && UserDefaults.standard.bool(...)` in every function.
+- Tags: swift-extensions, notificationmanager, service-refactor, async-notification, isNotificationsEnabled
+
+## 2026-03-31 — Unit Tests Expansion PR #200 — SUCCESS
+- Task: Add unit tests for ViewModels and Services (⭐ Priority)
+- Outcome: PR #200 merged, score 9/10. 83 new tests, 126→209 total
+- Duration: ~31m
+- Retries: 0
+- Lesson: Pure injection pattern (updateTransactions()/refresh()) confirmed working well. Good edge cases: zero-target savings, nil account, over-funded goals, boundary thresholds. Trivially weak tests (emptyWhenNoBudgets) should be avoided — test meaningful behavior.
+- Tags: unit-tests, viewmodel, swiftdata, injection, effort-m
+
+## 2026-03-31 — NotificationManager Refactor PR #201 — SUCCESS
+- Task: Refactor NotificationManager 392→63 LOC → 4 extension files
+- Outcome: PR #201 merged, score 9/10. Follow-up: displayName() missing custom: in notification bodies
+- Duration: ~31m (parallel with PR #200)
+- Retries: 0
+- Lesson: Swift extension files require private→internal widening — this is correct and expected. isNotificationsEnabled as a DRY computed property is a good pattern for notification managers. Extension file split (+RunwayAlerts, +BudgetAlerts, +Scheduling) is clean separation of concerns. displayName() without custom: is a recurring issue — grep for it after every refactor.
+- Tags: swiftui, notifications, refactor, extension-files, custom-categories, effort-s

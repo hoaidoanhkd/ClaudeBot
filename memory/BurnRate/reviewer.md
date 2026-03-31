@@ -160,3 +160,15 @@
 - Score: 9/10
 - Issues found: 🟢 Decimal(amount) in Y-axis chart labels (Double→Decimal micro imprecision, same as #177, negligible). 🟢 negativeZoneFill uses first-ever-negative-point as start X (same as original, not a regression).
 - Coder patterns: Clean. Faithful to #177/#178 pattern. Dead state (selectedPoint) correctly removed. @ChartContentBuilder used idiomatically. static let DateFormatters in chart file. warningBanner simplified from @ViewBuilder to plain if let. pbxproj 8 entries complete. import Charts moved to chart file. NSDecimalNumber(decimal:).doubleValue locale-safe. #Preview on all 3 files. Accessibility improved (full context in milestone row labels).
+
+## 2026-04-01 — PR #200 — Add 83 unit tests (126→209 total), 5 new test files
+- Decision: MERGE
+- Score: 9/10
+- Issues found: 🟢 test_topAlertBudgets_emptyWhenNoBudgets is trivially weak (just checks budgetStatuses.isEmpty, not the computed topAlertBudgets property). All others are meaningful.
+- Coder patterns: Excellent edge coverage — frequency boundary values, normalization (case + whitespace), over-funded savings, nil account no-op, decimal precision. No SwiftData. NSDecimalNumber.intValue not used. pbxproj 20 entries (4×5 files) complete.
+
+## 2026-04-01 — PR #201 — NotificationManager 392→63 LOC with 3 extension files
+- Decision: MERGE
+- Score: 9/10
+- Issues found: 🟢 displayName() without custom: in notification bodies — pre-existing issue from #197 follow-up, not a regression. 🟢 scheduleWeeklyRecap comment references "completion handler" but uses direct synchronous remove — misleading comment, correct behavior.
+- Coder patterns: Swift extension refactor for service class correct — private→internal widening necessary. isNotificationsEnabled computed property is a good DRY improvement. scheduleBillReminders loop correctly inside getPendingNotificationRequests callback. NSDecimalNumber.doubleValue used (not .intValue). pbxproj 12 entries (4×3 files) complete.
