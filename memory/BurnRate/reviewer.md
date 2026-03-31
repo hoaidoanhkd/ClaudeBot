@@ -184,3 +184,24 @@
 - Score: 9/10
 - Issues found: 🟢 none. CI failure was billing/spending limit (not code). Post-merge local build clean.
 - Coder patterns: Clean. SavingsGoalProgressView and SavingsGoalDetailSections (3 sub-views) all pure let. linkedAccount computed property correctly extracted to orchestrator. daysUntilDeadline/deadlineColor/progressColor helpers co-located with consuming views. Emoji unicode escapes cleaned to literals — nice touch. 8 #Preview variants (claimed 7). pbxproj 8 entries (4×2) complete.
+
+## 2026-04-01 — PR #205 — Silent catch blocks debug logging (4 locations)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — all 4 catch blocks patched, HistoryView 204 LOC ✅, CategoryManagementView 119 LOC ✅
+- Pass 2 (Quality): Score 10/10
+- Issues found: none
+- Coder patterns: Minimal, focused change. Consistent use of existing `#if DEBUG print(...)` pattern (matches EditBalanceView:96, WidgetDataStore:21). Class-prefix log format [ClassName] good. No pbxproj changes needed — no new files. Closed 4 issues cleanly.
+
+## 2026-04-01 — PR #206 — Siri & Apple Shortcuts integration (AppIntents)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — 3 intents (CheckBudget, GetSpending, GetRunway), AppShortcutsProvider, read-only, ModelContainer in perform()
+- Pass 2 (Quality): Score 10/10
+- Issues found: none
+- Coder patterns: Correct NSDecimalNumber.doubleValue.rounded() → Int() for percentage. CategorySpend.percentage is Double so direct Int() wrapping safe. AppCategory.find and allWith both include custom: param. BurnRateEngine.runway returns Int — integer division correct. No bare Decimal(string:). pbxproj 4×4 sections complete. Graceful empty-data guards in all 3 intents.
+
+## 2026-04-01 — PR #210 — Budget + SavingsGoal home screen widgets (small+medium)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — Both BudgetWidget and SavingsGoalWidget added (small+medium). deadline+remaining fields present. Coordinator description was partial (said only systemMedium for Savings, but PR added Budget widget too — within spec #190).
+- Pass 2 (Quality): Score 8/10
+- Issues found: 🟡 objectVersion downgrade 77→63 in pbxproj (preferredProjectObjectVersion removed). 🟡 Two target DevelopmentTeam TargetAttributes removed (compensated in build settings). Follow-up issue #211 created.
+- Coder patterns: Correct WidgetKit data model mirrors per extension. diff-before-reload pattern in WidgetDataStore ✅. containerBackground API correct. .policy(.never) push-driven correct. 4-section pbxproj entries complete. String-based onChange for savingsGoals (functional but slightly heavy).

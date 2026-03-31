@@ -75,3 +75,24 @@
 - Pattern: Add #if DEBUG print("[ClassName] description: \(error)") #endif to catch blocks that return nil/false
 - Key code: `catch { #if DEBUG \n print("[X] msg: \(error)") \n #endif \n return nil }`
 - Files: TransactionExporter.swift, NotificationManager.swift, BiometricAuthManager.swift
+
+## AppIntents/Siri Shortcuts — 2026-04-01
+- Pattern: Create ModelContainer in perform() method using same schema as app. Use ModelContext to fetch data. Return IntentResult with human-readable string.
+- Key code: `let container = try ModelContainer(for: Account.self, Transaction.self, ...)` then `let context = ModelContext(container)` then `try context.fetch(FetchDescriptor<T>())`
+- Gotcha: AppShortcut phrase interpolation `\(\.$param)` only works with AppEnum/AppEntity, not String. Use static phrases for String params.
+- Files: BurnRate/Intents/*.swift
+
+## WidgetKit Medium Layout — 2026-04-01
+- Pattern: HStack with circular progress ring (left) + VStack details (right) for medium widgets
+- Key code: Use @Environment(\.widgetFamily) + switch for size-specific layouts. Pass Decimal as String via Codable for App Group UserDefaults.
+- Files: BurnRateWidget/SavingsGoalWidget.swift
+
+## WidgetKit Medium Layout — 2026-04-01
+- Approach: HStack with circular progress ring (emoji + %) on left, detail VStack on right
+- Files: *Widget.swift, WidgetDataStore.swift, BurnRate.xcodeproj/project.pbxproj
+- Pattern: Mirror data model fields in widget extension (SavingsWidgetItem). Use diff-before-reload to prevent unnecessary WidgetCenter.reloadTimelines calls. Always check all 4 pbxproj sections when adding new files.
+
+## Spending Insights Engine — 2026-04-01
+- Pattern: Month-over-month comparison engine using targeted DB queries (fetchExpenses with from/to dates)
+- Key code: Group by category → compute % change → sort by amount → find top insight by max abs change
+- Files: SpendingInsightsEngine.swift, SpendingInsightsCard.swift

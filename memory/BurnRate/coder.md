@@ -142,3 +142,21 @@
 - Files: TransactionExporter.swift, NotificationManager.swift, BiometricAuthManager.swift
 - Tricky parts: Most "empty blocks" were actually valid patterns (preview closures, protocol stubs, @unknown default:break). Real issues were silent error swallowing.
 - Lesson: For "empty block cleanup" tasks, focus on silent catch blocks that swallow errors — preview closures with {} are normal. Use python3 script to analyze AST-like patterns when grep isn't specific enough.
+
+## 2026-04-01 — Siri & Apple Shortcuts Integration
+- Approach: Created 4 files in BurnRate/Intents/ using AppIntents framework. 3 read-only intents + AppShortcutsProvider.
+- Files: BurnRateShortcuts.swift, CheckBudgetIntent.swift, GetSpendingIntent.swift, GetRunwayIntent.swift, project.pbxproj
+- Tricky parts: AppShortcut phrases with `\(\.$param)` syntax require the parameter to be AppEnum or AppEntity type — plain String won't work. Had to remove parameterized phrase and use static phrases instead.
+- Lesson: For AppIntents with dynamic/user-created categories, avoid `\(\.$param)` in AppShortcut phrases unless you define an AppEnum. String parameters work fine for the intent itself but NOT for Siri phrase interpolation.
+
+## 2026-04-01 — Home Screen Widgets Expansion (Budget + Savings Goal)
+- Approach: Widgets were already scaffolded from prior commit. Added .systemMedium support to SavingsGoalWidget (was missing — only had .systemSmall). Added deadline + remaining fields to SavingsWidgetItem for richer medium layout.
+- Files: BurnRateWidget/SavingsGoalWidget.swift, BurnRate/Services/WidgetDataStore.swift
+- Tricky parts: The widgets were already partially built but SavingsGoalWidget was missing medium size. Had to add new fields (deadline, remaining) to both the widget-side and app-side Codable models to keep them in sync.
+- Lesson: When expanding widgets, always check both widget target AND main app WidgetDataStore models are in sync. Also verify all widget sizes listed in requirements match .supportedFamilies().
+
+## 2026-04-01 — Spending Insights Summary Card (Monarch-style)
+- Approach: Created SpendingInsightsEngine (on-device, DB queries for current + previous month), SpendingInsightsCard (dashboard component), wired into DashboardViewModel + DashboardView. Added 10 unit tests.
+- Files: SpendingInsightsEngine.swift, SpendingInsightsCard.swift, DashboardViewModel.swift, DashboardView.swift, SpendingInsightsEngineTests.swift, project.pbxproj
+- Tricky parts: xcodegen regenerated project.pbxproj and wiped signing + scheme config. Had to restore original pbxproj and use Ruby xcodeproj gem to add files properly. Don't use xcodegen on this project — it loses custom settings.
+- Lesson: NEVER use xcodegen to add files to this project — it resets signing and scheme configs. Use Ruby xcodeproj gem instead: `require 'xcodeproj'; project.targets.find{}.source_build_phase.add_file_reference(group.new_file('name.swift'))`. Also when engine needs ModelContext, test the pure computation helpers separately.

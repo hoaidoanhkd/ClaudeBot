@@ -1,0 +1,66 @@
+[
+  {
+    "rule": "Never use Decimal in SwiftData #Predicate",
+    "tier": "HIGH",
+    "confidence": 10,
+    "created": "2026-04-01",
+    "reinforced": "2026-04-01",
+    "context": "user corrected: causes string comparison bug",
+    "history": [
+      {
+        "action": "created_from_correction",
+        "date": "2026-04-01",
+        "context": "user corrected: causes string comparison bug"
+      }
+    ]
+  },
+  {
+    "rule": "Always pass custom: to AppCategory.find",
+    "tier": "HIGH",
+    "confidence": 10,
+    "created": "2026-04-01",
+    "reinforced": "2026-04-01",
+    "context": "repeated bug in PR #169, #170, #179",
+    "history": [
+      {
+        "action": "created_from_correction",
+        "date": "2026-04-01",
+        "context": "repeated bug in PR #169, #170, #179"
+      }
+    ]
+  },
+  {
+    "rule": "let+closure pattern for sub-view extraction",
+    "tier": "MEDIUM",
+    "confidence": 8,
+    "created": "2026-04-01",
+    "reinforced": "2026-04-01",
+    "context": "PR #164, #171, #172 all scored 9-10/10",
+    "history": [
+      {
+        "action": "created_from_success",
+        "date": "2026-04-01",
+        "context": "PR #164, #171, #172 all scored 9-10/10"
+      },
+      {
+        "action": "manual_reinforce",
+        "date": "2026-04-01"
+      }
+    ]
+  },
+  {
+    "rule": "shimmer modifier at leaf level only",
+    "tier": "LOW",
+    "confidence": 3,
+    "created": "2026-04-01",
+    "reinforced": "2026-04-01",
+    "context": "worked in PR #167",
+    "history": [
+      {
+        "action": "created_from_observation",
+        "date": "2026-04-01",
+        "context": "worked in PR #167"
+      }
+    ]
+  }
+]

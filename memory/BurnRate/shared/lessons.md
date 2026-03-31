@@ -329,3 +329,42 @@
 - Retries: 0
 - Lesson: GitHub Actions billing caps can cause CI to fail in 4s without running any code. When CI fails instantly with billing annotation, check GitHub Settings → Billing & Plans — no code investigation needed. Always confirm "job ran" before assuming code regression.
 - Tags: swiftui, refactor, savings-goal, ci-failure, billing, effort-s
+
+## 2026-04-01 — Review PR #205 — MERGED
+- Quality: 10/10
+- Lesson: `#if DEBUG print(...)` is the correct pattern for silenced catch blocks in this project — keeps production binary clean. Print messages should include [ClassName] prefix + error interpolation.
+- Tags: error-handling, debug-logging, catch-blocks
+
+## 2026-04-01 — Empty Catch Blocks Fix + Issue Verification PR #205 — SUCCESS
+- Task: Fix 4 silent catch blocks + verify HistoryView (#118) and CategoryManagement (#121) complete
+- Outcome: PR #205 merged, score 10/10
+- Duration: ~5m
+- Retries: 0
+- Lesson: `#if DEBUG print(...)` pattern with `[ClassName]` prefix is the correct project logging pattern for catch blocks. Zero production overhead. HistoryView confirmed 204 LOC (was 333), CategoryManagementView confirmed 119 LOC (was 496).
+- Tags: code-quality, error-handling, debug-logging, effort-s
+
+## 2026-04-01 — Review PR #206 — MERGED
+- Quality: 10/10
+- Lesson: AppIntents don't need #Preview macros (not SwiftUI views). ModelContainer init in perform() is the correct pattern for SwiftData access from Siri intents. AppShortcutsProvider uses @AppShortcutsBuilder result builder — no explicit [] needed.
+- Tags: appintents, siri, swiftdata, shortcuts
+
+## 2026-04-01 — Siri & Apple Shortcuts Integration PR #206 — SUCCESS
+- Task: Add AppIntents (CheckBudgetIntent, GetSpendingIntent, GetRunwayIntent + AppShortcutsProvider)
+- Outcome: PR #206 merged, score 10/10
+- Duration: ~25m (files were already partially in place)
+- Retries: 0
+- Lesson: AppIntents access SwiftData via ModelContainer in perform() — not @Query. NSDecimalNumber(decimal:).doubleValue.rounded() + Int() is correct for % conversion. CategorySpend.percentage as Double → Int((percentage * 100).rounded()) is type-safe. Graceful empty-data handling required in all intents.
+- Tags: siri, app-intents, shortcuts, swiftdata, modelcontainer, effort-m
+
+## 2026-04-01 — Review PR #210 — MERGED (8/10)
+- Quality: 8/10
+- Lesson: WidgetKit data models must be duplicated in widget extension (can't import main app) — this is correct pattern, not a code smell. Use diff-before-reload pattern in WidgetDataStore to avoid unnecessary WidgetCenter.reloadAllTimelines() calls.
+- Tags: widgets, widgetkit, pbxproj
+
+## 2026-04-01 — Home Screen Widgets Expansion — SUCCESS
+- Task: Add medium widget support to SavingsGoalWidget (Budget+Savings widgets)
+- Outcome: PR #210 merged, score 8/10
+- Duration: ~10m (Coder → Reviewer → merge)
+- Retries: 0
+- Lesson: WidgetKit data model must be mirrored in widget extension; diff-before-reload pattern is correct for push-driven `.policy(.never)` widgets. Watch for pbxproj objectVersion changes — can cause follow-up issues.
+- Tags: widgets, widgetkit, swiftui, effort-m

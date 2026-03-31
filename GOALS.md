@@ -47,7 +47,7 @@ Last scan: 2026-03-30
 ## 🟢 New Features (from Competitor Research)
 
 - [ ] ⭐ Siri & Apple Shortcuts integration — ask "What's my groceries balance?" (YNAB has this, high demand) — Effort: M
-- [ ] ⭐ Home screen widgets expansion — add budget % and savings goal widgets (beyond runway widget) — Effort: M
+- [x] ⭐ Home screen widgets expansion — add budget % and savings goal widgets (beyond runway widget) — PR #210
 - [ ] Spending insights summary card — weekly/monthly "you spent X% more on dining" (Monarch-style, on-device) — Effort: M
 - [ ] Zero-based budgeting mode — assign every dollar to a category (YNAB-style) — Effort: L
 - [ ] Planned/upcoming expenses — add future one-time expenses to cash flow (Simplifi-style) — Effort: M

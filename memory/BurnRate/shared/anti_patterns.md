@@ -21,3 +21,12 @@
 - Anti-pattern: Claiming to fix "all AppCategory.find() calls" without running grep to verify all call sites. Budget views (BudgetRowView, DashboardBudgetSummary, BudgetFormViews, InactiveBudgetRow) and service layer (BudgetViewModel, NotificationManager) were missed.
 - Prevention: Before submitting a "fix all X calls" PR, run: `grep -rn "\.find(\|displayName\|\.icon\|\.colorHex" --include="*.swift"` and check every result is updated or has a justification for why it doesn't need custom categories.
 - Tags: custom-categories, grep-verification, incomplete-fix
+
+## 2026-04-01 — PR #210
+- ANTI-PATTERN: pbxproj objectVersion downgrade (77→63) when adding new files. Likely caused by coder running on different Xcode version. Always verify objectVersion stays at project's baseline (77 for this project). Also ensure preferredProjectObjectVersion key is preserved.
+- Tags: pbxproj, xcode-version
+
+## XcodeGen Regeneration — 2026-04-01
+- Error: Running `xcodegen generate` on BurnRate project wiped signing config and auto-schemes
+- Root cause: project.yml has empty DEVELOPMENT_TEAM and no shared scheme definition
+- Fix: Use Ruby xcodeproj gem to add individual files. NEVER run xcodegen on this project.
