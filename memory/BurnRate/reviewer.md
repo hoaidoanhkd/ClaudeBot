@@ -219,3 +219,10 @@
 - Pass 2 (Quality): Score 9/10
 - Issues found: HistoryExportMenu missing dark mode preview (#214 filed); ContentView no inMemory flag (🟢)
 - Coder patterns: Good data seeding (real amounts/icons), correct inMemory usage on all SwiftData views, import SwiftData added correctly
+
+## 2026-04-01 — PR #215 — Multi-currency Display Support
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — Account.currency field, picker, badges, NetWorth formatting, Decimal extension all present. Closes #120.
+- Pass 2 (Quality): Score 8/10
+- Issues found: 🟡 var currency: String no property-level default → existing accounts get currency="" after SwiftData auto-migration (display breaks, picker blank). Follow-up #216. 🟢 formatted(currencyCode:) allocates new NumberFormatter per call. 🟢 nonisolated(unsafe) on CurrencySymbolCache. 🟢 No unit tests for new extensions.
+- Coder patterns: Good abstraction layer — formattedBalance/formatted(_:) on model is clean. CurrencySettings.code used correctly in init. currencySymbol(for:) lazy locale search with cache is correct. Accessibility updated across all 3 views.

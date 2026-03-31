@@ -1,4 +1,10 @@
 
+## 2026-04-01 — Service Layer Consolidation (#123)
+- Approach: Created 3 new services (BudgetService, RecurringRuleService, CategoryService) following existing TransactionService/SavingsGoalService pattern. Moved CRUD from BudgetViewModel + Views into services. Kept ViewModel CRUD methods as thin delegates for backward compatibility.
+- Files: 3 new service files, modified BudgetViewModel, CategoryFormViews, CategoryManagementView, RecurringRulesView, AddRecurringRuleView
+- Tricky parts: Deciding what to keep in Views vs move to services. OnboardingView and EditBalanceView kept direct saves as they're simple single-property operations. BudgetViewModel kept wrapper methods to avoid breaking existing call sites.
+- Lesson: When consolidating a service layer, keep thin delegation wrappers in existing call sites rather than updating all callers at once — reduces diff size and risk. Upgrade `try?` to `do/try/catch` with `#if DEBUG` logging during the migration.
+
 ## 2026-04-01 — Multi-currency Display Support (#120)
 - Approach: Added `currency` field to Account model, `Decimal.formatted(currencyCode:)` extension, currency picker in EditBalanceView, updated display in SettingsView + NetWorthAccountViews
 - Files: Account.swift, Decimal+Extensions.swift, EditBalanceView.swift, SettingsView.swift, NetWorthAccountViews.swift

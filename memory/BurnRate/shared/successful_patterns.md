@@ -1,4 +1,9 @@
 
+## Service Layer Consolidation — 2026-04-01
+- Pattern: Static-method service struct per model type. CRUD + queries in service, presentation logic in ViewModel. Thin delegation wrappers for backward compatibility.
+- Key code: `struct BudgetService { static func create(..., context: ModelContext) -> Budget }` — same pattern as TransactionService
+- Files: BudgetService.swift, RecurringRuleService.swift, CategoryService.swift
+
 ## Per-entity Currency Formatting — 2026-04-01
 - Pattern: Add currency field to model, helper method on model for formatting, Decimal extension with currencyCode parameter. Cache expensive locale lookups.
 - Key code: `func formatted(currencyCode: String) -> String` + `CurrencySymbolCache` for symbol lookup

@@ -394,3 +394,8 @@
 - Retries: 0
 - Lesson: When adding #Preview blocks, apply light + dark mode variants consistently to ALL files — missing even one gets flagged by Reviewer. ContentView using persistent (non-inMemory) container is a cosmetic issue, not a blocker. `isStoredInMemoryOnly: true` is the correct pattern for SwiftData previews.
 - Tags: swiftui, preview, dark-mode, swiftdata, effort-s
+
+## 2026-04-01 — Review PR #215 — MERGED (8/10)
+- Quality: 8/10
+- Lesson: When adding a new non-optional String property to a SwiftData @Model, ALWAYS provide a property-level default (e.g. `var currency: String = "USD"`). SwiftData auto-migration sets NULL columns to "" (empty string) for existing rows — init() defaults are NOT used during migration.
+- Tags: swiftdata, migration, currency, multi-currency, property-default

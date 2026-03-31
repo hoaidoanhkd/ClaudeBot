@@ -30,3 +30,9 @@
 - Error: Running `xcodegen generate` on BurnRate project wiped signing config and auto-schemes
 - Root cause: project.yml has empty DEVELOPMENT_TEAM and no shared scheme definition
 - Fix: Use Ruby xcodeproj gem to add individual files. NEVER run xcodegen on this project.
+
+## SwiftData: Non-optional property without property-level default
+**Problem:** `var currency: String` in an @Model — existing rows get `currency = ""` after migration.
+**Fix:** `var currency: String = "USD"` — SwiftData uses this default when migrating NULL rows.
+**Rule:** Every new non-optional stored property added to an existing @Model MUST have a property-level default value.
+**Tags:** swiftdata, migration, schema, non-optional, PR#215
