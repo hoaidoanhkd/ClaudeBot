@@ -25,7 +25,7 @@ Last scan: 2026-03-30
 - [x] Refactor CashFlowForecastView (361 LOC → sub-views) — PR #199
 - [x] Refactor NotificationManager (392→63 LOC → extension files) — PR #201
 - [x] Refactor RecurringRulesView (353→133 LOC → sub-views) — PR #203
-- [ ] Refactor SavingsGoalDetailView (308 LOC → sub-views) — Effort: S
+- [x] Refactor SavingsGoalDetailView (308→147 LOC → sub-views) — PR #204
 - [ ] Add #Preview macros to all views missing them (#117) — Effort: S
 
 ---

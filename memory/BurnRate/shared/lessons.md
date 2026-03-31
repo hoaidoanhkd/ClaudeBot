@@ -302,3 +302,16 @@
 - Retries: 0
 - Lesson: Swift extension files require private→internal widening — this is correct and expected. isNotificationsEnabled as a DRY computed property is a good pattern for notification managers. Extension file split (+RunwayAlerts, +BudgetAlerts, +Scheduling) is clean separation of concerns. displayName() without custom: is a recurring issue — grep for it after every refactor.
 - Tags: swiftui, notifications, refactor, extension-files, custom-categories, effort-s
+
+## 2026-04-01 — Review PR #203 — MERGED (RecurringRulesView refactor)
+- Quality: 9/10
+- Lesson: When a sub-view is a "feature sheet" (form with its own mutations) vs a "display component", it's correct and appropriate to give it its own @Query and @Environment. Don't force all views into pure let — use judgment: passive display components = pure let, interactive feature sheets = own lifecycle. RecurringRuleRow (pure let) vs AddRecurringRuleView (own @Query) is the right distinction.
+- Tags: swiftui, refactor, recurring-rules, AppCategory, custom-categories, sheet-pattern
+
+## 2026-03-31 — RecurringRulesView Refactor PR #203 — SUCCESS
+- Task: Decompose RecurringRulesView 353 LOC → 133 LOC + 3 sub-views
+- Outcome: PR #203 merged, score 9/10
+- Duration: ~25m
+- Retries: 0
+- Lesson: Self-contained feature sheets (AddRecurringRuleView with own @Query) are appropriate when the sheet is a complete add-flow. Group placement matters: display rows → Components, add/edit sheets → Sheets. try? modelContext.save() silently swallows errors — pre-existing pattern to watch.
+- Tags: swiftui, refactor, recurring-rules, decomposition, effort-s

@@ -172,3 +172,9 @@
 - Score: 9/10
 - Issues found: 🟢 displayName() without custom: in notification bodies — pre-existing issue from #197 follow-up, not a regression. 🟢 scheduleWeeklyRecap comment references "completion handler" but uses direct synchronous remove — misleading comment, correct behavior.
 - Coder patterns: Swift extension refactor for service class correct — private→internal widening necessary. isNotificationsEnabled computed property is a good DRY improvement. scheduleBillReminders loop correctly inside getPendingNotificationRequests callback. NSDecimalNumber.doubleValue used (not .intValue). pbxproj 12 entries (4×3 files) complete.
+
+## 2026-04-01 — PR #203 — RecurringRulesView 353→133 LOC (3 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: 🟢 try? modelContext.save() silently swallows errors — pre-existing, not a regression.
+- Coder patterns: Correct placement — RecurringRuleRow + RecurringRuleSectionViews in Components group, AddRecurringRuleView in Sheets group. AppCategory.find() with custom: verified in orchestrator (@Query customCategories → .map(\.asAppCategory) threaded correctly to both active and paused rows). AddRecurringRuleView self-contained with own @Query — appropriate for feature sheet. #Preview on all 4 files. pbxproj 12 entries (4×3). LOC counts 133/99/45/149 verified.

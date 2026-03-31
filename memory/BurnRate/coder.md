@@ -130,3 +130,9 @@
 - Files: RecurringRulesView.swift (modified), RecurringRuleRow.swift, RecurringRuleSectionViews.swift, AddRecurringRuleView.swift (new), project.pbxproj
 - Tricky parts: Preview macros with multi-statement setup need `import SwiftData` and `return` keyword before the view. First build failed due to missing SwiftData import in extracted file.
 - Lesson: Always add `import SwiftData` when extracting views that use ModelConfiguration/ModelContainer in #Preview. The `return` keyword is required in multi-statement #Preview blocks.
+
+## 2026-04-01 — Refactor SavingsGoalDetailView
+- Approach: Split 308 LOC into orchestrator (147) + SavingsGoalProgressView (133) + SavingsGoalDetailSections (154, contains 3 sub-views)
+- Files: SavingsGoalDetailView.swift, SavingsGoalProgressView.swift, SavingsGoalDetailSections.swift
+- Tricky parts: Account lookup needed a computed property (linkedAccount) in orchestrator since sub-views don't have @Query
+- Lesson: When sub-view needs data from @Query, resolve it in orchestrator and pass as let. Group related small sections (actions, details, danger) into one file with multiple structs rather than 3 separate files.
