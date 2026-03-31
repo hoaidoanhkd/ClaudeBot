@@ -1,4 +1,9 @@
 
+## Per-entity Currency Formatting — 2026-04-01
+- Pattern: Add currency field to model, helper method on model for formatting, Decimal extension with currencyCode parameter. Cache expensive locale lookups.
+- Key code: `func formatted(currencyCode: String) -> String` + `CurrencySymbolCache` for symbol lookup
+- Files: Account.swift, Decimal+Extensions.swift
+
 ## Notification Feature — 2026-03-30
 - Pattern: For scheduled notifications that get rescheduled, always clear ALL pending with matching prefix before adding new ones (prevents ghosts from deleted entities)
 - Key code: `center.getPendingNotificationRequests { requests in let ghostIds = requests.filter { $0.identifier.hasPrefix("burnrate.bill.") }.map(\.identifier); center.removePendingNotificationRequests(withIdentifiers: ghostIds) }`
@@ -96,3 +101,7 @@
 - Pattern: Month-over-month comparison engine using targeted DB queries (fetchExpenses with from/to dates)
 - Key code: Group by category → compute % change → sort by amount → find top insight by max abs change
 - Files: SpendingInsightsEngine.swift, SpendingInsightsCard.swift
+
+## 2026-04-01 — PR #212 — SpendingInsightsEngine accessibility
+- PATTERN: Full accessibility suite on analytics cards — .accessibilityElement(children: .contain) on container, .accessibilityHidden(true) on all decorative SF Symbols, dedicated categoryAccessibilityLabel() helper that combines name + amount + direction, .accessibilityLabel on footer. This is the gold standard for dashboard card accessibility.
+- Tags: accessibility, swiftui, dashboard

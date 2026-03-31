@@ -1,4 +1,10 @@
 
+## 2026-04-01 — Multi-currency Display Support (#120)
+- Approach: Added `currency` field to Account model, `Decimal.formatted(currencyCode:)` extension, currency picker in EditBalanceView, updated display in SettingsView + NetWorthAccountViews
+- Files: Account.swift, Decimal+Extensions.swift, EditBalanceView.swift, SettingsView.swift, NetWorthAccountViews.swift
+- Tricky parts: `Locale.currencySymbol` is optional, `.map(\.currencySymbol)` returns `String?` not `String` — needed `.flatMap`. Also iterating all Locale.availableIdentifiers is expensive — added cache.
+- Lesson: When mapping optional keypath on optional result from `.first(where:)`, use `.flatMap` not `.map` to avoid double-optional. Cache locale lookups when used in UI that re-renders frequently.
+
 ## 2026-03-30 — Fix BurnRateEngine.runway() Decimal Division Bug
 - Approach: NSDecimalNumber.intValue returns 0 for repeating decimals (333.333…). Switched to .doubleValue → Int() truncation.
 - Files: BurnRate/Services/BurnRateEngine.swift (1 line change)

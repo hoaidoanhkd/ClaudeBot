@@ -368,3 +368,29 @@
 - Retries: 0
 - Lesson: WidgetKit data model must be mirrored in widget extension; diff-before-reload pattern is correct for push-driven `.policy(.never)` widgets. Watch for pbxproj objectVersion changes — can cause follow-up issues.
 - Tags: widgets, widgetkit, swiftui, effort-m
+
+## 2026-04-01 — Review PR #212 — MERGED (9/10)
+- Quality: 9/10
+- Lesson: For on-device analytics engines, use targeted DB-level predicates (TransactionService.fetchExpenses) rather than loading all transactions. NSDecimalNumber.doubleValue pattern for Decimal→Int conversion is the established project standard. Always guard division by previous > 0 before computing % change; use nil percentChange for "new" categories.
+- Tags: analytics, swiftdata, accessibility, decimal-math
+
+## 2026-04-01 — Spending Insights Summary Card — SUCCESS
+- Task: On-device Monarch Money-style spending insights card in DashboardView
+- Outcome: PR #212 merged, score 9/10
+- Duration: ~10m (Coder → Reviewer → merge)
+- Retries: 0
+- Lesson: Division-by-zero guard on percentage calc is critical — use `if previous > 0` guard + nil percentChange for new categories. Targeted SwiftData queries with predicates outperform loading all transactions. Always add accessibility labels for icon-heavy UI.
+- Tags: insights, swiftdata, accessibility, dashboard, effort-m
+
+## 2026-04-01 — Review PR #213 — MERGED (9/10)
+- Quality: 9/10
+- Lesson: When adding #Preview macros in batch, toolbar/menu components (HistoryExportMenu) are easy to miss for dark mode variants since they look the same — add a dark mode checklist pass before pushing. ContentView preview with persistent container (no inMemory:) is acceptable for root view previews but inMemory:true is the cleaner convention.
+- Tags: preview-macros, dark-mode, swiftdata, inMemory, contentview
+
+## 2026-04-01 — Add #Preview macros PR #213 — SUCCESS
+- Task: Add #Preview blocks to all 7 SwiftUI view files missing them (#117)
+- Outcome: PR #213 merged, score 9/10. Follow-up #214 (HistoryExportMenu missing dark mode variant)
+- Duration: ~3m (Coder → Reviewer → merge)
+- Retries: 0
+- Lesson: When adding #Preview blocks, apply light + dark mode variants consistently to ALL files — missing even one gets flagged by Reviewer. ContentView using persistent (non-inMemory) container is a cosmetic issue, not a blocker. `isStoredInMemoryOnly: true` is the correct pattern for SwiftData previews.
+- Tags: swiftui, preview, dark-mode, swiftdata, effort-s

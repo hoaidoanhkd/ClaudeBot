@@ -205,3 +205,17 @@
 - Pass 2 (Quality): Score 8/10
 - Issues found: 🟡 objectVersion downgrade 77→63 in pbxproj (preferredProjectObjectVersion removed). 🟡 Two target DevelopmentTeam TargetAttributes removed (compensated in build settings). Follow-up issue #211 created.
 - Coder patterns: Correct WidgetKit data model mirrors per extension. diff-before-reload pattern in WidgetDataStore ✅. containerBackground API correct. .policy(.never) push-driven correct. 4-section pbxproj entries complete. String-based onChange for savingsGoals (functional but slightly heavy).
+
+## 2026-04-01 — PR #212 — SpendingInsightsEngine + SpendingInsightsCard (Monarch-style)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — Engine, Card, DashboardView wiring, 10 tests all present. Closes #191 and #22.
+- Pass 2 (Quality): Score 9/10
+- Issues found: 🟢 Categories with zero current spend appear in list (sorted last, minor UX). No test for compute() itself (acceptable — needs SwiftData container). 
+- Coder patterns: Excellent. Proper NSDecimalNumber.doubleValue for Decimal→Double conversion. Guard for division-by-zero (previous > 0). nil percentChange for new categories. top insight filters on currentAmount > 0. Superb accessibility: .accessibilityHidden(true) on decorative icons, categoryAccessibilityLabel helper, .accessibilityLabel on footer. 10 deterministic unit tests covering all text-generation branches. pbxproj: 4 sections correct, SpendingInsightsEngine+Card in main app target (not widget) ✅.
+
+## 2026-04-01 — PR #213 — Add #Preview macros to 7 SwiftUI views
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK (6/7 dark mode; HistoryExportMenu missing dark → Important not blocker)
+- Pass 2 (Quality): Score 9/10
+- Issues found: HistoryExportMenu missing dark mode preview (#214 filed); ContentView no inMemory flag (🟢)
+- Coder patterns: Good data seeding (real amounts/icons), correct inMemory usage on all SwiftData views, import SwiftData added correctly

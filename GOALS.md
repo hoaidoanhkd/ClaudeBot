@@ -26,7 +26,7 @@ Last scan: 2026-03-30
 - [x] Refactor NotificationManager (392→63 LOC → extension files) — PR #201
 - [x] Refactor RecurringRulesView (353→133 LOC → sub-views) — PR #203
 - [x] Refactor SavingsGoalDetailView (308→147 LOC → sub-views) — PR #204
-- [ ] Add #Preview macros to all views missing them (#117) — Effort: S
+- [x] Add #Preview macros to all views missing them (#117) — PR #213
 
 ---
 
@@ -37,8 +37,8 @@ Last scan: 2026-03-30
 - [ ] Multi-currency support — Account.currency field exists but unused (#120) — Effort: M
 - [x] Fix weeklyRecapEnabled default to false (#138) — PR #169
 - [ ] Service layer consolidation (#123) — Effort: M
-- [ ] Verify HistoryView refactor is complete (#118 — was 333→187 LOC) — Effort: S
-- [ ] Verify custom category management done (#121 — CategoryManagementView exists) — Effort: S
+- [x] Verify HistoryView refactor is complete (#118) — confirmed PR #205 (204 LOC)
+- [x] Verify custom category management done (#121) — confirmed PR #205
 - [ ] Close duplicate AI Spending Coach issues (8 duplicates of #149/#139) — Effort: S
 - [x] Fix MonthlyCategoryChart custom category names (#179) — fixed in PR #196
 
@@ -46,9 +46,9 @@ Last scan: 2026-03-30
 
 ## 🟢 New Features (from Competitor Research)
 
-- [ ] ⭐ Siri & Apple Shortcuts integration — ask "What's my groceries balance?" (YNAB has this, high demand) — Effort: M
+- [x] ⭐ Siri & Apple Shortcuts integration — PR #206
 - [x] ⭐ Home screen widgets expansion — add budget % and savings goal widgets (beyond runway widget) — PR #210
-- [ ] Spending insights summary card — weekly/monthly "you spent X% more on dining" (Monarch-style, on-device) — Effort: M
+- [x] Spending insights summary card — weekly/monthly "you spent X% more on dining" (Monarch-style, on-device) — PR #212
 - [ ] Zero-based budgeting mode — assign every dollar to a category (YNAB-style) — Effort: L
 - [ ] Planned/upcoming expenses — add future one-time expenses to cash flow (Simplifi-style) — Effort: M
 - [ ] App localization — Vietnamese + other languages (hardcoded English strings) — Effort: L

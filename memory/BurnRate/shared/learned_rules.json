@@ -49,6 +49,21 @@
     ]
   },
   {
+    "rule": "Locale(identifier: en_US_POSIX) for all currency parsing",
+    "tier": "MEDIUM",
+    "confidence": 6,
+    "created": "2026-04-01",
+    "reinforced": "2026-04-01",
+    "context": "PR #999 scored 9/10",
+    "history": [
+      {
+        "action": "created_from_success",
+        "date": "2026-04-01",
+        "context": "PR #999 scored 9/10"
+      }
+    ]
+  },
+  {
     "rule": "shimmer modifier at leaf level only",
     "tier": "LOW",
     "confidence": 3,

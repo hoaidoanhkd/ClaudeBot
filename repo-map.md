@@ -1,8 +1,8 @@
 # Repo Map — BurnRate
-Generated: 2026-04-01 06:10
+Generated: 2026-04-01 07:35
 
 ## Overview
-- swift: 105 files
+- swift: 108 files
 
 ## File Tree
 ```
@@ -32,6 +32,7 @@ BurnRate/Services/NotificationManager+Scheduling.swift
 BurnRate/Services/RecurringTransactionService.swift
 BurnRate/Services/SavingsGoalService.swift
 BurnRate/Services/SmartBudgetSuggestionEngine.swift
+BurnRate/Services/SpendingInsightsEngine.swift
 BurnRate/Services/SubscriptionDetectorEngine.swift
 BurnRate/Services/TransactionExporter.swift
 BurnRate/Services/TransactionService.swift
@@ -50,6 +51,7 @@ BurnRateTests/HistoryViewModelTests.swift
 BurnRateTests/MonthlySummaryViewModelTests.swift
 BurnRateTests/RecurringFrequencyTests.swift
 BurnRateTests/SavingsGoalTests.swift
+BurnRateTests/SpendingInsightsEngineTests.swift
 BurnRateTests/SubscriptionDetectorEngineTests.swift
 BurnRateTests/TransactionServiceTests.swift
 BurnRateTests/TransactionViewModelTests.swift
@@ -59,13 +61,15 @@ BurnRateWidget/SavingsGoalWidget.swift
 ```
 
 ## Key Files (by size)
+- BurnRate/Views/Screens/DashboardView.swift (291 lines)
 - BurnRate/Views/Screens/SubscriptionDetectorView.swift (290 lines)
 - BurnRate/Views/Screens/SettingsView.swift (290 lines)
-- BurnRate/Views/Screens/DashboardView.swift (284 lines)
 - BurnRate/Services/TransactionExporter.swift (265 lines)
+- BurnRateWidget/SavingsGoalWidget.swift (257 lines)
 - BurnRate/Views/Screens/SmartBudgetSuggestionsView.swift (241 lines)
 - BurnRate/Services/TransactionService.swift (233 lines)
 - BurnRate/Views/Screens/SavingsGoalsView.swift (232 lines)
+- BurnRate/Views/Components/SpendingInsightsCard.swift (232 lines)
 - BurnRate/Views/Components/MonthlySummarySectionViews.swift (230 lines)
 - BurnRate/Views/Screens/OnboardingView.swift (228 lines)
 - BurnRateTests/HistoryViewModelTests.swift (224 lines)
@@ -77,7 +81,5 @@ BurnRateWidget/SavingsGoalWidget.swift
 - BurnRateWidget/BudgetWidget.swift (203 lines)
 - BurnRate/Views/Sheets/AddSavingsGoalView.swift (203 lines)
 - BurnRateWidget/BurnRateWidget.swift (199 lines)
-- BurnRate/Views/Components/SkeletonView.swift (189 lines)
-- BurnRateTests/CashFlowForecastEngineTests.swift (188 lines)
 
 ## Dependencies
