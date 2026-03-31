@@ -47,3 +47,26 @@
 - Pattern: `Int(NSDecimalNumber(decimal: value).doubleValue)` instead of `.intValue`
 - Why: .intValue returns 0 for repeating decimals (Foundation bug). Now used consistently in runway() and notification formatting.
 - Reuse: Any Decimal→Int conversion in the project should use this pattern.
+
+## Custom Category Threading Pattern — 2026-03-31
+- Pattern: Parent views with @Query for CustomCategory pass .map(\.asAppCategory) down to child components via `var customCategories: [AppCategory] = []` parameter
+- Key code: `AppCategory.find(id, custom: customCategories)` — always pass custom array
+- Files: Category.swift (find overload), all views/components that display categories
+
+## Unit Test Setup Pattern — 2026-03-31
+- Pattern: For XCTest in Xcode projects, test files need: PBXFileReference + PBXBuildFile in project.pbxproj, added to test group children and Sources build phase. Scheme TestAction must have Testables with BuildableReference to test target.
+- Key setup: GENERATE_INFOPLIST_FILE = YES in test target build settings (both Debug and Release)
+- Best targets for testing: Pure logic engines, ViewModels with no ModelContext dependency, model computed properties, date calculations
+
+## 2026-04-01 — PR #198 — Unit Test Design Patterns
+- Pattern: ViewModel tests use in-memory data injection (vm.updateTransactions / vm.refresh) rather than @Query — no SwiftData container needed, tests run in 0.15s for 126 cases.
+- Pattern: makeTransaction() / makeStatus() / makeRule() private helpers with default params reduce boilerplate while keeping tests readable.
+- Pattern: Boundary-condition tests (Jan 31 → Feb 28, Feb 29 leap year, zero limit, zero balance, inactive rules) alongside happy path — good test taxonomy.
+- Pattern: test_budget_displayName_withoutCustomFallsBackToOther() explicitly documents known fallback behavior, making future regressions visible.
+- Tags: unit-tests, test-helpers, viewmodel, boundary-conditions
+
+## Unit Testing Pure Logic — 2026-04-01
+- Pattern: Identify services/engines that accept plain objects (not ModelContext) as ideal test targets
+- Key targets: SubscriptionDetectorEngine.detect(from:), TransactionService.adjustBalance(), SavingsGoal computed properties, BudgetSuggestion.roundedAmount
+- Key code: `import SwiftUI` needed when testing ViewModel Color properties
+- Files: BurnRateTests/SubscriptionDetectorEngineTests.swift, DashboardViewModelTests.swift, TransactionServiceTests.swift, SavingsGoalTests.swift, BudgetSuggestionTests.swift

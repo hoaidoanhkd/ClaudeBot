@@ -94,3 +94,27 @@
 - Files: MonthlySummaryView.swift (refactored), MonthlySummaryChartViews.swift (new), MonthlySummarySectionViews.swift (new), project.pbxproj
 - Tricky parts: None — clean extraction. Remembered to verify branch before committing this time.
 - Lesson: When a view has charts + non-chart sections, split into ChartViews + SectionViews files. Nested enums (like ChartMode) must be extracted to standalone when used across files.
+
+## 2026-03-31 — Fix AppCategory.find() missing custom: parameter (#179)
+- Approach: Swept entire codebase for AppCategory.find() without custom: parameter. Fixed 19 files: views, services, models. Converted Budget computed properties to methods with default param. Threaded customCategories from parent @Query views down through component hierarchy.
+- Files: 19 files modified across Models, Services, ViewModels, Components, Screens
+- Tricky parts: Budget.swift had computed properties (displayName, icon, colorHex) that needed conversion to methods — cascaded to 18+ callers. Used `= []` default parameter to avoid breaking callsites that don't have custom categories.
+- Lesson: When fixing a pattern bug (missing parameter), always do a codebase-wide sweep. Use `var customCategories: [AppCategory] = []` as default on child views for backward compatibility. Converting computed properties to methods with defaults is the cleanest way to add parameters to model properties.
+
+## 2026-03-31 — Add unit tests for ViewModels and Services
+- Approach: Created 6 new test files covering CashFlowForecastEngine, MonthlySummaryViewModel, HistoryViewModel, TransactionViewModel, BudgetStatus, RecurringFrequency, and AppCategory. 102 new tests, 126 total.
+- Files: 6 new test files in BurnRateTests/, updated project.pbxproj and BurnRate.xcscheme
+- Tricky parts: (1) BurnRate scheme had empty TestAction — had to add BurnRateTests testable reference. (2) Test target missing GENERATE_INFOPLIST_FILE=YES in build settings. (3) MonthlySummaryViewModel.refresh() returns 6 months even with empty transactions — test assumption was wrong initially.
+- Lesson: Always check that the scheme's TestAction includes the test target. Test target needs GENERATE_INFOPLIST_FILE=YES. BurnRateEngine.monthlyAggregates generates calendar-based months regardless of transaction count. Focus tests on pure-logic code (engines, ViewModels with no DB dependency) for highest value without SwiftData setup complexity.
+
+## 2026-04-01 — Refactor CashFlowForecastView 361→106 LOC
+- Approach: Split into CashFlowForecastChartView (chart + helpers) and CashFlowForecastSectionViews (empty state, warning banner, milestones). Used @ChartContentBuilder for chart mark extraction.
+- Files: CashFlowForecastView.swift (refactored), CashFlowForecastChartView.swift (new), CashFlowForecastSectionViews.swift (new), project.pbxproj
+- Tricky parts: None — clean extraction. Chart components extracted using @ChartContentBuilder private computed properties.
+- Lesson: @ChartContentBuilder works great for decomposing large Chart bodies into named components. Keep chart helpers (gradients, formatters, minBalance) co-located with the chart view.
+
+## 2026-04-01 — Add 83 unit tests (126→209 total)
+- Approach: Identified untested pure-logic code: SubscriptionDetectorEngine, DashboardViewModel computed properties, TransactionService.adjustBalance, SavingsGoal model, BudgetSuggestion. Wrote tests without SwiftData.
+- Files: 5 new test files in BurnRateTests/, updated project.pbxproj
+- Tricky parts: DashboardViewModelTests needed `import SwiftUI` for Color comparison. Build failed first time without it.
+- Lesson: When testing SwiftUI ViewModel with Color properties, must import SwiftUI in the test file. Focus on pure-logic testable code first — SubscriptionDetectorEngine.detect(from:) and TransactionService.adjustBalance are ideal because they take plain objects, no ModelContext needed.

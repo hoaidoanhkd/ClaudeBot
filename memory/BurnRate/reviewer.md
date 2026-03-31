@@ -142,3 +142,21 @@
 - Score: 9/10
 - Issues found: 🟢 Pre-existing bug preserved: MonthlyCategoryChart uses AppCategory.find(catId) without custom: — custom categories show as "Other Expense" in chart legend. Tracked #179 (same root cause as #170).
 - Coder patterns: Clean. 7 sub-views all pure let. MonthSelectorView onSelect closure wires to viewModel.selectedMonthIndex in orchestrator. ChartMode→MonthlyChartMode rename good for collision avoidance. import Charts moved to chart file. NSDecimalNumber(decimal:).doubleValue locale-safe on all 3 chart value conversions. ForEach(monthlyData.reversed()) valid with Identifiable. pbxproj 8 entries complete.
+
+## 2026-03-31 — PR #196 — Fix AppCategory.find() missing custom: parameter
+- Decision: MERGE
+- Score: 8/10
+- Issues found: 🟡 DashboardBudgetSummary not passed customCategories from DashboardView. 🟡 BudgetRowView/BudgetFormViews/InactiveBudgetRow no custom threading from parent screens. 🟡 BudgetViewModel.checkBudgetAlerts() + NotificationManager call displayName() with empty default. All 3 are pre-existing, not regressions. Created follow-up #197.
+- Coder patterns: Comprehensive 19-file fix. customCategories.map(\.asAppCategory) threading pattern at screen level is clean and consistent. @Query added correctly in 4 screen views. Default [] parameter for backward compat is good. HistoryFilterSection correctly uses viewModel.customAppCategories. PR claims "all" calls fixed but misses budget display layer.
+
+## 2026-04-01 — PR #198 — Add 102 unit tests for ViewModels and Services
+- Decision: MERGE
+- Score: 10/10
+- Issues found: 🟢 Two if-let delta tests without XCTFail fallback (silent no-op risk). 🟢 test_daysUntilNegative_zeroBalance_withExpense_returnsDay1 mildly timing-sensitive.
+- Coder patterns: Excellent test design — no SwiftData dependencies in unit tests, fast (0.15s/126 tests), full edge coverage (leap year, month boundary, div-by-zero protection, zero balance, inactive rules). Documents #179 fallback behavior in BudgetStatusTests. All 126 tests pass locally and post-merge. Infrastructure fix (scheme + GENERATE_INFOPLIST_FILE) minimal and correct.
+
+## 2026-04-01 — PR #199 — CashFlowForecastView refactor 361→106 LOC (2 new files)
+- Decision: MERGE
+- Score: 9/10
+- Issues found: 🟢 Decimal(amount) in Y-axis chart labels (Double→Decimal micro imprecision, same as #177, negligible). 🟢 negativeZoneFill uses first-ever-negative-point as start X (same as original, not a regression).
+- Coder patterns: Clean. Faithful to #177/#178 pattern. Dead state (selectedPoint) correctly removed. @ChartContentBuilder used idiomatically. static let DateFormatters in chart file. warningBanner simplified from @ViewBuilder to plain if let. pbxproj 8 entries complete. import Charts moved to chart file. NSDecimalNumber(decimal:).doubleValue locale-safe. #Preview on all 3 files. Accessibility improved (full context in milestone row labels).

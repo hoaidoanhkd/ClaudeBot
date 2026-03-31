@@ -22,7 +22,7 @@ Last scan: 2026-03-30
 - [x] Refactor DebtPayoffView (459→221 LOC) — PR #175
 - [x] Refactor NetWorthView (416→168 LOC) — PR #177
 - [x] Refactor MonthlySummaryView (364→67 LOC) — PR #178
-- [ ] Refactor CashFlowForecastView (361 LOC → sub-views) — Effort: S
+- [x] Refactor CashFlowForecastView (361 LOC → sub-views) — PR #199
 - [ ] Refactor NotificationManager (354 LOC → split concerns) — Effort: S
 - [ ] Refactor RecurringRulesView (353 LOC → sub-views) — Effort: S
 - [ ] Refactor SavingsGoalDetailView (308 LOC → sub-views) — Effort: S

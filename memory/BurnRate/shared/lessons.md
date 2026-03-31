@@ -261,3 +261,18 @@
 - Duration: ~90m
 - Lesson: AppCategory.find(catId) without custom: is a recurring pattern — ALL callsites need the custom: array. Should do a global search for AppCategory.find calls missing custom: and fix in one sweep.
 - Tags: swiftui, refactor, net-worth, monthly-summary, custom-categories
+
+## 2026-03-31 — Review PR #196 — MERGED
+- Quality: 8/10
+- Lesson: When threading a parameter through a view hierarchy, be systematic — use grep to find ALL call sites before calling the fix complete. PR #196 missed the Budget display layer (BudgetRowView, DashboardBudgetSummary, BudgetFormViews) and service layer (BudgetViewModel, NotificationManager). Always verify the parameter reaches service-layer callers too.
+- Tags: custom-categories, parameter-threading, view-hierarchy, AppCategory
+
+## 2026-04-01 — Review PR #198 — MERGED
+- Quality: 10/10
+- Lesson: Unit tests for SwiftUI ViewModels should avoid @Query/SwiftData — use updateTransactions() / refresh() injection methods to feed data. This keeps tests fast and deterministic. BurnRate's ViewModel design (separate refresh/update methods) is well-suited for unit testing.
+- Tags: unit-tests, viewmodel, swiftdata, test-infrastructure
+
+## 2026-04-01 — Review PR #199 — MERGED
+- Quality: 9/10
+- Lesson: CashFlowForecastView refactor completes the trilogy (#177 NetWorth, #178 MonthlySummary, #199 CashFlow). The @ChartContentBuilder pattern for extracting chart marks into computed vars is clean and reusable — consider applying to any remaining monolithic chart views. Dead @State vars should be pruned during refactors (selectedPoint removed here is a good example).
+- Tags: swiftui, refactor, cashflow, charts, ChartContentBuilder, decomposition, effort-s

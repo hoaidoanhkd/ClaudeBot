@@ -16,3 +16,8 @@
 - Risk: Falls back to all.last! (last built-in expense category) → wrong display name shown
 - Fix: Always use AppCategory.find(id, custom: customCategories.map(\.asAppCategory)) when custom categories may be present
 - Rule: Any place that resolves a categoryId string to a display name must consider custom categories
+
+## 2026-03-31 — PR #196 — Incomplete parameter threading
+- Anti-pattern: Claiming to fix "all AppCategory.find() calls" without running grep to verify all call sites. Budget views (BudgetRowView, DashboardBudgetSummary, BudgetFormViews, InactiveBudgetRow) and service layer (BudgetViewModel, NotificationManager) were missed.
+- Prevention: Before submitting a "fix all X calls" PR, run: `grep -rn "\.find(\|displayName\|\.icon\|\.colorHex" --include="*.swift"` and check every result is updated or has a justification for why it doesn't need custom categories.
+- Tags: custom-categories, grep-verification, incomplete-fix
