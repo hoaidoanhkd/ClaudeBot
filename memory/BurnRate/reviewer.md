@@ -226,3 +226,10 @@
 - Pass 2 (Quality): Score 8/10
 - Issues found: 🟡 var currency: String no property-level default → existing accounts get currency="" after SwiftData auto-migration (display breaks, picker blank). Follow-up #216. 🟢 formatted(currencyCode:) allocates new NumberFormatter per call. 🟢 nonisolated(unsafe) on CurrencySymbolCache. 🟢 No unit tests for new extensions.
 - Coder patterns: Good abstraction layer — formattedBalance/formatted(_:) on model is clean. CurrencySettings.code used correctly in init. currencySymbol(for:) lazy locale search with cache is correct. Accessibility updated across all 3 views.
+
+## 2026-04-01 — PR #217 — Service Layer Consolidation
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — 3 new services, static-method pattern, zero remaining direct modelContext.insert/delete in ViewModels/Views (grep confirmed), error handling upgraded, pbxproj 12 entries complete. Closes #123.
+- Pass 2 (Quality): Score 9/10
+- Issues found: 🟢 BudgetViewModel thin passthrough methods (preserved call-site compat). 🟢 fetchActive/fetchInactive currently unused by callers. 🟢 SavingsGoalService still uses try? on mutations (inconsistency with new services).
+- Coder patterns: Perfect pattern match to existing services. Deliberate distinction: mutations→do/try/catch, queries→try?. grep-verified clean sweep.

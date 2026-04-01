@@ -110,3 +110,8 @@
 ## 2026-04-01 — PR #212 — SpendingInsightsEngine accessibility
 - PATTERN: Full accessibility suite on analytics cards — .accessibilityElement(children: .contain) on container, .accessibilityHidden(true) on all decorative SF Symbols, dedicated categoryAccessibilityLabel() helper that combines name + amount + direction, .accessibilityLabel on footer. This is the gold standard for dashboard card accessibility.
 - Tags: accessibility, swiftui, dashboard
+
+## Planned Expenses Feature — 2026-04-01
+- Pattern: New SwiftData model + static service + list view with sections + form views + engine integration
+- Key code: Default parameter pattern for backward-compatible engine extension; `applyPlannedExpenses` modifies daily impacts array in-place via `inout`
+- Files: PlannedExpense.swift, PlannedExpenseService.swift, PlannedExpensesView.swift, PlannedExpenseFormViews.swift

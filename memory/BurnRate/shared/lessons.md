@@ -399,3 +399,8 @@
 - Quality: 8/10
 - Lesson: When adding a new non-optional String property to a SwiftData @Model, ALWAYS provide a property-level default (e.g. `var currency: String = "USD"`). SwiftData auto-migration sets NULL columns to "" (empty string) for existing rows — init() defaults are NOT used during migration.
 - Tags: swiftdata, migration, currency, multi-currency, property-default
+
+## 2026-04-01 — Review PR #217 — MERGED (9/10)
+- Quality: 9/10
+- Lesson: Service layer consolidation pattern: static methods + explicit `context: ModelContext` param = perfect injection compatibility. Deliberate error-handling distinction: mutation methods use `do/try/catch` + `#if DEBUG` logging, query methods use `try? ... ?? []` — both are correct and intentional. Always grep for remaining direct modelContext.insert/delete before approving "CRUD extracted" PRs.
+- Tags: service-layer, swiftdata, dependency-injection, error-handling, refactor

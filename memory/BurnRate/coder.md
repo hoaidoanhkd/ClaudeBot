@@ -172,3 +172,9 @@
 - Files: SpendingInsightsEngine.swift, SpendingInsightsCard.swift, DashboardViewModel.swift, DashboardView.swift, SpendingInsightsEngineTests.swift, project.pbxproj
 - Tricky parts: xcodegen regenerated project.pbxproj and wiped signing + scheme config. Had to restore original pbxproj and use Ruby xcodeproj gem to add files properly. Don't use xcodegen on this project — it loses custom settings.
 - Lesson: NEVER use xcodegen to add files to this project — it resets signing and scheme configs. Use Ruby xcodeproj gem instead: `require 'xcodeproj'; project.targets.find{}.source_build_phase.add_file_reference(group.new_file('name.swift'))`. Also when engine needs ModelContext, test the pure computation helpers separately.
+
+## 2026-04-01 — Planned/Upcoming Expenses (#193)
+- Approach: Created PlannedExpense model, service, views (list + forms), integrated with CashFlowForecastEngine
+- Files: PlannedExpense.swift, PlannedExpenseService.swift, PlannedExpensesView.swift, PlannedExpenseFormViews.swift, CashFlowForecastEngine.swift, CashFlowForecastView.swift, SettingsView.swift
+- Tricky parts: CashFlowForecastEngine integration needed two helpers (applyPlannedExpenses for daily impacts, accumulatePlannedExpenses for milestones). Default parameters maintain backward compatibility.
+- Lesson: Use default parameters (plannedExpenses: [PlannedExpense] = []) when extending existing engine functions to avoid breaking existing callers.
