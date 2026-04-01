@@ -409,3 +409,13 @@
 - Quality: 9/10
 - Lesson: New @Model types don't have the migration default concern (unlike PR #215's Account.currency) — migration defaults only matter when adding properties to EXISTING models. New models set all values via init(). Also: CashFlowForecastEngine extensibility pattern — default=[] parameters on engine functions maintains backward compatibility with existing unit tests when adding new optional data sources.
 - Tags: swiftdata, new-model, cashflow, decimal-parsing, accessibility, planned-expenses
+
+## 2026-04-01 — /go Batch Session (5 tasks) — SUCCESS
+- Tasks: Close duplicates, Multi-currency #215, Service layer #217, Planned expenses #218, Currency default fix #219
+- Outcome: All 5 PRs merged. Avg score: 9.0/10
+- Duration: ~1h total
+- Retries: 0
+- Lesson: SwiftData non-optional property added to existing model MUST have declaration-level default (= "USD") — NULL auto-migration produces empty string. New @Model types don't need this (no existing rows). Pattern: always set defaults on property additions to existing models.
+- Lesson 2: Service layer static-method pattern (PR #217) + do/try/catch for mutations, try? for queries — confirmed as correct intentional distinction.
+- Lesson 3: CashFlowForecastEngine: default=[] params for new optional inputs = backward compat with existing tests.
+- Tags: swiftdata, migration, service-layer, cash-flow, multi-currency, planned-expenses

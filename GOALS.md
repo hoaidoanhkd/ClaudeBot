@@ -1,5 +1,5 @@
 # BurnRate — GOALS.md
-Last scan: 2026-03-30
+Last scan: 2026-04-01
 
 ## Legend
 - ⭐ Priority | Effort: S (< 2h) / M (half day) / L (1+ days)
@@ -9,9 +9,16 @@ Last scan: 2026-03-30
 
 ## 🔴 Critical Fixes
 
-- [x] ⭐ Add unit tests for ViewModels and Services (126→209 total) — PRs #198 #200
+- [x] ⭐ Add unit tests for ViewModels and Services (126→219 total) — PRs #198 #200
 - [x] ⭐ Fix SwiftData queries — use #Predicate instead of in-memory filter (#124) — PR #165
 - [x] Empty code blocks cleanup — already clean, no empty blocks found
+- [ ] ⭐ Fix budget alerts repeated firing (#87) — fires on every refresh instead of threshold crossing — Effort: M
+- [ ] ⭐ Fix budget dashboard doesn't refresh on limit edit (#88) — Effort: S
+- [ ] Fix avgDailyBurn inflated for current month (#90) — Effort: S
+- [ ] Fix custom category display in Budget views/notifications (#197) — Effort: S
+- [ ] Fix NotificationManager displayName() missing custom: in notifications (#202) — Effort: S
+- [ ] Fix Delta card VoiceOver missing percentage info (#91) — a11y — Effort: S
+- [ ] Verify Decimal #Predicate correctness in DebtPayoff/SavingsGoals (#166) — Effort: S
 
 ---
 
@@ -41,6 +48,8 @@ Last scan: 2026-03-30
 - [x] Verify custom category management done (#121) — confirmed PR #205
 - [x] Close duplicate AI Spending Coach issues (9 duplicates of #149/#139) — closed via gh CLI
 - [x] Fix MonthlyCategoryChart custom category names (#179) — fixed in PR #196
+- [ ] Add unit tests for new services: BudgetService, CategoryService, RecurringRuleService, PlannedExpenseService — Effort: M
+- [ ] Refactor SettingsView (310 LOC → sub-views) — Effort: S
 
 ---
 
@@ -53,6 +62,8 @@ Last scan: 2026-03-30
 - [x] Planned/upcoming expenses — add future one-time expenses to cash flow (Simplifi-style) — PR #218
 - [ ] App localization — Vietnamese + other languages (hardcoded English strings) — Effort: L
 - [ ] iCloud sync — sync data across devices (high retention driver) — Effort: L
+- [ ] Investment/RSU tracking — manual vest schedule entry, portfolio value — Effort: M
+- [ ] Shared/collaborative budgets via iCloud — Effort: L
 
 ---
 
@@ -77,3 +88,5 @@ Last scan: 2026-03-30
 - [x] Service layer consolidation — BudgetService, RecurringRuleService, CategoryService (PR #217)
 - [x] Planned/upcoming expenses with cash flow integration (PR #218)
 - [x] Closed 9 duplicate AI Spending Coach issues
+- [x] Fix Account.currency SwiftData migration default (PR #219)
+- [x] Bulk-closed 46 duplicate/resolved GitHub issues (86→40 open)

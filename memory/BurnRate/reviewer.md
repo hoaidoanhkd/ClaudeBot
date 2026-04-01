@@ -240,3 +240,10 @@
 - Pass 2 (Quality): Score 9/10
 - Issues found: 🟢 .onChange(of: count) won't recompute forecast on amount/date edits (mitigated by .onAppear). 🟢 customCategories.map per-row (negligible scale). 🟢 No unit tests for new engine helpers.
 - Coder patterns: Excellent. Locale-safe Decimal parsing (en_US_POSIX) in both forms. AppCategory.find with custom: correct. Decimal.description locale-independent for form seeding. Bool predicates in @Query safe. applyPlannedExpenses boundary checks correct. Engine default=[] ensures backward compat with existing tests.
+
+## 2026-04-01 — PR #219 — Fix Account.currency migration default
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — exactly 1 line, var currency: String = "USD", closes #216
+- Pass 2 (Quality): Score 10/10
+- Issues found: none
+- Coder patterns: Perfect surgical fix. init() unchanged — new accounts still get CurrencySettings.code. Property-level default ensures SwiftData migration uses "USD" for existing NULL rows.
