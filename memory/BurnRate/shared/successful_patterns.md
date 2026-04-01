@@ -132,3 +132,8 @@
 - Pattern: Pre-compute expensive values before filter loop, cache per-element lookups in dictionary, order checks cheapest-first with early exit
 - Example: `let fromBound = dateFrom?.startOfDay` outside loop; `categoryNameCache[id] ?? AppCategory.find(...)` inside; type check → date check → text search (costliest last)
 - Why: Avoids Calendar.startOfDay per element, avoids O(n×m) category lookups, short-circuits on cheap conditions first
+
+## Unit Tests (Engine) — 2026-04-01
+- Pattern: When testing forecast engines with daily impact arrays, verify the index-to-day mapping first with a simple single-impact test before writing complex multi-impact tests
+- Key code: `dailyImpacts[i]` applied at `dayOffset=i+1` → expense at `dateFromToday(N)` shows in `points[N+1]`
+- Files: BurnRateTests/CashFlowForecastEngineTests.swift

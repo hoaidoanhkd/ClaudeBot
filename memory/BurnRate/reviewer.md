@@ -296,3 +296,17 @@
 - Pass 2 (Quality): Score 10/10
 - Issues found: None
 - Coder patterns: Correct use of SwiftData computed property (non-stored); excellent O(n×m)→O(n) optimization with category name cache + pre-computed date bounds + cheapest-first check ordering.
+
+## 2026-04-01 — PR #228 — CashFlowForecastEngine Unit Tests (15 → 28)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — 13 new tests, all 3 engine functions covered with plannedExpenses
+- Pass 2 (Quality): Score 9/10
+- Issues found: None. Range assertions in combined-timing tests are pragmatically correct.
+- Coder patterns: Correctly creates @Model without context for pure engine tests (no SwiftData needed). Off-by-one documented with inline comments. paid/beyond-window exclusion tested with allSatisfy.
+
+## 2026-04-01 — PR #229 — InvestmentService Unit Tests (18 tests)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — full CRUD, cascade delete, computed properties (marketValue, unrealizedGain, isVested), fetchVestEvents UUID filter
+- Pass 2 (Quality): Score 9/10
+- Issues found: None. Minor: PR description says 18 tests, diff shows 17 (harmless count discrepancy).
+- Coder patterns: Correct 9-model container; cascade delete test is the critical one — verifies manual vest event cleanup; isVested today boundary test is correct (second Date() >= first).

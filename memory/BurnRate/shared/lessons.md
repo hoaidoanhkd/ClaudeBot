@@ -452,3 +452,21 @@
 - Quality: 9/10
 - Lesson: Stored Bool flags derived from date comparisons (e.g., isVested = vestDate <= Date()) go stale as time passes. Prefer in-memory computed filtering: `filter { $0.vestDate <= Date() }` in the view. Only use stored Bool flags for user-controlled states (like isPaid in PlannedExpense).
 - Tags: swiftdata, date-comparison, model-design, vest-events
+
+## 2026-04-01 — Review PR #228 — MERGED
+- Quality: 9/10
+- Lesson: CashFlowForecastEngine pure function tests don't need @MainActor + ModelContainer. @Model objects can be instantiated without a context for read-only property access in pure function tests. Use range assertions (XCTAssertLessThan/GreaterThan) when combined timing makes exact values non-deterministic; use precise assertions when timing is deterministic.
+- Tags: testing, cashflow, engine, planned-expenses
+
+## 2026-04-01 — Review PR #229 — MERGED
+- Quality: 9/10
+- Lesson: For services with manual cascade delete (no @Relationship deleteRule), always add a test that creates dependent objects, then deletes parent and verifies dependents also gone (test_deleteInvestment_cascadesVestEvents pattern).
+- Tags: testing, service-layer, cascade-delete, investment
+
+## 2026-04-01 — /go Batch 3 Session (5 tasks) — SUCCESS
+- Tasks: Batch chores #224, Investment/RSU #225, isVested+HistoryView #227, CashFlowEngine tests #228, InvestmentService tests #229
+- Outcome: All 5 PRs merged. Avg 9.2/10. 297 total tests (was 266 at start).
+- Lesson: VestEvent.isVested as computed property (vestDate <= Date()) is always correct — stored Bool flags for time-based state always go stale. Pattern: use computed properties for any property derived from Date comparison.
+- Lesson 2: O(n×m) → O(n) cache pattern for category name lookups: pre-build [ID: String] dict once before filter loop.
+- Lesson 3: CashFlowForecastEngine applies dailyImpacts[i] at dayOffset=i+1 — off-by-one is intentional, must be accounted for in tests.
+- Tags: computed-properties, performance, testing, investment, cash-flow

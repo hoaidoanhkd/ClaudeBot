@@ -18,7 +18,13 @@ Last scan: 2026-04-01
 - [ ] Fix custom category display in Budget views/notifications (#197) — Effort: S
 - [ ] Fix NotificationManager displayName() missing custom: in notifications (#202) — Effort: S
 - [ ] Fix Delta card VoiceOver missing percentage info (#91) — a11y — Effort: S
-- [ ] Verify Decimal #Predicate correctness in DebtPayoff/SavingsGoals (#166) — Effort: S
+- [x] Verify Decimal #Predicate correctness in DebtPayoff/SavingsGoals (#166) — PR #224 (switched to in-memory filter)
+- [ ] Fix hardcoded dollar sign in OnboardingView (#46) — Effort: S
+- [ ] Fix symbolEffect pulse isActive (#50) — Effort: S
+- [ ] Fix runway() 999 empty state for new users (#29) — Effort: S
+- [ ] Add static DateFormatter cache (#31) — Effort: S
+- [ ] Add loop cap to RecurringTransactionService.processDueRules (#52) — Effort: S
+- [ ] Add inverse relationship for RecurringRule.account (#53) — Effort: S
 
 ---
 
@@ -48,8 +54,8 @@ Last scan: 2026-04-01
 - [x] Verify custom category management done (#121) — confirmed PR #205
 - [x] Close duplicate AI Spending Coach issues (9 duplicates of #149/#139) — closed via gh CLI
 - [x] Fix MonthlyCategoryChart custom category names (#179) — fixed in PR #196
-- [ ] Add unit tests for new services: BudgetService, CategoryService, RecurringRuleService, PlannedExpenseService — Effort: M
-- [ ] Refactor SettingsView (310 LOC → sub-views) — Effort: S
+- [x] Add unit tests for new services: BudgetService, CategoryService, RecurringRuleService, PlannedExpenseService — PR #222
+- [x] Refactor SettingsView (310→84 LOC → sub-views) — PR #223
 
 ---
 
@@ -62,7 +68,7 @@ Last scan: 2026-04-01
 - [x] Planned/upcoming expenses — add future one-time expenses to cash flow (Simplifi-style) — PR #218
 - [ ] App localization — Vietnamese + other languages (hardcoded English strings) — Effort: L
 - [ ] iCloud sync — sync data across devices (high retention driver) — Effort: L
-- [ ] Investment/RSU tracking — manual vest schedule entry, portfolio value — Effort: M
+- [x] Investment/RSU tracking — manual vest schedule entry, portfolio value — PR #225
 - [ ] Shared/collaborative budgets via iCloud — Effort: L
 
 ---
@@ -90,3 +96,11 @@ Last scan: 2026-04-01
 - [x] Closed 9 duplicate AI Spending Coach issues
 - [x] Fix Account.currency SwiftData migration default (PR #219)
 - [x] Bulk-closed 46 duplicate/resolved GitHub issues (86→40 open)
+- [x] Unit tests for BudgetService, CategoryService, RecurringRuleService, PlannedExpenseService (PR #222)
+- [x] SettingsView refactor 310→84 LOC (PR #223)
+- [x] Batch chores: Decimal #Predicate fix, objectVersion restore, dark preview (PR #224)
+- [x] Investment/RSU tracking — models, service, 4 views (PR #225)
+- [x] VestEvent isVested fix + HistoryView filter optimization (PR #227)
+- [x] CashFlowForecastEngine tests 15→28 (PR #228)
+- [x] InvestmentService tests — 18 tests (PR #229)
+- [x] Total test suite: 297 tests passing

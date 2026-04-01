@@ -184,3 +184,9 @@
 - Files: BurnRateTests/{BudgetServiceTests,CategoryServiceTests,RecurringRuleServiceTests,PlannedExpenseServiceTests}.swift, project.pbxproj
 - Tricky parts: pbxproj registration (4 sections: PBXBuildFile, PBXFileReference, PBXGroup, Sources build phase). One unused variable warning caught on build.
 - Lesson: Always use `_ =` for discardable results in tests where the object is only needed for side effects. Total test count went from 219→266.
+
+## 2026-04-01 — CashFlowForecastEngine Unit Tests
+- Approach: Extended existing test file with 13 new tests covering planned expenses integration and edge cases
+- Files: BurnRateTests/CashFlowForecastEngineTests.swift (modified, 189→413 LOC)
+- Tricky parts: Off-by-one in forecast engine — dailyImpacts[i] is applied at dayOffset=i+1 (points[i+1]). Initial test assertions assumed same-day application. Required 3 assertion fixes after first test run.
+- Lesson: Always verify timing/indexing behavior of the engine before writing exact-value assertions. The engine's impact array is 0-indexed but applied starting at dayOffset=1.
