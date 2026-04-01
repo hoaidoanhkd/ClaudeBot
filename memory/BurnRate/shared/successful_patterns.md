@@ -115,3 +115,20 @@
 - Pattern: New SwiftData model + static service + list view with sections + form views + engine integration
 - Key code: Default parameter pattern for backward-compatible engine extension; `applyPlannedExpenses` modifies daily impacts array in-place via `inout`
 - Files: PlannedExpense.swift, PlannedExpenseService.swift, PlannedExpensesView.swift, PlannedExpenseFormViews.swift
+
+## Service Unit Tests — 2026-04-01
+- Pattern: @MainActor test class + in-memory ModelContainer with ALL model types registered (even unrelated ones — SwiftData requires full schema)
+- Key code: `let config = ModelConfiguration(isStoredInMemoryOnly: true); container = try! ModelContainer(for: Model1.self, Model2.self, ..., configurations: config)`
+- Files: BurnRateTests/*ServiceTests.swift
+- Note: pbxproj needs 4 edits per file: PBXBuildFile, PBXFileReference, PBXGroup children, Sources build phase
+
+## 2026-04-01 — PR #222 — SwiftData Service Unit Test Pattern
+- Pattern: @MainActor class + ModelConfiguration(isStoredInMemoryOnly:true) + ModelContainer(for: ALL models) + setUp creates context + tearDown deletes context
+- Use: For testing any static service (BudgetService, CategoryService, etc.)
+- Example: `@MainActor final class BudgetServiceTests: XCTestCase { var context: ModelContext! }`
+- Why it works: Full model graph prevents relationship FK errors; in-memory ensures isolation; @MainActor matches SwiftData main-thread requirement
+
+## 2026-04-01 — PR #227 — Filter Pipeline Optimization Pattern
+- Pattern: Pre-compute expensive values before filter loop, cache per-element lookups in dictionary, order checks cheapest-first with early exit
+- Example: `let fromBound = dateFrom?.startOfDay` outside loop; `categoryNameCache[id] ?? AppCategory.find(...)` inside; type check → date check → text search (costliest last)
+- Why: Avoids Calendar.startOfDay per element, avoids O(n×m) category lookups, short-circuits on cheap conditions first

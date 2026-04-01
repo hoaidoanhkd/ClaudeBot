@@ -178,3 +178,9 @@
 - Files: PlannedExpense.swift, PlannedExpenseService.swift, PlannedExpensesView.swift, PlannedExpenseFormViews.swift, CashFlowForecastEngine.swift, CashFlowForecastView.swift, SettingsView.swift
 - Tricky parts: CashFlowForecastEngine integration needed two helpers (applyPlannedExpenses for daily impacts, accumulatePlannedExpenses for milestones). Default parameters maintain backward compatibility.
 - Lesson: Use default parameters (plannedExpenses: [PlannedExpense] = []) when extending existing engine functions to avoid breaking existing callers.
+
+## 2026-04-01 — Unit Tests for New Services
+- Approach: Wrote 47 unit tests for BudgetService, CategoryService, RecurringRuleService, PlannedExpenseService using @MainActor + in-memory ModelContainer
+- Files: BurnRateTests/{BudgetServiceTests,CategoryServiceTests,RecurringRuleServiceTests,PlannedExpenseServiceTests}.swift, project.pbxproj
+- Tricky parts: pbxproj registration (4 sections: PBXBuildFile, PBXFileReference, PBXGroup, Sources build phase). One unused variable warning caught on build.
+- Lesson: Always use `_ =` for discardable results in tests where the object is only needed for side effects. Total test count went from 219→266.

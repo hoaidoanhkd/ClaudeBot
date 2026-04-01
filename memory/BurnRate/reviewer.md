@@ -247,3 +247,52 @@
 - Pass 2 (Quality): Score 10/10
 - Issues found: none
 - Coder patterns: Perfect surgical fix. init() unchanged — new accounts still get CurrencySettings.code. Property-level default ensures SwiftData migration uses "USD" for existing NULL rows.
+
+## 2026-04-01 — PR #220 — Batch Bug Fixes (#88 #90 #91 #197 #202)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — all 5 fixes present and correct. Closes #88, #90, #91, #197, #202.
+- Pass 2 (Quality): Score 9/10
+- Issues found: 🟢 deltaAccessibilityLabel unused invertColor param (neutral label OK). 🟢 day-1 daysElapsed=0→denominator=1 is mathematically correct.
+- Coder patterns: avgDailyBurn fix elegant — min(now, nextMonth) ensures daysElapsed never exceeds month. max(1,...) div-zero guard. Default=[] on notification methods preserves backward compat. let custom = extracted before dual notification calls (DRY). EditBudgetView correctly uses own @Query (self-contained sheet pattern). All 7 budget callsites for custom categories correctly updated.
+
+## 2026-04-01 — PR #221 — Fix budget alerts repeated firing (#87)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — UserDefaults persistence with UUID+month+threshold key, bidirectional clearing, pace dedup persisted, dead resetMonthlyTracking() removed (grep confirmed 0 refs). Closes #87.
+- Pass 2 (Quality): Score 9/10
+- Issues found: 🟢 Pace key uses categoryName not ID (same as old behavior, not regression). 🟢 currentMonthKey computed per-call in loop (minor). 🟢 No unit tests for persistence helpers.
+- Coder patterns: Excellent dedup design. UUID-based keys (rename-proof). Month-keyed auto-expiry elegant — no cleanup code needed. Bidirectional threshold clearing all 7 scenarios correct. clearAlert on non-existent key is no-op (safe). Extension file access via internal func (correct, same as PR #201).
+
+## 2026-04-01 — PR #222 — Unit Tests for 4 New Services
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — 47 tests for BudgetService, CategoryService, PlannedExpenseService, RecurringRuleService; 266 total
+- Pass 2 (Quality): Score 9/10
+- Issues found: None blocking. Minor: no CashFlowForecastEngine helper tests (pre-existing follow-up)
+- Coder patterns: Excellent @MainActor + in-memory ModelContainer pattern; setUp/tearDown isolation; meaningful edge cases (allFrequencies iteration, past-due upcoming, delete-reassigns, large Decimal, double-delete safety); correct `try?` for fetches in tests
+
+## 2026-04-01 — PR #223 — Refactor SettingsView into Sub-Views
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — 311 → 84 LOC, 3 files, PlannedExpenses preserved, pbxproj correct, #Preview light+dark
+- Pass 2 (Quality): Score 9/10
+- Issues found: None. All behaviors preserved — .onChange/requestPermission, biometric conditional section, all nav links, all accessibility.
+- Coder patterns: Excellent let+closure for AccountSection, @Binding for mutable state in NotificationsSection, no @Query leakage anywhere, companion structs (SettingsCurrencySection, SettingsSecuritySection) co-located logically.
+
+## 2026-04-01 — PR #224 — Batch Chores (#166, #211, #214)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — all 3 issues closed
+- Pass 2 (Quality): Score 9/10
+- Issues found: None. Clean precise fixes.
+- Coder patterns: Excellent comment on SwiftData Decimal TEXT gotcha; correct pattern of keeping sort at @Query level while moving filter in-memory (SavingsGoalsView).
+
+## 2026-04-01 — PR #225 — Investment/RSU Tracking (new feature)
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — 7 files, full CRUD, RSU vest schedule, portfolio dashboard, gain/loss
+- Pass 2 (Quality): Score 9/10
+- Issues found: 🟡 VestEvent.isVested stored flag is stale — won't auto-flip when vestDate passes without edit. Filed #226.
+- Coder patterns: Excellent migration defaults on all model properties; correct NSDecimalNumber.doubleValue for gainPercent; POSIX locale static let; correct manual cascade delete for VestEvent (no @Relationship on Investment); in-memory UUID filter for fetchVestEvents (correct, can't #Predicate on UUID).
+
+## 2026-04-01 — PR #227 — Fix stale isVested + HistoryViewModel filter optimization
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — both issues addressed precisely
+- Pass 2 (Quality): Score 10/10
+- Issues found: None
+- Coder patterns: Correct use of SwiftData computed property (non-stored); excellent O(n×m)→O(n) optimization with category name cache + pre-computed date bounds + cheapest-first check ordering.

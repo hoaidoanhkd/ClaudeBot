@@ -36,3 +36,10 @@
 **Fix:** `var currency: String = "USD"` — SwiftData uses this default when migrating NULL rows.
 **Rule:** Every new non-optional stored property added to an existing @Model MUST have a property-level default value.
 **Tags:** swiftdata, migration, schema, non-optional, PR#215
+
+## 2026-04-01 — SwiftData Decimal #Predicate Comparisons
+- Anti-pattern: `@Query(filter: #Predicate<T> { $0.decimalField < someDecimal })`
+- Why: SwiftData stores Decimal as TEXT in SQLite. String ordering is incorrect for numeric comparison (e.g. "9" > "10" as strings).
+- Fix: `@Query private var allItems: [T]` + computed var with in-memory `filter { $0.decimalField < someDecimal }`
+- Examples fixed: DebtPayoffView ($0.balance < 0), SavingsGoalsView ($0.currentAmount < $0.targetAmount)
+- Note: ASCII "-" < "0" means negative-vs-zero MAY work accidentally, but is fragile — always use in-memory filter for Decimal comparisons.

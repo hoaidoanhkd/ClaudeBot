@@ -419,3 +419,36 @@
 - Lesson 2: Service layer static-method pattern (PR #217) + do/try/catch for mutations, try? for queries — confirmed as correct intentional distinction.
 - Lesson 3: CashFlowForecastEngine: default=[] params for new optional inputs = backward compat with existing tests.
 - Tags: swiftdata, migration, service-layer, cash-flow, multi-currency, planned-expenses
+
+## 2026-04-01 — Review PR #220 — MERGED (9/10)
+- Quality: 9/10
+- Lesson: avgDailyBurn for current month: use daysElapsed (dateComponents from firstOfMonth to min(now, nextMonth)) NOT totalDaysInMonth. max(1, daysElapsed) prevents div-zero on day 1. Past months unaffected (monthOffset != 0 branch uses totalDaysInMonth). Batch bug fix PRs work well when each fix is surgical with no cross-contamination.
+- Tags: burnrate-engine, daily-avg, accessibility, custom-categories, notifications
+
+## 2026-04-01 — Review PR #221 — MERGED (9/10)
+- Quality: 9/10
+- Lesson: For "fire once per threshold per period" notification dedup, use UserDefaults with compound key: `prefix.entityId.periodKey.threshold`. Month-keyed auto-expiry (keys from prior months are simply never matched again) is cleaner than explicit cleanup. Bidirectional threshold clearing (crossing 100% clears 80% key; crossing 80% clears 100% key; under 80% clears both) ensures re-alert is possible after limit increases or refunds.
+- Tags: notifications, userdefaults, dedup, threshold, budget-alerts
+
+## 2026-04-01 — Review PR #222 — MERGED
+- Quality: 9/10
+- Lesson: SwiftData unit test pattern confirmed solid: @MainActor + ModelConfiguration(isStoredInMemoryOnly:true) + full model container (all 7 models) + setUp/tearDown isolation. Use try? for fetches in tests (matches production pattern). allCases iteration in edge tests is excellent for enum coverage.
+- Tags: testing, swiftdata, unit-tests, service-layer
+
+## 2026-04-01 — Review PR #223 — MERGED
+- Quality: 9/10
+- Lesson: When decomposing large views into sub-views, always verify: (1) .onChange handlers preserved, (2) conditional sections (if authManager.isAvailable) preserved, (3) let+closure pattern for display, @Binding for mutable state. Read the actual sub-view files — don't rely solely on diff context.
+- Tags: refactor, sub-views, swiftui, settings
+
+## 2026-04-01 — /go Batch 2 Session (5 tasks) — SUCCESS
+- Tasks: Scan+bulk-close, Batch bugs #220, Budget alerts #221, Service tests #222, SettingsView refactor #223
+- Outcome: All 5 tasks complete. PRs merged 9/10 avg. 266 total tests (was 219).
+- Lesson: Compound UserDefaults key pattern for notification dedup: `prefix.id.YYYY-MM.threshold` — UUID-based, auto-expiry, bidirectional clearing. No cleanup code needed.
+- Lesson 2: @MainActor + ModelConfiguration(isStoredInMemoryOnly:true) + full schema container = correct SwiftData test pattern.
+- Lesson 3: @Binding for mutable state in sub-views (NotificationsSection) vs let+closure for passive display — correct distinction.
+- Tags: notifications, userdefaults, swiftdata, testing, refactor, bugfix
+
+## 2026-04-01 — Review PR #225 — MERGED
+- Quality: 9/10
+- Lesson: Stored Bool flags derived from date comparisons (e.g., isVested = vestDate <= Date()) go stale as time passes. Prefer in-memory computed filtering: `filter { $0.vestDate <= Date() }` in the view. Only use stored Bool flags for user-controlled states (like isPaid in PlannedExpense).
+- Tags: swiftdata, date-comparison, model-design, vest-events
