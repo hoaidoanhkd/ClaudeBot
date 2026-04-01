@@ -404,3 +404,8 @@
 - Quality: 9/10
 - Lesson: Service layer consolidation pattern: static methods + explicit `context: ModelContext` param = perfect injection compatibility. Deliberate error-handling distinction: mutation methods use `do/try/catch` + `#if DEBUG` logging, query methods use `try? ... ?? []` — both are correct and intentional. Always grep for remaining direct modelContext.insert/delete before approving "CRUD extracted" PRs.
 - Tags: service-layer, swiftdata, dependency-injection, error-handling, refactor
+
+## 2026-04-01 — Review PR #218 — MERGED (9/10)
+- Quality: 9/10
+- Lesson: New @Model types don't have the migration default concern (unlike PR #215's Account.currency) — migration defaults only matter when adding properties to EXISTING models. New models set all values via init(). Also: CashFlowForecastEngine extensibility pattern — default=[] parameters on engine functions maintains backward compatibility with existing unit tests when adding new optional data sources.
+- Tags: swiftdata, new-model, cashflow, decimal-parsing, accessibility, planned-expenses

@@ -233,3 +233,10 @@
 - Pass 2 (Quality): Score 9/10
 - Issues found: 🟢 BudgetViewModel thin passthrough methods (preserved call-site compat). 🟢 fetchActive/fetchInactive currently unused by callers. 🟢 SavingsGoalService still uses try? on mutations (inconsistency with new services).
 - Coder patterns: Perfect pattern match to existing services. Deliberate distinction: mutations→do/try/catch, queries→try?. grep-verified clean sweep.
+
+## 2026-04-01 — PR #218 — Planned/Upcoming Expenses
+- Decision: MERGE
+- Pass 1 (Spec): ✅ OK — PlannedExpense model, PlannedExpenseService, PlannedExpensesView, Add/Edit forms, CashFlowForecastEngine integration, Settings link, #Preview (light+dark), model container registration, pbxproj 16 entries. Closes #193.
+- Pass 2 (Quality): Score 9/10
+- Issues found: 🟢 .onChange(of: count) won't recompute forecast on amount/date edits (mitigated by .onAppear). 🟢 customCategories.map per-row (negligible scale). 🟢 No unit tests for new engine helpers.
+- Coder patterns: Excellent. Locale-safe Decimal parsing (en_US_POSIX) in both forms. AppCategory.find with custom: correct. Decimal.description locale-independent for form seeding. Bool predicates in @Query safe. applyPlannedExpenses boundary checks correct. Engine default=[] ensures backward compat with existing tests.

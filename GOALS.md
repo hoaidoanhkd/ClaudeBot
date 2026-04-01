@@ -34,12 +34,12 @@ Last scan: 2026-03-30
 
 - [x] ⭐ Pull-to-refresh + skeleton loading states (#122) — PR #167
 - [x] Weekly spending recap notification (#140, weeklyRecapEnabled) — PR #169
-- [ ] Multi-currency support — Account.currency field exists but unused (#120) — Effort: M
+- [x] Multi-currency support — Account.currency field exists but unused (#120) — PR #215
 - [x] Fix weeklyRecapEnabled default to false (#138) — PR #169
-- [ ] Service layer consolidation (#123) — Effort: M
+- [x] Service layer consolidation (#123) — PR #217
 - [x] Verify HistoryView refactor is complete (#118) — confirmed PR #205 (204 LOC)
 - [x] Verify custom category management done (#121) — confirmed PR #205
-- [ ] Close duplicate AI Spending Coach issues (8 duplicates of #149/#139) — Effort: S
+- [x] Close duplicate AI Spending Coach issues (9 duplicates of #149/#139) — closed via gh CLI
 - [x] Fix MonthlyCategoryChart custom category names (#179) — fixed in PR #196
 
 ---
@@ -50,7 +50,7 @@ Last scan: 2026-03-30
 - [x] ⭐ Home screen widgets expansion — add budget % and savings goal widgets (beyond runway widget) — PR #210
 - [x] Spending insights summary card — weekly/monthly "you spent X% more on dining" (Monarch-style, on-device) — PR #212
 - [ ] Zero-based budgeting mode — assign every dollar to a category (YNAB-style) — Effort: L
-- [ ] Planned/upcoming expenses — add future one-time expenses to cash flow (Simplifi-style) — Effort: M
+- [x] Planned/upcoming expenses — add future one-time expenses to cash flow (Simplifi-style) — PR #218
 - [ ] App localization — Vietnamese + other languages (hardcoded English strings) — Effort: L
 - [ ] iCloud sync — sync data across devices (high retention driver) — Effort: L
 
@@ -73,3 +73,7 @@ Last scan: 2026-03-30
 - [x] Spending Pace Alerts (PR #154)
 - [x] Bill reminders (PR #152)
 - [x] Async race fix in notifications (PR #156)
+- [x] Multi-currency display support per account (PR #215)
+- [x] Service layer consolidation — BudgetService, RecurringRuleService, CategoryService (PR #217)
+- [x] Planned/upcoming expenses with cash flow integration (PR #218)
+- [x] Closed 9 duplicate AI Spending Coach issues
